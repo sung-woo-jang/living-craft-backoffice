@@ -1,0 +1,53 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(test:*)",
+      "Bash(node --version)",
+      "Bash(yarn install:*)",
+      "Bash(yarn lint:*)",
+      "Bash(yarn format:check:*)",
+      "Bash(yarn format:*)",
+      "Bash(yarn tsc:*)",
+      "Bash(yarn build:*)",
+      "Bash(timeout 5 yarn dev:*)",
+      "Bash(git add:*)",
+      "Bash(git rm:*)",
+      "Bash(git commit:*)",
+      "mcp__shadcn__get_project_registries",
+      "mcp__shadcn__list_items_in_registries",
+      "Bash(find:*)",
+      "Bash(done)",
+      "Bash(yarn remove:*)",
+      "Bash(yarn add:*)",
+      "Bash(timeout 10 yarn dev:*)",
+      "Bash(yarn dev)",
+      "Bash(curl:*)",
+      "Bash(xargs sed:*)",
+      "Bash(git checkout:*)",
+      "Bash(wc:*)",
+      "Bash(xargs:*)",
+      "Bash(yarn knip:*)",
+      "Bash(tree:*)",
+      "Bash(git mv:*)",
+      "Bash(while read dir)",
+      "Bash(do)",
+      "Bash(if [ ! -f \"$dir/index.ts\" ])",
+      "Bash(then)",
+      "Bash(echo:*)",
+      "Bash(fi)",
+      "Bash(__NEW_LINE__ echo \"\")",
+      "Bash(if [ ! -f \"/Users/jangseong-u/Desktop/Project/living-craft/living-craft-backoffice/src/app/providers/index.ts\" ])",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git push:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(gh auth:*)",
+      "Bash(gh repo view:*)",
+      "Bash(cat:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "shadcn"
+  ]
+}
