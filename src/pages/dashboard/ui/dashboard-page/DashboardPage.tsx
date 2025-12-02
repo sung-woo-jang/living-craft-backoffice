@@ -1,3 +1,7 @@
+import { ConfigDrawer } from '@/shared/ui-kit/config-drawer'
+import { ProfileDropdown } from '@/shared/ui-kit/profile-dropdown'
+import { Search } from '@/shared/ui-kit/search'
+import { ThemeSwitch } from '@/shared/ui-kit/theme-switch'
 import { Button } from '@/shared/ui/button'
 import {
   Card,
@@ -7,11 +11,7 @@ import {
   CardTitle,
 } from '@/shared/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs'
-import { ConfigDrawer } from '@/shared/ui-kit/config-drawer'
 import { Header, Main, TopNav } from '@/widgets/header'
-import { ProfileDropdown } from '@/shared/ui-kit/profile-dropdown'
-import { Search } from '@/shared/ui-kit/search'
-import { ThemeSwitch } from '@/shared/ui-kit/theme-switch'
 import { Analytics } from '@/features/dashboard/ui/analytics'
 import { Overview } from '@/features/dashboard/ui/overview'
 import { RecentSales } from '@/features/dashboard/ui/recent-sales'

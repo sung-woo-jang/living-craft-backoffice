@@ -1,17 +1,16 @@
+import { mockTasks as tasks } from '@/entities/task'
 import { ConfigDrawer } from '@/shared/ui-kit/config-drawer'
-import { Header, Main } from '@/widgets/header'
 import { ProfileDropdown } from '@/shared/ui-kit/profile-dropdown'
 import { Search } from '@/shared/ui-kit/search'
 import { ThemeSwitch } from '@/shared/ui-kit/theme-switch'
+import { Header, Main } from '@/widgets/header'
 import { TasksDialogs } from '@/features/tasks/ui/tasks-dialogs'
 import { TasksPrimaryButtons } from '@/features/tasks/ui/tasks-primary-buttons'
-import { TasksProvider } from '@/features/tasks/ui/tasks-provider'
 import { TasksTable } from '@/features/tasks/ui/tasks-table'
-import { mockTasks as tasks } from '@/entities/task'
 
 export function Tasks() {
   return (
-    <TasksProvider>
+    <>
       <Header fixed>
         <Search />
         <div className='ms-auto flex items-center space-x-4'>
@@ -35,6 +34,6 @@ export function Tasks() {
       </Main>
 
       <TasksDialogs />
-    </TasksProvider>
+    </>
   )
 }

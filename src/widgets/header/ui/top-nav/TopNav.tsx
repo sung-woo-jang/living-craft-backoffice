@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom'
-import { Menu } from 'lucide-react'
 import { cn } from '@/shared/lib/utils'
 import { Button } from '@/shared/ui/button'
 import {
@@ -8,6 +6,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/shared/ui/dropdown-menu'
+import { Menu } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 type TopNavProps = React.HTMLAttributes<HTMLElement> & {
   links: {
@@ -30,7 +30,11 @@ export function TopNav({ className, links, ...props }: TopNavProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent side='bottom' align='start'>
             {links.map(({ title, href, isActive, disabled }) => (
-              <DropdownMenuItem key={`${title}-${href}`} asChild disabled={disabled}>
+              <DropdownMenuItem
+                key={`${title}-${href}`}
+                asChild
+                disabled={disabled}
+              >
                 {disabled ? (
                   <span className={!isActive ? 'text-muted-foreground' : ''}>
                     {title}
@@ -60,7 +64,7 @@ export function TopNav({ className, links, ...props }: TopNavProps) {
           disabled ? (
             <span
               key={`${title}-${href}`}
-              className={`text-sm font-medium transition-colors ${isActive ? '' : 'text-muted-foreground'} opacity-50 cursor-not-allowed`}
+              className={`text-sm font-medium transition-colors ${isActive ? '' : 'text-muted-foreground'} cursor-not-allowed opacity-50`}
             >
               {title}
             </span>

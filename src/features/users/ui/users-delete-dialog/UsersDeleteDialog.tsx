@@ -1,13 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { AlertTriangle } from 'lucide-react'
+import { type User } from '@/entities/user'
 import { showSubmittedData } from '@/shared/lib/show-submitted-data'
+import { ConfirmDialog } from '@/shared/ui-kit/confirm-dialog'
 import { Alert, AlertDescription, AlertTitle } from '@/shared/ui/alert'
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
-import { ConfirmDialog } from '@/shared/ui-kit/confirm-dialog'
-import { type User } from '@/entities/user'
+import { AlertTriangle } from 'lucide-react'
 
 type UserDeleteDialogProps = {
   open: boolean

@@ -1,10 +1,10 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { userStatusStyles, userRoles, type User } from '@/entities/user'
 import { cn } from '@/shared/lib/utils'
-import { Badge } from '@/shared/ui/badge'
-import { Checkbox } from '@/shared/ui/checkbox'
 import { DataTableColumnHeader } from '@/shared/ui-kit/data-table'
 import { LongText } from '@/shared/ui-kit/long-text'
-import { userStatusStyles, userRoles, type User } from '@/entities/user'
+import { Badge } from '@/shared/ui/badge'
+import { Checkbox } from '@/shared/ui/checkbox'
 import { DataTableRowActions } from '../data-table-row-actions'
 
 export const usersColumns: ColumnDef<User>[] = [

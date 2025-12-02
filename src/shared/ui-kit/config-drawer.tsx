@@ -1,6 +1,6 @@
 import { type SVGProps } from 'react'
 import { Root as Radio, Item } from '@radix-ui/react-radio-group'
-import { CircleCheck, RotateCcw, Settings } from 'lucide-react'
+import { useDirection, useTheme } from '@/app/providers'
 import {
   IconDir,
   IconLayoutCompact,
@@ -14,8 +14,6 @@ import {
   IconThemeSystem,
 } from '@/shared/assets/custom'
 import { cn } from '@/shared/lib/utils'
-import { useDirection, useTheme } from '@/app/providers'
-import { type Collapsible, useLayout } from '@/features/layout-config'
 import { Button } from '@/shared/ui/button'
 import {
   Sheet,
@@ -27,12 +25,14 @@ import {
   SheetTrigger,
 } from '@/shared/ui/sheet'
 import { useSidebar } from '@/shared/ui/sidebar'
+import { CircleCheck, RotateCcw, Settings } from 'lucide-react'
+import { type Collapsible, useLayout } from '@/features/layout-config'
 
 export function ConfigDrawer() {
   const { setOpen } = useSidebar()
-  const { resetDir } = useDirection()
-  const { resetTheme } = useTheme()
-  const { resetLayout } = useLayout()
+  const { resetDir } = useDirection(['resetDir'])
+  const { resetTheme } = useTheme(['resetTheme'])
+  const { resetLayout } = useLayout(['resetLayout'])
 
   const handleReset = () => {
     setOpen(true)
@@ -170,7 +170,11 @@ function RadioGroupItem({
 }
 
 function ThemeConfig() {
-  const { defaultTheme, theme, setTheme } = useTheme()
+  const { defaultTheme, theme, setTheme } = useTheme([
+    'defaultTheme',
+    'theme',
+    'setTheme',
+  ])
   return (
     <div>
       <SectionTitle
@@ -213,7 +217,11 @@ function ThemeConfig() {
 }
 
 function SidebarConfig() {
-  const { defaultVariant, variant, setVariant } = useLayout()
+  const { defaultVariant, variant, setVariant } = useLayout([
+    'defaultVariant',
+    'variant',
+    'setVariant',
+  ])
   return (
     <div className='max-md:hidden'>
       <SectionTitle
@@ -257,7 +265,11 @@ function SidebarConfig() {
 
 function LayoutConfig() {
   const { open, setOpen } = useSidebar()
-  const { defaultCollapsible, collapsible, setCollapsible } = useLayout()
+  const { defaultCollapsible, collapsible, setCollapsible } = useLayout([
+    'defaultCollapsible',
+    'collapsible',
+    'setCollapsible',
+  ])
 
   const radioState = open ? 'default' : collapsible
 
@@ -313,7 +325,11 @@ function LayoutConfig() {
 }
 
 function DirConfig() {
-  const { defaultDir, dir, setDir } = useDirection()
+  const { defaultDir, dir, setDir } = useDirection([
+    'defaultDir',
+    'dir',
+    'setDir',
+  ])
   return (
     <div>
       <SectionTitle

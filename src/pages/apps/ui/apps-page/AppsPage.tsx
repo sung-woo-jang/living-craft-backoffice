@@ -1,6 +1,9 @@
 import { type ChangeEvent, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { SlidersHorizontal, ArrowUpAZ, ArrowDownAZ } from 'lucide-react'
+import { apps } from '@/entities/app'
+import { ConfigDrawer } from '@/shared/ui-kit/config-drawer'
+import { ProfileDropdown } from '@/shared/ui-kit/profile-dropdown'
+import { Search } from '@/shared/ui-kit/search'
+import { ThemeSwitch } from '@/shared/ui-kit/theme-switch'
 import { Button } from '@/shared/ui/button'
 import { Input } from '@/shared/ui/input'
 import {
@@ -11,12 +14,9 @@ import {
   SelectValue,
 } from '@/shared/ui/select'
 import { Separator } from '@/shared/ui/separator'
-import { ConfigDrawer } from '@/shared/ui-kit/config-drawer'
 import { Header, Main } from '@/widgets/header'
-import { ProfileDropdown } from '@/shared/ui-kit/profile-dropdown'
-import { Search } from '@/shared/ui-kit/search'
-import { ThemeSwitch } from '@/shared/ui-kit/theme-switch'
-import { apps } from '@/entities/app'
+import { SlidersHorizontal, ArrowUpAZ, ArrowDownAZ } from 'lucide-react'
+import { useSearchParams } from 'react-router-dom'
 
 type AppType = 'all' | 'connected' | 'notConnected'
 

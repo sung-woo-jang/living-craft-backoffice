@@ -1,18 +1,16 @@
+import { mockUsers as users } from '@/entities/user'
 import { ConfigDrawer } from '@/shared/ui-kit/config-drawer'
-import { Header, Main } from '@/widgets/header'
 import { ProfileDropdown } from '@/shared/ui-kit/profile-dropdown'
 import { Search } from '@/shared/ui-kit/search'
 import { ThemeSwitch } from '@/shared/ui-kit/theme-switch'
+import { Header, Main } from '@/widgets/header'
 import { UsersDialogs } from '@/features/users/ui/users-dialogs'
 import { UsersPrimaryButtons } from '@/features/users/ui/users-primary-buttons'
-import { UsersProvider } from '@/features/users/ui/users-provider'
 import { UsersTable } from '@/features/users/ui/users-table'
-import { mockUsers as users } from '@/entities/user'
 
 export function Users() {
-
   return (
-    <UsersProvider>
+    <>
       <Header fixed>
         <Search />
         <div className='ms-auto flex items-center space-x-4'>
@@ -36,6 +34,6 @@ export function Users() {
       </Main>
 
       <UsersDialogs />
-    </UsersProvider>
+    </>
   )
 }

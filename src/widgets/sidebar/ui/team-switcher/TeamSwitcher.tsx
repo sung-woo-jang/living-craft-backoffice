@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { ChevronsUpDown, Plus } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +14,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/shared/ui/sidebar'
+import { ChevronsUpDown, Plus } from 'lucide-react'
 
 type TeamSwitcherProps = {
   teams: {

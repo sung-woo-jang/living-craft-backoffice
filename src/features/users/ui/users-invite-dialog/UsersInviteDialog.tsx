@@ -1,8 +1,9 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { MailPlus, Send } from 'lucide-react'
+import { userRoles } from '@/entities/user'
 import { showSubmittedData } from '@/shared/lib/show-submitted-data'
+import { SelectDropdown } from '@/shared/ui-kit/select-dropdown'
 import { Button } from '@/shared/ui/button'
 import {
   Dialog,
@@ -23,8 +24,7 @@ import {
 } from '@/shared/ui/form'
 import { Input } from '@/shared/ui/input'
 import { Textarea } from '@/shared/ui/textarea'
-import { SelectDropdown } from '@/shared/ui-kit/select-dropdown'
-import { userRoles } from '@/entities/user'
+import { MailPlus, Send } from 'lucide-react'
 
 const formSchema = z.object({
   email: z.email({

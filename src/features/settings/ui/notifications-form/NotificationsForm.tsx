@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link } from 'react-router-dom'
 import { showSubmittedData } from '@/shared/lib/show-submitted-data'
 import { Button } from '@/shared/ui/button'
 import { Checkbox } from '@/shared/ui/checkbox'
@@ -16,6 +15,7 @@ import {
 } from '@/shared/ui/form'
 import { RadioGroup, RadioGroupItem } from '@/shared/ui/radio-group'
 import { Switch } from '@/shared/ui/switch'
+import { Link } from 'react-router-dom'
 
 const notificationsFormSchema = z.object({
   type: z.enum(['all', 'mentions', 'none'], {

@@ -1,8 +1,13 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import {
+  taskLabels,
+  taskPriorities,
+  taskStatuses,
+  type Task,
+} from '@/entities/task'
+import { DataTableColumnHeader } from '@/shared/ui-kit/data-table'
 import { Badge } from '@/shared/ui/badge'
 import { Checkbox } from '@/shared/ui/checkbox'
-import { DataTableColumnHeader } from '@/shared/ui-kit/data-table'
-import { taskLabels, taskPriorities, taskStatuses, type Task } from '@/entities/task'
 import { DataTableRowActions } from '../data-table-row-actions'
 
 export const tasksColumns: ColumnDef<Task>[] = [
@@ -46,7 +51,9 @@ export const tasksColumns: ColumnDef<Task>[] = [
     ),
     meta: { className: 'ps-1', tdClassName: 'ps-4' },
     cell: ({ row }) => {
-      const label = taskLabels.find((label) => label.value === row.original.label)
+      const label = taskLabels.find(
+        (label) => label.value === row.original.label
+      )
 
       return (
         <div className='flex space-x-2'>

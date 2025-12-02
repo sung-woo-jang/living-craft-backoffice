@@ -1,6 +1,19 @@
 import { useState } from 'react'
 import { Fragment } from 'react/jsx-runtime'
 import { format } from 'date-fns'
+import { type ChatUser, type Convo } from '@/entities/chat'
+// Fake Data
+import { conversations } from '@/entities/chat/lib/convo.json'
+import { cn } from '@/shared/lib/utils'
+import { ConfigDrawer } from '@/shared/ui-kit/config-drawer'
+import { ProfileDropdown } from '@/shared/ui-kit/profile-dropdown'
+import { Search } from '@/shared/ui-kit/search'
+import { ThemeSwitch } from '@/shared/ui-kit/theme-switch'
+import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar'
+import { Button } from '@/shared/ui/button'
+import { ScrollArea } from '@/shared/ui/scroll-area'
+import { Separator } from '@/shared/ui/separator'
+import { Header, Main } from '@/widgets/header'
 import {
   ArrowLeft,
   MoreVertical,
@@ -14,20 +27,7 @@ import {
   Video,
   MessagesSquare,
 } from 'lucide-react'
-import { cn } from '@/shared/lib/utils'
-import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar'
-import { Button } from '@/shared/ui/button'
-import { ScrollArea } from '@/shared/ui/scroll-area'
-import { Separator } from '@/shared/ui/separator'
-import { ConfigDrawer } from '@/shared/ui-kit/config-drawer'
-import { Header, Main } from '@/widgets/header'
-import { ProfileDropdown } from '@/shared/ui-kit/profile-dropdown'
-import { Search } from '@/shared/ui-kit/search'
-import { ThemeSwitch } from '@/shared/ui-kit/theme-switch'
 import { NewChat } from '@/features/chats/ui/new-chat'
-import { type ChatUser, type Convo } from '@/entities/chat'
-// Fake Data
-import { conversations } from '@/entities/chat/lib/convo.json'
 
 export function Chats() {
   const [search, setSearch] = useState('')

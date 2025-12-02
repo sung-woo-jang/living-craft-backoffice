@@ -1,8 +1,8 @@
 import { AxiosError } from 'axios'
 import { QueryCache, QueryClient } from '@tanstack/react-query'
+import { handleServerError } from '@/shared/lib/handle-server-error'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/features/auth'
-import { handleServerError } from '@/shared/lib/handle-server-error'
 
 export const queryClient = new QueryClient({
   defaultOptions: {

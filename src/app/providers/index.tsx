@@ -1,8 +1,8 @@
 import { QueryClientProvider } from '@tanstack/react-query'
+import { DirectionProvider } from './direction-provider'
+import { FontProvider } from './font-provider'
 import { queryClient } from './query-provider'
 import { ThemeProvider } from './theme-provider'
-import { FontProvider } from './font-provider'
-import { DirectionProvider } from './direction-provider'
 
 type ProvidersProps = {
   children: React.ReactNode

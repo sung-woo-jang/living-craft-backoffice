@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
 import useDialogState from '@/shared/hooks/use-dialog-state'
+import { SignOutDialog } from '@/shared/ui-kit/sign-out-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar'
 import { Button } from '@/shared/ui/button'
 import {
@@ -12,7 +12,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/shared/ui/dropdown-menu'
-import { SignOutDialog } from '@/shared/ui-kit/sign-out-dialog'
+import { Link } from 'react-router-dom'
 
 export function ProfileDropdown() {
   const [open, setOpen] = useDialogState()

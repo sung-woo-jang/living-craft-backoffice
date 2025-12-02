@@ -1,13 +1,5 @@
-import { Link } from 'react-router-dom'
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
-} from 'lucide-react'
 import useDialogState from '@/shared/hooks/use-dialog-state'
+import { SignOutDialog } from '@/shared/ui-kit/sign-out-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar'
 import {
   DropdownMenu,
@@ -24,7 +16,15 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/shared/ui/sidebar'
-import { SignOutDialog } from '@/shared/ui-kit/sign-out-dialog'
+import {
+  BadgeCheck,
+  Bell,
+  ChevronsUpDown,
+  CreditCard,
+  LogOut,
+  Sparkles,
+} from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 type NavUserProps = {
   user: {

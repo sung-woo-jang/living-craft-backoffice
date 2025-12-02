@@ -1,46 +1,44 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { useEffect } from 'react'
+import {
+  type StoreWithShallow,
+  useStoreWithShallow,
+} from '@/shared/model/utils'
 import { CommandMenu } from '@/shared/ui-kit/command-menu'
+import { createWithEqualityFn } from 'zustand/traditional'
 
-type SearchContextType = {
+type SearchState = {
   open: boolean
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
+  setOpen: (open: boolean) => void
+  toggle: () => void
 }
 
-const SearchContext = createContext<SearchContextType | null>(null)
+const useSearchStore = createWithEqualityFn<SearchState>((set) => ({
+  open: false,
+  setOpen: (open: boolean) => set({ open }),
+  toggle: () => set((state) => ({ open: !state.open })),
+}))
 
-type SearchProviderProps = {
-  children: React.ReactNode
-}
+export const useSearch: StoreWithShallow<SearchState> = (keys) =>
+  useStoreWithShallow(useSearchStore, keys)
 
-export function SearchProvider({ children }: SearchProviderProps) {
-  const [open, setOpen] = useState(false)
+export function SearchProvider({ children }: { children: React.ReactNode }) {
+  const { toggle } = useSearch(['toggle'])
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault()
-        setOpen((open) => !open)
+        toggle()
       }
     }
     document.addEventListener('keydown', down)
     return () => document.removeEventListener('keydown', down)
-  }, [])
+  }, [toggle])
 
   return (
-    <SearchContext value={{ open, setOpen }}>
+    <>
       {children}
       <CommandMenu />
-    </SearchContext>
+    </>
   )
-}
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const useSearch = () => {
-  const searchContext = useContext(SearchContext)
-
-  if (!searchContext) {
-    throw new Error('useSearch has to be used within SearchProvider')
-  }
-
-  return searchContext
 }

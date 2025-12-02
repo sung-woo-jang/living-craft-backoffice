@@ -1,6 +1,6 @@
+import { ConfirmDialog } from '@/shared/ui-kit/confirm-dialog'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '@/features/auth'
-import { ConfirmDialog } from '@/shared/ui-kit/confirm-dialog'
 
 interface SignOutDialogProps {
   open: boolean

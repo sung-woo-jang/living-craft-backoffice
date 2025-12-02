@@ -2,13 +2,13 @@
 
 import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
-import { AlertTriangle } from 'lucide-react'
-import { toast } from 'sonner'
 import { sleep } from '@/shared/lib/utils'
+import { ConfirmDialog } from '@/shared/ui-kit/confirm-dialog'
 import { Alert, AlertDescription, AlertTitle } from '@/shared/ui/alert'
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
-import { ConfirmDialog } from '@/shared/ui-kit/confirm-dialog'
+import { AlertTriangle } from 'lucide-react'
+import { toast } from 'sonner'
 
 type UserMultiDeleteDialogProps<TData> = {
   open: boolean

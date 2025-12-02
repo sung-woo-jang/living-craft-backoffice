@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
-import { Trash2, CircleArrowUp, ArrowUpDown, Download } from 'lucide-react'
-import { toast } from 'sonner'
+import { taskPriorities, taskStatuses, type Task } from '@/entities/task'
 import { sleep } from '@/shared/lib/utils'
+import { DataTableBulkActions as BulkActionsToolbar } from '@/shared/ui-kit/data-table'
 import { Button } from '@/shared/ui/button'
 import {
   DropdownMenu,
@@ -10,13 +10,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/shared/ui/dropdown-menu'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/shared/ui/tooltip'
-import { DataTableBulkActions as BulkActionsToolbar } from '@/shared/ui-kit/data-table'
-import { taskPriorities, taskStatuses, type Task } from '@/entities/task'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/tooltip'
+import { Trash2, CircleArrowUp, ArrowUpDown, Download } from 'lucide-react'
+import { toast } from 'sonner'
 import { TasksMultiDeleteDialog } from '../tasks-multi-delete-dialog'
 
 type DataTableBulkActionsProps<TData> = {

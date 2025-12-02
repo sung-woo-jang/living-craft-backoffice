@@ -1,7 +1,4 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
-import { ArrowRight, ChevronRight, Laptop, Moon, Sun } from 'lucide-react'
-import { useSearch } from '@/features/search'
 import { useTheme } from '@/app/providers'
 import {
   CommandDialog,
@@ -12,13 +9,16 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/shared/ui/command'
-import { sidebarData } from '@/widgets/sidebar'
 import { ScrollArea } from '@/shared/ui/scroll-area'
+import { sidebarData } from '@/widgets/sidebar'
+import { ArrowRight, ChevronRight, Laptop, Moon, Sun } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { useSearch } from '@/features/search'
 
 export function CommandMenu() {
   const navigate = useNavigate()
-  const { setTheme } = useTheme()
-  const { open, setOpen } = useSearch()
+  const { setTheme } = useTheme(['setTheme'])
+  const { open, setOpen } = useSearch(['open', 'setOpen'])
 
   const runCommand = React.useCallback(
     (command: () => unknown) => {

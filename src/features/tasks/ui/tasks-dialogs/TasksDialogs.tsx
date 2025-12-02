@@ -5,7 +5,12 @@ import { TasksMutateDrawer } from '../tasks-mutate-drawer'
 import { useTasks } from '../tasks-provider'
 
 export function TasksDialogs() {
-  const { open, setOpen, currentRow, setCurrentRow } = useTasks()
+  const { open, setOpen, currentRow, setCurrentRow } = useTasks([
+    'open',
+    'setOpen',
+    'currentRow',
+    'setCurrentRow',
+  ])
   return (
     <>
       <TasksMutateDrawer

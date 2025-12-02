@@ -1,4 +1,3 @@
-import { useSearchParams } from 'react-router-dom'
 import {
   Card,
   CardContent,
@@ -7,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/shared/ui/card'
+import { useSearchParams } from 'react-router-dom'
 import { AuthLayout } from '@/features/auth/auth-layout'
 import { UserAuthForm } from '@/features/auth/sign-in/ui/user-auth-form'
 

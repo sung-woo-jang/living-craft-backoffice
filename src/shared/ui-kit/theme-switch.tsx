@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
-import { Check, Moon, Sun } from 'lucide-react'
-import { cn } from '@/shared/lib/utils'
 import { useTheme } from '@/app/providers'
+import { cn } from '@/shared/lib/utils'
 import { Button } from '@/shared/ui/button'
 import {
   DropdownMenu,
@@ -9,9 +8,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/shared/ui/dropdown-menu'
+import { Check, Moon, Sun } from 'lucide-react'
 
 export function ThemeSwitch() {
-  const { theme, setTheme } = useTheme()
+  const { theme, setTheme } = useTheme(['theme', 'setTheme'])
 
   /* Update theme-color meta tag
    * when theme is updated */

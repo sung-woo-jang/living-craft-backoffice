@@ -1,16 +1,12 @@
 import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
+import { type User } from '@/entities/user'
+import { sleep } from '@/shared/lib/utils'
+import { DataTableBulkActions as BulkActionsToolbar } from '@/shared/ui-kit/data-table'
+import { Button } from '@/shared/ui/button'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/tooltip'
 import { Trash2, UserX, UserCheck, Mail } from 'lucide-react'
 import { toast } from 'sonner'
-import { sleep } from '@/shared/lib/utils'
-import { Button } from '@/shared/ui/button'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/shared/ui/tooltip'
-import { DataTableBulkActions as BulkActionsToolbar } from '@/shared/ui-kit/data-table'
-import { type User } from '@/entities/user'
 import { UsersMultiDeleteDialog } from '../users-multi-delete-dialog'
 
 type DataTableBulkActionsProps<TData> = {

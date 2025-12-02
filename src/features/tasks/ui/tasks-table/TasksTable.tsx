@@ -11,7 +11,12 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { taskPriorities, taskStatuses, type Task } from '@/entities/task'
 import { cn } from '@/shared/lib/utils'
+import {
+  DataTablePagination,
+  DataTableToolbar,
+} from '@/shared/ui-kit/data-table'
 import {
   Table,
   TableBody,
@@ -20,11 +25,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/shared/ui/table'
-import { DataTablePagination, DataTableToolbar } from '@/shared/ui-kit/data-table'
-import { taskPriorities, taskStatuses, type Task } from '@/entities/task'
 import { DataTableBulkActions } from '../data-table-bulk-actions'
 import { tasksColumns as columns } from '../tasks-columns'
-
 
 type DataTableProps = {
   data: Task[]
@@ -39,7 +41,10 @@ export function TasksTable({ data }: DataTableProps) {
   // Local state management for table (uncomment to use local-only state, not synced with URL)
   const [globalFilter, onGlobalFilterChange] = useState('')
   const [columnFilters, onColumnFiltersChange] = useState<any>([])
-  const [pagination, onPaginationChange] = useState<any>({ pageIndex: 0, pageSize: 10 })
+  const [pagination, onPaginationChange] = useState<any>({
+    pageIndex: 0,
+    pageSize: 10,
+  })
 
   // Synced with URL states (updated to match route search schema defaults)
   /* const {

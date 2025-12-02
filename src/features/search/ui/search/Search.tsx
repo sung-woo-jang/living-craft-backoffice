@@ -1,7 +1,7 @@
-import { SearchIcon } from 'lucide-react'
 import { cn } from '@/shared/lib/utils'
-import { useSearch } from '@/features/search'
 import { Button } from '@/shared/ui/button'
+import { SearchIcon } from 'lucide-react'
+import { useSearch } from '@/features/search'
 
 type SearchProps = {
   className?: string
@@ -13,7 +13,7 @@ export function Search({
   className = '',
   placeholder = 'Search',
 }: SearchProps) {
-  const { setOpen } = useSearch()
+  const { setOpen } = useSearch(['setOpen'])
   return (
     <Button
       variant='outline'

@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import {
   Card,
   CardContent,
@@ -7,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/shared/ui/card'
+import { Link } from 'react-router-dom'
 import { AuthLayout } from '@/features/auth/auth-layout'
 import { OtpForm } from '@/features/auth/otp/ui/otp-form'
 

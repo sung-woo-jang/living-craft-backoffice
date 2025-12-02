@@ -1,10 +1,6 @@
 import { useRef, useState } from 'react'
 import { cn } from '@/shared/lib/utils'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/shared/ui/popover'
+import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover'
 import {
   Tooltip,
   TooltipContent,

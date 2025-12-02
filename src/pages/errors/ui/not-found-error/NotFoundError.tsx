@@ -1,9 +1,9 @@
-import { useNavigate } from 'react-router-dom'
 import { Button } from '@/shared/ui/button'
+import { useNavigate } from 'react-router-dom'
 
 export function NotFoundError() {
   const navigate = useNavigate()
-  
+
   return (
     <div className='h-svh'>
       <div className='m-auto flex h-full w-full flex-col items-center justify-center gap-2'>

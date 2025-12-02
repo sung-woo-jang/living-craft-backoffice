@@ -11,7 +11,12 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { userRoles, type User } from '@/entities/user'
 import { cn } from '@/shared/lib/utils'
+import {
+  DataTablePagination,
+  DataTableToolbar,
+} from '@/shared/ui-kit/data-table'
 import {
   Table,
   TableBody,
@@ -20,8 +25,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/shared/ui/table'
-import { DataTablePagination, DataTableToolbar } from '@/shared/ui-kit/data-table'
-import { userRoles, type User } from '@/entities/user'
 import { DataTableBulkActions } from '../data-table-bulk-actions'
 import { usersColumns as columns } from '../users-columns'
 
@@ -37,7 +40,10 @@ export function UsersTable({ data }: DataTableProps) {
 
   // Local state management for table (uncomment to use local-only state, not synced with URL)
   const [columnFilters, onColumnFiltersChange] = useState<any>([])
-  const [pagination, onPaginationChange] = useState<any>({ pageIndex: 0, pageSize: 10 })
+  const [pagination, onPaginationChange] = useState<any>({
+    pageIndex: 0,
+    pageSize: 10,
+  })
 
   const ensurePageInRange = () => {}
 

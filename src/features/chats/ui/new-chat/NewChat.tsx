@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Check, X } from 'lucide-react'
+import { type ChatUser } from '@/entities/chat'
 import { showSubmittedData } from '@/shared/lib/show-submitted-data'
 import { Badge } from '@/shared/ui/badge'
 import { Button } from '@/shared/ui/button'
@@ -17,7 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/shared/ui/dialog'
-import { type ChatUser } from '@/entities/chat'
+import { Check, X } from 'lucide-react'
 
 type User = Omit<ChatUser, 'messages'>
 

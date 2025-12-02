@@ -2,9 +2,6 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useNavigate } from 'react-router-dom'
-import { ArrowRight, Loader2 } from 'lucide-react'
-import { toast } from 'sonner'
 import { sleep, cn } from '@/shared/lib/utils'
 import { Button } from '@/shared/ui/button'
 import {
@@ -16,6 +13,9 @@ import {
   FormMessage,
 } from '@/shared/ui/form'
 import { Input } from '@/shared/ui/input'
+import { ArrowRight, Loader2 } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 
 const formSchema = z.object({
   email: z.email({

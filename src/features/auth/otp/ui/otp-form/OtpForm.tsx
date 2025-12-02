@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useNavigate } from 'react-router-dom'
 import { showSubmittedData } from '@/shared/lib/show-submitted-data'
 import { cn } from '@/shared/lib/utils'
 import { Button } from '@/shared/ui/button'
@@ -20,6 +19,7 @@ import {
   InputOTPSlot,
   InputOTPSeparator,
 } from '@/shared/ui/input-otp'
+import { useNavigate } from 'react-router-dom'
 
 const formSchema = z.object({
   otp: z

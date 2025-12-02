@@ -1,7 +1,9 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { type Task } from '@/entities/task'
 import { showSubmittedData } from '@/shared/lib/show-submitted-data'
+import { SelectDropdown } from '@/shared/ui-kit/select-dropdown'
 import { Button } from '@/shared/ui/button'
 import {
   Form,
@@ -22,8 +24,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/shared/ui/sheet'
-import { SelectDropdown } from '@/shared/ui-kit/select-dropdown'
-import { type Task } from '@/entities/task'
 
 type TaskMutateDrawerProps = {
   open: boolean

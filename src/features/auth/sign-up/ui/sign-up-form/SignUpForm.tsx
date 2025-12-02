@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { IconFacebook, IconGithub } from '@/shared/assets/brand-icons'
 import { cn } from '@/shared/lib/utils'
+import { PasswordInput } from '@/shared/ui-kit/password-input'
 import { Button } from '@/shared/ui/button'
 import {
   Form,
@@ -14,7 +15,6 @@ import {
   FormMessage,
 } from '@/shared/ui/form'
 import { Input } from '@/shared/ui/input'
-import { PasswordInput } from '@/shared/ui-kit/password-input'
 
 const formSchema = z
   .object({

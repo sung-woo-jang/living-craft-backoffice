@@ -4,7 +4,12 @@ import { UsersInviteDialog } from '../users-invite-dialog'
 import { useUsers } from '../users-provider'
 
 export function UsersDialogs() {
-  const { open, setOpen, currentRow, setCurrentRow } = useUsers()
+  const { open, setOpen, currentRow, setCurrentRow } = useUsers([
+    'open',
+    'setOpen',
+    'currentRow',
+    'setCurrentRow',
+  ])
   return (
     <>
       <UsersActionDialog

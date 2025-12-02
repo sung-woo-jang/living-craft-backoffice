@@ -2,10 +2,10 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { ChevronDownIcon } from '@radix-ui/react-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useFont, useTheme } from '@/app/providers'
 import { fonts } from '@/shared/config/fonts'
 import { showSubmittedData } from '@/shared/lib/show-submitted-data'
 import { cn } from '@/shared/lib/utils'
-import { useFont, useTheme } from '@/app/providers'
 import { Button, buttonVariants } from '@/shared/ui/button'
 import {
   Form,
@@ -26,8 +26,8 @@ const appearanceFormSchema = z.object({
 type AppearanceFormValues = z.infer<typeof appearanceFormSchema>
 
 export function AppearanceForm() {
-  const { font, setFont } = useFont()
-  const { theme, setTheme } = useTheme()
+  const { font, setFont } = useFont(['font', 'setFont'])
+  const { theme, setTheme } = useTheme(['theme', 'setTheme'])
 
   // This can come from your database or API.
   const defaultValues: Partial<AppearanceFormValues> = {

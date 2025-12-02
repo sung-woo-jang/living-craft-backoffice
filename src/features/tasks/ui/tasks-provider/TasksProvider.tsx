@@ -1,36 +1,25 @@
-import React, { useState } from 'react'
-import useDialogState from '@/shared/hooks/use-dialog-state'
 import { type Task } from '@/entities/task'
+import {
+  type StoreWithShallow,
+  useStoreWithShallow,
+} from '@/shared/model/utils'
+import { createWithEqualityFn } from 'zustand/traditional'
 
 type TasksDialogType = 'create' | 'update' | 'delete' | 'import'
 
-type TasksContextType = {
+type TasksState = {
   open: TasksDialogType | null
-  setOpen: (str: TasksDialogType | null) => void
+  setOpen: (type: TasksDialogType | null) => void
   currentRow: Task | null
-  setCurrentRow: React.Dispatch<React.SetStateAction<Task | null>>
+  setCurrentRow: (row: Task | null) => void
 }
 
-const TasksContext = React.createContext<TasksContextType | null>(null)
+const useTasksStore = createWithEqualityFn<TasksState>((set) => ({
+  open: null,
+  setOpen: (open: TasksDialogType | null) => set({ open }),
+  currentRow: null,
+  setCurrentRow: (currentRow: Task | null) => set({ currentRow }),
+}))
 
-export function TasksProvider({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = useDialogState<TasksDialogType>(null)
-  const [currentRow, setCurrentRow] = useState<Task | null>(null)
-
-  return (
-    <TasksContext value={{ open, setOpen, currentRow, setCurrentRow }}>
-      {children}
-    </TasksContext>
-  )
-}
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const useTasks = () => {
-  const tasksContext = React.useContext(TasksContext)
-
-  if (!tasksContext) {
-    throw new Error('useTasks has to be used within <TasksContext>')
-  }
-
-  return tasksContext
-}
+export const useTasks: StoreWithShallow<TasksState> = (keys) =>
+  useStoreWithShallow(useTasksStore, keys)

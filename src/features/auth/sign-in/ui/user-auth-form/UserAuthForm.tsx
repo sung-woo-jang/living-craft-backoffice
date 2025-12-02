@@ -2,12 +2,9 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link, useNavigate } from 'react-router-dom'
-import { Loader2, LogIn } from 'lucide-react'
-import { toast } from 'sonner'
 import { IconFacebook, IconGithub } from '@/shared/assets/brand-icons'
-import { useAuthStore } from '@/features/auth'
 import { sleep, cn } from '@/shared/lib/utils'
+import { PasswordInput } from '@/shared/ui-kit/password-input'
 import { Button } from '@/shared/ui/button'
 import {
   Form,
@@ -18,7 +15,10 @@ import {
   FormMessage,
 } from '@/shared/ui/form'
 import { Input } from '@/shared/ui/input'
-import { PasswordInput } from '@/shared/ui-kit/password-input'
+import { Loader2, LogIn } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
+import { useAuthStore } from '@/features/auth'
 
 const formSchema = z.object({
   email: z.email({

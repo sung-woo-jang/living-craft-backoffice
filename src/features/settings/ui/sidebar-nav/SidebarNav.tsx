@@ -1,5 +1,4 @@
 import { useState, type JSX } from 'react'
-import { useLocation, useNavigate, Link } from 'react-router-dom'
 import { cn } from '@/shared/lib/utils'
 import { buttonVariants } from '@/shared/ui/button'
 import { ScrollArea } from '@/shared/ui/scroll-area'
@@ -10,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/ui/select'
+import { useLocation, useNavigate, Link } from 'react-router-dom'
 
 type SidebarNavProps = React.HTMLAttributes<HTMLElement> & {
   items: {

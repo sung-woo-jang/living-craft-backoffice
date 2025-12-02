@@ -1,4 +1,6 @@
-import { useLayout } from '@/features/layout-config'
+// import { AppTitle } from './app-title'
+// import { AppTitle } from './app-title'
+import { NavUser } from '@/shared/ui-kit/nav-user'
 import {
   Sidebar,
   SidebarContent,
@@ -6,14 +8,13 @@ import {
   SidebarHeader,
   SidebarRail,
 } from '@/shared/ui/sidebar'
-// import { AppTitle } from './app-title'
-import { NavUser } from '@/shared/ui-kit/nav-user'
-import { sidebarData } from '../../model/sidebar-data'
+import { sidebarData } from '@/widgets/sidebar'
+import { useLayout } from '@/features/layout-config'
 import { NavGroup } from '../nav-group'
 import { TeamSwitcher } from '../team-switcher'
 
 export function AppSidebar() {
-  const { collapsible, variant } = useLayout()
+  const { collapsible, variant } = useLayout(['collapsible', 'variant'])
   return (
     <Sidebar collapsible={collapsible} variant={variant}>
       <SidebarHeader>

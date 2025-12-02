@@ -1,3 +1,4 @@
+import { type SidebarData } from '@/shared/types/sidebar'
 import {
   Construction,
   LayoutDashboard,
@@ -22,7 +23,6 @@ import {
   Command,
   GalleryVerticalEnd,
 } from 'lucide-react'
-import { type SidebarData } from '@/shared/types/sidebar'
 
 export const sidebarData: SidebarData = {
   user: {

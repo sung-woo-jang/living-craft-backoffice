@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link } from 'react-router-dom'
 import { showSubmittedData } from '@/shared/lib/show-submitted-data'
 import { cn } from '@/shared/lib/utils'
 import { Button } from '@/shared/ui/button'
@@ -23,6 +22,7 @@ import {
   SelectValue,
 } from '@/shared/ui/select'
 import { Textarea } from '@/shared/ui/textarea'
+import { Link } from 'react-router-dom'
 
 const profileFormSchema = z.object({
   username: z

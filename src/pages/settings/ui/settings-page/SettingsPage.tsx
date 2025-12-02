@@ -1,11 +1,11 @@
-import { Outlet } from 'react-router-dom'
-import { Monitor, Bell, Palette, Wrench, UserCog } from 'lucide-react'
-import { Separator } from '@/shared/ui/separator'
 import { ConfigDrawer } from '@/shared/ui-kit/config-drawer'
-import { Header, Main } from '@/widgets/header'
 import { ProfileDropdown } from '@/shared/ui-kit/profile-dropdown'
 import { Search } from '@/shared/ui-kit/search'
 import { ThemeSwitch } from '@/shared/ui-kit/theme-switch'
+import { Separator } from '@/shared/ui/separator'
+import { Header, Main } from '@/widgets/header'
+import { Monitor, Bell, Palette, Wrench, UserCog } from 'lucide-react'
+import { Outlet } from 'react-router-dom'
 import { SidebarNav } from '@/features/settings/ui/sidebar-nav'
 
 const sidebarNavItems = [

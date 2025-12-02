@@ -13,11 +13,7 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/shared/ui/command'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/shared/ui/popover'
+import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover'
 import { Separator } from '@/shared/ui/separator'
 
 type DataTableFacetedFilterProps<TData, TValue> = {
