@@ -1,4 +1,3 @@
-import { Route } from 'react-router-dom'
 // Error Pages
 import {
   ForbiddenError,
@@ -7,6 +6,7 @@ import {
   NotFoundError,
   UnauthorisedError,
 } from '@/pages/errors'
+import { Route } from 'react-router-dom'
 
 export function ErrorRoutes() {
   return (

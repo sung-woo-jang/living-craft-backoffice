@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
+  type ColumnFiltersState,
+  type PaginationState,
   type SortingState,
   type VisibilityState,
   flexRender,
@@ -40,8 +42,10 @@ export function TasksTable({ data }: DataTableProps) {
 
   // Local state management for table (uncomment to use local-only state, not synced with URL)
   const [globalFilter, onGlobalFilterChange] = useState('')
-  const [columnFilters, onColumnFiltersChange] = useState<any>([])
-  const [pagination, onPaginationChange] = useState<any>({
+  const [columnFilters, onColumnFiltersChange] = useState<ColumnFiltersState>(
+    []
+  )
+  const [pagination, onPaginationChange] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   })
@@ -65,9 +69,7 @@ export function TasksTable({ data }: DataTableProps) {
     ],
   }) */
 
-  const ensurePageInRange = () => {}
-
-  // eslint-disable-next-line react-hooks/incompatible-library
+   
   const table = useReactTable({
     data,
     columns,
@@ -100,11 +102,6 @@ export function TasksTable({ data }: DataTableProps) {
     onGlobalFilterChange,
     onColumnFiltersChange,
   })
-
-  const pageCount = table.getPageCount()
-  useEffect(() => {
-    ensurePageInRange()
-  }, [pageCount, ensurePageInRange])
 
   return (
     <div

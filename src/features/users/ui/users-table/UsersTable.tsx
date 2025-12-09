@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
+  type ColumnFiltersState,
+  type PaginationState,
   type SortingState,
   type VisibilityState,
   flexRender,
@@ -39,13 +41,13 @@ export function UsersTable({ data }: DataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([])
 
   // Local state management for table (uncomment to use local-only state, not synced with URL)
-  const [columnFilters, onColumnFiltersChange] = useState<any>([])
-  const [pagination, onPaginationChange] = useState<any>({
+  const [columnFilters, onColumnFiltersChange] = useState<ColumnFiltersState>(
+    []
+  )
+  const [pagination, onPaginationChange] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   })
-
-  const ensurePageInRange = () => {}
 
   // Synced with URL states (keys/defaults mirror users route search schema)
   /* const {
@@ -67,7 +69,7 @@ export function UsersTable({ data }: DataTableProps) {
     ],
   }) */
 
-  // eslint-disable-next-line react-hooks/incompatible-library
+   
   const table = useReactTable({
     data,
     columns,
@@ -91,10 +93,6 @@ export function UsersTable({ data }: DataTableProps) {
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
-
-  useEffect(() => {
-    ensurePageInRange()
-  }, [table, ensurePageInRange])
 
   return (
     <div

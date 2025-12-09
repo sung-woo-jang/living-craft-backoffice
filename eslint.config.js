@@ -7,7 +7,7 @@ import { defineConfig } from 'eslint/config'
 import tseslint from 'typescript-eslint'
 
 export default defineConfig(
-  { ignores: ['dist', 'src/components/ui'] },
+  { ignores: ['dist', 'src/components/ui', 'src/shared/ui'] },
   {
     extends: [
       js.configs.recommended,
@@ -25,10 +25,10 @@ export default defineConfig(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+      // Provider, Context, UI 라이브러리 등에서는 컴포넌트 외 export 허용
+      'react-refresh/only-export-components': 'off',
+      // TanStack Table 등 서드파티 라이브러리 호환성 경고 비활성화
+      'react-hooks/incompatible-library': 'off',
       'no-console': 'error',
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': [
