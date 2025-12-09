@@ -61,25 +61,72 @@ export interface Reservation {
 
 // ===== 서비스 관련 타입 =====
 
-export interface TravelFee {
-  regionName: string
-  fee: number
+export interface CityDto {
+  id: string
+  name: string
+  estimateFee: number | null
+}
+
+export interface ServiceableRegionDto {
+  id: string
+  name: string
+  estimateFee: number
+  cities: CityDto[]
 }
 
 export interface Service {
   id: string
   title: string
   description: string
-  iconName: string | null
-  color: string | null
-  estimatedDuration: number
+  iconName: string
+  iconBgColor: string
+  duration: string // "하루 종일", "2-3시간" 등
   requiresTimeSelection: boolean
-  serviceableRegions: string[]
-  travelFees: TravelFee[]
   isActive: boolean
-  displayOrder: number | null
+  sortOrder: number
+  serviceableRegions: ServiceableRegionDto[]
   createdAt: string
   updatedAt: string
+}
+
+export interface ServiceRegionInput {
+  districtId: number
+  estimateFee: number
+}
+
+export interface CreateServiceRequest {
+  title: string
+  description: string
+  iconName: string
+  iconBgColor: string
+  duration: string
+  requiresTimeSelection: boolean
+  sortOrder?: number
+  regions: ServiceRegionInput[]
+}
+
+export interface UpdateServiceRequest {
+  title?: string
+  description?: string
+  iconName?: string
+  iconBgColor?: string
+  duration?: string
+  requiresTimeSelection?: boolean
+  sortOrder?: number
+  regions?: ServiceRegionInput[]
+}
+
+// ===== 행정구역 관련 타입 =====
+
+export type DistrictLevel = 'SIDO' | 'SIGUNGU' | 'EUPMYEONDONG'
+
+export interface District {
+  id: number
+  code: string
+  name: string
+  fullName: string
+  level: DistrictLevel
+  parentId: number | null
 }
 
 // ===== 포트폴리오 관련 타입 =====

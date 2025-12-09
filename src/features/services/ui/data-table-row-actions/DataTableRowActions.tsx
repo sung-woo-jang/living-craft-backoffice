@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { type Row } from '@tanstack/react-table'
+import { type Row, type Table } from '@tanstack/react-table'
 import type { Service } from '@/shared/types/api'
 import { Button } from '@/shared/ui/button'
 import {
@@ -10,50 +9,42 @@ import {
   DropdownMenuTrigger,
 } from '@/shared/ui/dropdown-menu'
 import { MoreHorizontal, Pencil, Trash2, Eye } from 'lucide-react'
-import { toast } from 'sonner'
+import {
+  useDeleteService,
+  useToggleService,
+} from '../../api/use-services-mutation'
 
 interface DataTableRowActionsProps {
   row: Row<Service>
+  table: Table<Service>
 }
 
-export function DataTableRowActions({ row }: DataTableRowActionsProps) {
+export function DataTableRowActions({ row, table }: DataTableRowActionsProps) {
   const service = row.original
-  const [isLoading, setIsLoading] = useState(false)
+  const deleteService = useDeleteService()
+  const toggleService = useToggleService()
+
+  const onEdit = table.options.meta?.onEdit as
+    | ((service: Service) => void)
+    | undefined
 
   const handleEdit = () => {
-    // TODO: Phase 4 - 서비스 수정 Drawer 열기
-    toast.info('서비스 수정 기능은 곧 구현됩니다.')
+    onEdit?.(service)
   }
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!confirm(`"${service.title}" 서비스를 정말 삭제하시겠습니까?`)) {
       return
     }
 
-    setIsLoading(true)
-    try {
-      // TODO: API 연동
-      toast.success('서비스가 삭제되었습니다.')
-    } catch (_error) {
-      toast.error('서비스 삭제에 실패했습니다.')
-    } finally {
-      setIsLoading(false)
-    }
+    deleteService.mutate(service.id)
   }
 
-  const handleToggleActive = async () => {
-    const action = service.isActive ? '비활성화' : '활성화'
-
-    setIsLoading(true)
-    try {
-      // TODO: API 연동
-      toast.success(`서비스가 ${action}되었습니다.`)
-    } catch (_error) {
-      toast.error(`서비스 ${action}에 실패했습니다.`)
-    } finally {
-      setIsLoading(false)
-    }
+  const handleToggleActive = () => {
+    toggleService.mutate(service.id)
   }
+
+  const isLoading = deleteService.isPending || toggleService.isPending
 
   return (
     <DropdownMenu>

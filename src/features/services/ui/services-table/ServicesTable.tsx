@@ -29,9 +29,10 @@ import { servicesColumns } from '../services-columns'
 
 interface ServicesTableProps {
   data: Service[]
+  onEdit: (service: Service) => void
 }
 
-export function ServicesTable({ data }: ServicesTableProps) {
+export function ServicesTable({ data, onEdit }: ServicesTableProps) {
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -66,6 +67,9 @@ export function ServicesTable({ data }: ServicesTableProps) {
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    meta: {
+      onEdit,
+    },
   })
 
   return (

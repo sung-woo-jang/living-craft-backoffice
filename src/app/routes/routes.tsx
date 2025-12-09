@@ -1,4 +1,4 @@
-import { AuthenticatedLayout } from '@/app/layout'
+import { AuthenticatedLayout, RootLayout } from '@/app/layout'
 import { CustomersPage } from '@/pages/customers'
 import { Dashboard } from '@/pages/dashboard'
 import { PortfoliosPage } from '@/pages/portfolios'
@@ -14,6 +14,7 @@ import { templateRoutes } from './template-routes'
 
 export const router = createBrowserRouter([
   {
+    element: <RootLayout />,
     children: [
       // Auth Routes (인증 관련)
       ...authRoutes,

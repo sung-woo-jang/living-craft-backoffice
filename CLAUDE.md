@@ -9,8 +9,7 @@
 
 ## 프로젝트 개요
 
-React, TypeScript, Vite, TanStack 기반의 Shadcn 어드민 대시보드 프로젝트입니다. 대시보드 페이지, 사용자 관리, 설정 등의 어드민 UI를 제공하며, RTL(우-좌) 지원과
-커스터마이징된 Shadcn 컴포넌트를 포함합니다.
+React, TypeScript, Vite 기반의 Shadcn 어드민 대시보드 프로젝트입니다. React Router DOM v6을 사용한 클라이언트 사이드 라우팅과 함께 대시보드 페이지, 사용자 관리, 설정 등의 어드민 UI를 제공하며, RTL(우-좌) 지원과 커스터마이징된 Shadcn 컴포넌트를 포함합니다.
 
 ## 개발 명령어
 
@@ -55,7 +54,7 @@ src/
 │   └── [도메인]/       # 각 기능의 컴포넌트, 훅, 타입 등 포함
 ├── hooks/              # 커스텀 React 훅
 ├── lib/                # 유틸리티 함수
-├── routes/             # TanStack Router 라우트 정의 (파일 기반 라우팅)
+├── routes/             # 라우트 정의
 ├── stores/             # Zustand 상태 관리 (auth-store)
 ├── styles/             # 글로벌 CSS 및 Tailwind 설정
 └── main.tsx           # 애플리케이션 진입점
@@ -65,14 +64,18 @@ src/
 
 ### 라우팅
 
-- **프레임워크**: TanStack Router (파일 기반 라우팅)
+- **라이브러리**: React Router DOM v6.28.0
 - **위치**: `src/routes/`
 - **구조**: 디렉토리 그룹핑으로 URL에 영향을 주지 않는 논리적 조직
     - `(auth)` - 인증 페이지 (로그인, 회원가입, 비밀번호 찾기, OTP)
     - `(errors)` - 에러 페이지 (401, 403, 404, 500, 503)
     - `_authenticated` - 인증이 필요한 보호된 라우트
-- **자동 생성**: TanStack Router가 파일 구조로부터 `src/routeTree.gen.ts` 자동 생성
-- **컨텍스트**: QueryClient는 라우터 컨텍스트로 전달되어 모든 라우트에서 사용 가능
+- **주요 Hook**:
+    - `useNavigate()` - 프로그래매틱 내비게이션
+    - `useLocation()` - 현재 위치 정보 (pathname, search, hash)
+    - `useParams()` - URL 파라미터 추출
+    - `useSearchParams()` - 쿼리 스트링 관리
+- **보호된 라우트**: `_authenticated` 디렉토리 내 라우트는 인증 상태 확인 후 접근 가능
 
 ### 상태 관리
 
@@ -230,9 +233,7 @@ Shadcn CLI로 업데이트할 때는 커스터마이징을 보존하기 위해 �
 ### 새 페이지/라우트 추가
 
 1. `src/routes/` 디렉토리에 `.tsx` 파일 생성
-2. TanStack Router의 `createFileRoute()` 사용하여 `Route` 컴포넌트 익스포트
-3. 데이터 페칭에 React Query의 `useQuery()` 또는 `useMutation()` 사용
-4. 라우트가 자동으로 `routeTree.gen.ts`에 생성됨
+2. 데이터 페칭에 React Query의 `useQuery()` 또는 `useMutation()` 사용
 
 ### 새 기능 모듈 추가
 

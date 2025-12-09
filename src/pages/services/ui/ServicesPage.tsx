@@ -1,16 +1,27 @@
+import { useState } from 'react'
 import { Button } from '@/shared/ui/button'
 import { Plus } from 'lucide-react'
 import { useServicesList } from '@/features/services/api/use-services-query'
 import { ServicesTable } from '@/features/services/ui/services-table'
+import { ServiceFormDrawer } from '@/features/services/ui/service-form-drawer/ServiceFormDrawer'
+import type { Service } from '@/shared/types/api'
 
 /**
  * 서비스 관리 페이지
  */
 export function ServicesPage() {
   const { data, isLoading, error } = useServicesList()
+  const [formOpen, setFormOpen] = useState(false)
+  const [editService, setEditService] = useState<Service | undefined>(undefined)
 
   const handleCreateService = () => {
-    // TODO: Phase 4 - 서비스 생성 Drawer 열기
+    setEditService(undefined)
+    setFormOpen(true)
+  }
+
+  const handleEditService = (service: Service) => {
+    setEditService(service)
+    setFormOpen(true)
   }
 
   return (
@@ -47,7 +58,9 @@ export function ServicesPage() {
         !error &&
         data &&
         Array.isArray(data) &&
-        data.length > 0 && <ServicesTable data={data} />}
+        data.length > 0 && (
+          <ServicesTable data={data} onEdit={handleEditService} />
+        )}
 
       {!isLoading &&
         !error &&
@@ -56,6 +69,12 @@ export function ServicesPage() {
             <p className='text-muted-foreground'>등록된 서비스가 없습니다.</p>
           </div>
         )}
+
+      <ServiceFormDrawer
+        open={formOpen}
+        onOpenChange={setFormOpen}
+        service={editService}
+      />
     </div>
   )
 }

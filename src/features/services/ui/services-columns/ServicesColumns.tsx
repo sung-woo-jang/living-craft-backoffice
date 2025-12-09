@@ -1,10 +1,9 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { formatCurrency } from '@/shared/lib/format'
-import type { Service } from '@/shared/types/api'
+import type { Service, ServiceableRegionDto } from '@/shared/types/api'
 import { DataTableColumnHeader } from '@/shared/ui-kit/data-table'
 import { Badge } from '@/shared/ui/badge'
 import { Checkbox } from '@/shared/ui/checkbox'
-import { Paintbrush, Sparkles, type LucideIcon } from 'lucide-react'
 import { DataTableRowActions } from '../data-table-row-actions'
 
 /**
@@ -41,26 +40,16 @@ export const servicesColumns: ColumnDef<Service>[] = [
       <DataTableColumnHeader column={column} title='서비스명' />
     ),
     cell: ({ row }) => {
-      const iconName = row.original.iconName
-      const color = row.original.color
-
-      let IconComponent: LucideIcon | null = null
-      if (iconName === 'paintbrush') {
-        IconComponent = Paintbrush
-      } else if (iconName === 'sparkles') {
-        IconComponent = Sparkles
-      }
+      const iconBgColor = row.original.iconBgColor
 
       return (
         <div className='flex items-center gap-2'>
-          {IconComponent && (
-            <div
-              className='flex size-8 items-center justify-center rounded-md'
-              style={{ backgroundColor: color || '#3B82F6' }}
-            >
-              <IconComponent className='size-4 text-white' />
-            </div>
-          )}
+          <div
+            className='flex size-8 items-center justify-center rounded-md text-xs font-medium text-white'
+            style={{ backgroundColor: iconBgColor || '#3B82F6' }}
+          >
+            {row.getValue('title')?.toString().charAt(0) || '서'}
+          </div>
           <span className='font-medium'>{row.getValue('title')}</span>
         </div>
       )
@@ -76,20 +65,13 @@ export const servicesColumns: ColumnDef<Service>[] = [
     ),
   },
   {
-    accessorKey: 'estimatedDuration',
+    accessorKey: 'duration',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='소요 시간' />
     ),
     cell: ({ row }) => {
-      const duration = row.getValue('estimatedDuration') as number
-      const hours = Math.floor(duration / 60)
-      const minutes = duration % 60
-      return (
-        <span>
-          {hours > 0 && `${hours}시간 `}
-          {minutes > 0 && `${minutes}분`}
-        </span>
-      )
+      const duration = row.getValue('duration') as string
+      return <span>{duration}</span>
     },
   },
   {
@@ -109,35 +91,55 @@ export const servicesColumns: ColumnDef<Service>[] = [
     accessorKey: 'serviceableRegions',
     header: '서비스 지역',
     cell: ({ row }) => {
-      const regions = (row.getValue('serviceableRegions') as string[]) || []
+      const regions = (row.getValue('serviceableRegions') as ServiceableRegionDto[]) || []
 
       if (regions.length === 0) {
         return <span className='text-muted-foreground'>-</span>
       }
 
+      const regionNames = regions.map((r) => r.name)
+
       return (
         <div className='flex flex-wrap gap-1'>
-          {regions.slice(0, 2).map((region) => (
-            <Badge key={region} variant='outline'>
-              {region}
+          {regionNames.slice(0, 2).map((name) => (
+            <Badge key={name} variant='outline'>
+              {name}
             </Badge>
           ))}
-          {regions.length > 2 && (
-            <Badge variant='outline'>+{regions.length - 2}개</Badge>
+          {regionNames.length > 2 && (
+            <Badge variant='outline'>+{regionNames.length - 2}개</Badge>
           )}
         </div>
       )
     },
   },
   {
-    accessorKey: 'travelFees',
+    id: 'estimateFees',
     header: '출장비',
     cell: ({ row }) => {
-      const fees = row.original.travelFees || []
-      if (fees.length === 0)
+      const regions = row.original.serviceableRegions || []
+      if (regions.length === 0) {
         return <span className='text-muted-foreground'>미설정</span>
-      const minFee = Math.min(...fees.map((f) => f.fee))
-      const maxFee = Math.max(...fees.map((f) => f.fee))
+      }
+
+      // 모든 지역의 기본 출장비를 수집
+      const allFees: number[] = []
+      regions.forEach((region) => {
+        allFees.push(region.estimateFee)
+        region.cities.forEach((city) => {
+          if (city.estimateFee !== null) {
+            allFees.push(city.estimateFee)
+          }
+        })
+      })
+
+      if (allFees.length === 0) {
+        return <span className='text-muted-foreground'>미설정</span>
+      }
+
+      const minFee = Math.min(...allFees)
+      const maxFee = Math.max(...allFees)
+
       if (minFee === maxFee) {
         return formatCurrency(minFee)
       }
@@ -160,17 +162,17 @@ export const servicesColumns: ColumnDef<Service>[] = [
     filterFn: (row, id, value) => value.includes(row.getValue(id)),
   },
   {
-    accessorKey: 'displayOrder',
+    accessorKey: 'sortOrder',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='표시 순서' />
+      <DataTableColumnHeader column={column} title='정렬 순서' />
     ),
     cell: ({ row }) => {
-      const order = row.getValue('displayOrder') as number | null
-      return order !== null ? order : '-'
+      const order = row.getValue('sortOrder') as number
+      return order
     },
   },
   {
     id: 'actions',
-    cell: ({ row }) => <DataTableRowActions row={row} />,
+    cell: ({ row, table }) => <DataTableRowActions row={row} table={table} />,
   },
 ]
