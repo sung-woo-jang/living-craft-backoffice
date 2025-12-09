@@ -113,6 +113,17 @@ export function ServiceFormModal({
   // 수정 모드일 때 기존 데이터 로드
   useEffect(() => {
     if (service && open) {
+      // serviceableRegions 계층 구조를 평면화하여 regions 배열 생성
+      // serviceableRegions는 시/도 레벨, cities는 시/군/구 레벨
+      // DB에는 시/군/구(SIGUNGU) 레벨만 저장되므로 cities를 평면화해야 함
+      const flattenedRegions = service.serviceableRegions.flatMap((region) =>
+        region.cities.map((city) => ({
+          districtId: parseInt(city.id),
+          // 시/군/구별 개별 출장비가 있으면 사용, 없으면 시/도 기본 출장비 사용
+          estimateFee: city.estimateFee ?? region.estimateFee,
+        }))
+      )
+
       reset({
         title: service.title,
         description: service.description,
@@ -121,10 +132,7 @@ export function ServiceFormModal({
         duration: service.duration,
         requiresTimeSelection: service.requiresTimeSelection,
         sortOrder: service.sortOrder,
-        regions: service.serviceableRegions.map((region) => ({
-          districtId: parseInt(region.id),
-          estimateFee: region.estimateFee,
-        })),
+        regions: flattenedRegions,
       })
     } else if (!open) {
       reset()

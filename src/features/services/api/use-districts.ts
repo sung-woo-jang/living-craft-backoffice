@@ -24,14 +24,12 @@ export function useDistricts(params?: UseDistrictsParams) {
 
       const url = `${ADMIN_API.DISTRICTS.LIST}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`
 
-      const response = await apiClient.get<{
-        success: boolean
-        data: District[]
-        message: string
-      }>(url)
+      // 인터셉터가 이미 SuccessResponse.data를 추출했으므로
+      // response.data가 바로 District[] 배열
+      const response = await apiClient.get<District[]>(url)
 
       // TanStack Query는 undefined를 허용하지 않으므로 빈 배열 반환
-      return response.data.data ?? []
+      return response.data ?? []
     },
   })
 }
