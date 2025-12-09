@@ -22,7 +22,7 @@ export const router = createBrowserRouter([
       ...templateRoutes,
       // Error Routes
       ...errorRoutes,
-      
+
       // Protected Routes (인증 필요)
       {
         path: '/',

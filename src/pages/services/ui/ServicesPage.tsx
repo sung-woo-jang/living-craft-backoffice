@@ -1,10 +1,10 @@
 import { useState } from 'react'
+import type { Service } from '@/shared/types/api'
 import { Button } from '@/shared/ui/button'
 import { Plus } from 'lucide-react'
 import { useServicesList } from '@/features/services/api/use-services-query'
+import { ServiceFormModal } from '@/features/services/ui/service-form-modal'
 import { ServicesTable } from '@/features/services/ui/services-table'
-import { ServiceFormDrawer } from '@/features/services/ui/service-form-drawer/ServiceFormDrawer'
-import type { Service } from '@/shared/types/api'
 
 /**
  * 서비스 관리 페이지
@@ -70,7 +70,7 @@ export function ServicesPage() {
           </div>
         )}
 
-      <ServiceFormDrawer
+      <ServiceFormModal
         open={formOpen}
         onOpenChange={setFormOpen}
         service={editService}

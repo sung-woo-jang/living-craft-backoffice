@@ -1,9 +1,7 @@
 import { useState } from 'react'
-import { X } from 'lucide-react'
-import { Badge } from '@/shared/ui/badge'
+import type { ServiceRegionInput, District } from '@/shared/types/api'
 import { Button } from '@/shared/ui/button'
 import { Input } from '@/shared/ui/input'
-import { Label } from '@/shared/ui/label'
 import {
   Select,
   SelectContent,
@@ -11,8 +9,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/ui/select'
-import type { ServiceRegionInput, District } from '@/shared/types/api'
+import { X, MapPin } from 'lucide-react'
 import { useDistricts } from '../../api/use-districts'
+import styles from './styles.module.scss'
 
 interface RegionFeeSelectorProps {
   value: ServiceRegionInput[]
@@ -33,7 +32,7 @@ export function RegionFeeSelector({ value, onChange }: RegionFeeSelectorProps) {
     parentId: selectedSido || undefined,
   })
 
-  // 선택된 지역 정보 조회 (Badge 표시용)
+  // 선택된 지역 정보 조회 (태그 표시용)
   const { data: allDistricts = [] } = useDistricts()
 
   const selectedRegions = value
@@ -57,7 +56,6 @@ export function RegionFeeSelector({ value, onChange }: RegionFeeSelectorProps) {
 
     // 중복 체크
     if (value.some((r) => r.districtId === districtId)) {
-      alert('이미 추가된 지역입니다.')
       return
     }
 
@@ -74,65 +72,75 @@ export function RegionFeeSelector({ value, onChange }: RegionFeeSelectorProps) {
   }
 
   return (
-    <div className='space-y-4'>
+    <div className={styles.container}>
       {/* 선택된 지역 목록 */}
-      {selectedRegions.length > 0 && (
-        <div className='flex flex-wrap gap-2'>
+      {selectedRegions.length > 0 ? (
+        <div className={styles.selectedRegions}>
           {selectedRegions.map((region) => (
-            <Badge key={region.districtId} variant='outline' className='gap-1'>
-              <span>
-                {region.district.name} - {region.estimateFee.toLocaleString()}원
+            <div key={region.districtId} className={styles.regionTag}>
+              <span className={styles.regionTagText}>
+                <span className={styles.regionName}>{region.district.name}</span>
+                <span className={styles.regionFee}>
+                  {region.estimateFee.toLocaleString()}원
+                </span>
               </span>
               <button
-                type='button'
+                type="button"
                 onClick={() => handleRemoveRegion(region.districtId)}
-                className='hover:bg-muted ml-1 rounded-full'
+                className={styles.removeButton}
               >
-                <X className='h-3 w-3' />
+                <X size={12} />
               </button>
-            </Badge>
+            </div>
           ))}
+        </div>
+      ) : (
+        <div className={styles.emptyState}>
+          <MapPin size={24} />
+          <p className={styles.emptyStateText}>선택된 서비스 지역이 없습니다</p>
+          <p className={styles.emptyStateHint}>아래에서 지역을 추가해주세요</p>
         </div>
       )}
 
       {/* 지역 추가 폼 */}
-      <div className='grid gap-4 rounded-lg border p-4'>
-        <div className='grid gap-2'>
-          <Label htmlFor='sido'>시/도</Label>
-          <Select
-            value={selectedSido?.toString()}
-            onValueChange={(value) => {
-              setSelectedSido(parseInt(value))
-              setSelectedSigungu(null) // 시/도 변경 시 시/군/구 초기화
-            }}
-          >
-            <SelectTrigger id='sido'>
-              <SelectValue placeholder='시/도를 선택하세요' />
-            </SelectTrigger>
-            <SelectContent>
-              {sidoList.map((sido) => (
-                <SelectItem key={sido.id} value={sido.id.toString()}>
-                  {sido.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {selectedSido && (
-          <div className='grid gap-2'>
-            <Label htmlFor='sigungu'>시/군/구 (선택사항)</Label>
+      <div className={styles.addForm}>
+        <div className={styles.selectRow}>
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>시/도</label>
             <Select
-              value={selectedSigungu?.toString() || ''}
-              onValueChange={(value) => {
-                setSelectedSigungu(value ? parseInt(value) : null)
+              value={selectedSido?.toString() || ''}
+              onValueChange={(val) => {
+                setSelectedSido(val ? parseInt(val) : null)
+                setSelectedSigungu(null)
               }}
             >
-              <SelectTrigger id='sigungu'>
-                <SelectValue placeholder='전체 (시/도 전체)' />
+              <SelectTrigger>
+                <SelectValue placeholder="시/도 선택" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value=''>전체 (시/도 전체)</SelectItem>
+                {sidoList.map((sido) => (
+                  <SelectItem key={sido.id} value={sido.id.toString()}>
+                    {sido.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>시/군/구 (선택)</label>
+            <Select
+              value={selectedSigungu?.toString() || '__ALL__'}
+              onValueChange={(val) => {
+                setSelectedSigungu(val === '__ALL__' ? null : parseInt(val))
+              }}
+              disabled={!selectedSido}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={selectedSido ? '전체' : '시/도를 먼저 선택'} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__ALL__">전체 (시/도 전체)</SelectItem>
                 {sigunguList.map((sigungu) => (
                   <SelectItem key={sigungu.id} value={sigungu.id.toString()}>
                     {sigungu.name}
@@ -141,29 +149,32 @@ export function RegionFeeSelector({ value, onChange }: RegionFeeSelectorProps) {
               </SelectContent>
             </Select>
           </div>
-        )}
-
-        <div className='grid gap-2'>
-          <Label htmlFor='estimateFee'>출장비 (원)</Label>
-          <Input
-            id='estimateFee'
-            type='number'
-            placeholder='0'
-            value={estimateFee}
-            onChange={(e) => setEstimateFee(e.target.value)}
-            min='0'
-            step='1000'
-          />
         </div>
 
-        <Button
-          type='button'
-          onClick={handleAddRegion}
-          disabled={!selectedSido || !estimateFee}
-          variant='outline'
-        >
-          지역 추가
-        </Button>
+        <div className={styles.feeRow}>
+          <div className={styles.feeInputWrapper}>
+            <label className={styles.label}>출장비</label>
+            <Input
+              type="number"
+              placeholder="0"
+              value={estimateFee}
+              onChange={(e) => setEstimateFee(e.target.value)}
+              min="0"
+              step="1000"
+              className={styles.feeInput}
+            />
+            <span className={styles.feeSuffix}>원</span>
+          </div>
+          <Button
+            type="button"
+            onClick={handleAddRegion}
+            disabled={!selectedSido || !estimateFee}
+            variant="secondary"
+            className={styles.addButton}
+          >
+            추가
+          </Button>
+        </div>
       </div>
     </div>
   )

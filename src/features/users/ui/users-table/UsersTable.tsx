@@ -69,7 +69,6 @@ export function UsersTable({ data }: DataTableProps) {
     ],
   }) */
 
-   
   const table = useReactTable({
     data,
     columns,

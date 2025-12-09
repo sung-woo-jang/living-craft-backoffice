@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/shared/api/client'
 import { ADMIN_API } from '@/shared/api/endpoints'
-import { toast } from 'sonner'
 import type {
   CreateServiceRequest,
   UpdateServiceRequest,
 } from '@/shared/types/api'
+import { toast } from 'sonner'
 
 export function useCreateService() {
   const queryClient = useQueryClient()
@@ -25,7 +25,13 @@ export function useUpdateService() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: UpdateServiceRequest }) => {
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string
+      data: UpdateServiceRequest
+    }) => {
       await apiClient.post(ADMIN_API.SERVICES.UPDATE(id), data)
     },
     onSuccess: () => {

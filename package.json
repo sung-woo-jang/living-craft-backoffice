@@ -76,6 +76,7 @@
     "knip": "^5.70.2",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.7.1",
+    "sass": "^1.95.0",
     "shadcn": "^3.5.1",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.48.0",

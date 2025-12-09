@@ -30,7 +30,8 @@ export function useDistricts(params?: UseDistrictsParams) {
         message: string
       }>(url)
 
-      return response.data.data
+      // TanStack Query는 undefined를 허용하지 않으므로 빈 배열 반환
+      return response.data.data ?? []
     },
   })
 }

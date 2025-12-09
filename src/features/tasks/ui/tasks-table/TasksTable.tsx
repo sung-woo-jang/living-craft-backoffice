@@ -69,7 +69,6 @@ export function TasksTable({ data }: DataTableProps) {
     ],
   }) */
 
-   
   const table = useReactTable({
     data,
     columns,

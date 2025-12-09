@@ -91,7 +91,8 @@ export const servicesColumns: ColumnDef<Service>[] = [
     accessorKey: 'serviceableRegions',
     header: '서비스 지역',
     cell: ({ row }) => {
-      const regions = (row.getValue('serviceableRegions') as ServiceableRegionDto[]) || []
+      const regions =
+        (row.getValue('serviceableRegions') as ServiceableRegionDto[]) || []
 
       if (regions.length === 0) {
         return <span className='text-muted-foreground'>-</span>

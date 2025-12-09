@@ -1,10 +1,10 @@
-import { type RouteObject } from 'react-router-dom'
 import {
   GeneralError,
   MaintenanceError,
   NotFoundError,
   UnauthorisedError,
 } from '@/pages/errors'
+import { type RouteObject } from 'react-router-dom'
 
 export const errorRoutes: RouteObject[] = [
   {

@@ -39,7 +39,6 @@ export function OtpForm({ className, ...props }: OtpFormProps) {
     defaultValues: { otp: '' },
   })
 
-   
   const otp = form.watch('otp')
 
   function onSubmit(data: z.infer<typeof formSchema>) {

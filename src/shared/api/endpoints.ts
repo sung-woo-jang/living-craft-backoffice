@@ -25,12 +25,12 @@ export const ADMIN_API = {
 
   // 서비스 관리
   SERVICES: {
-    LIST: `${API_BASE}/services/admin`,
-    CREATE: `${API_BASE}/services/admin`,
-    DETAIL: (id: string) => `${API_BASE}/services/admin/${id}`,
-    UPDATE: (id: string) => `${API_BASE}/services/admin/${id}/update`,
-    DELETE: (id: string) => `${API_BASE}/services/admin/${id}/delete`,
-    TOGGLE: (id: string) => `${API_BASE}/services/admin/${id}/toggle`,
+    LIST: `${API_BASE}/admin/services`,
+    CREATE: `${API_BASE}/admin/services`,
+    DETAIL: (id: string) => `${API_BASE}/admin/services/${id}`,
+    UPDATE: (id: string) => `${API_BASE}/admin/services/${id}`,
+    DELETE: (id: string) => `${API_BASE}/admin/services/${id}/delete`,
+    TOGGLE: (id: string) => `${API_BASE}/admin/services/${id}/toggle`,
   },
 
   // 행정구역 관리

@@ -33,7 +33,6 @@ const useDirectionStore = createWithEqualityFn<DirectionState>((set) => ({
   },
 }))
 
- 
 export const useDirection: StoreWithShallow<DirectionState> = (keys) =>
   useStoreWithShallow(useDirectionStore, keys)
 

@@ -1,9 +1,9 @@
-import { type RouteObject } from 'react-router-dom'
 import { Apps } from '@/pages/apps'
 import { Chats } from '@/pages/chats'
 import { HelpCenter } from '@/pages/help-center'
 import { Tasks } from '@/pages/tasks'
 import { Users } from '@/pages/users'
+import { type RouteObject } from 'react-router-dom'
 
 export const templateRoutes: RouteObject[] = [
   {

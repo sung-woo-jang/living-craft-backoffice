@@ -9,7 +9,8 @@
 
 ## 프로젝트 개요
 
-React, TypeScript, Vite 기반의 Shadcn 어드민 대시보드 프로젝트입니다. React Router DOM v6을 사용한 클라이언트 사이드 라우팅과 함께 대시보드 페이지, 사용자 관리, 설정 등의 어드민 UI를 제공하며, RTL(우-좌) 지원과 커스터마이징된 Shadcn 컴포넌트를 포함합니다.
+React, TypeScript, Vite 기반의 Shadcn 어드민 대시보드 프로젝트입니다. React Router DOM v6을 사용한 클라이언트 사이드 라우팅과 함께 대시보드 페이지, 사용자 관리, 설정 등의
+어드민 UI를 제공하며, RTL(우-좌) 지원과 커스터마이징된 Shadcn 컴포넌트를 포함합니다.
 
 ## 개발 명령어
 
@@ -184,6 +185,170 @@ Shadcn CLI로 업데이트할 때는 커스터마이징을 보존하기 위해 �
 - **baseUrl**: `src`로 설정된 경로 별칭 (`@/*`)
 - **빌드 체크**: `tsc -b`로 전체 프로젝트 타입 검사
 
+## 스타일링 가이드라인
+
+### 기본 원칙
+
+이 프로젝트는 **SCSS 모듈을 우선**으로 사용하며, Tailwind CSS는 **최소한으로만** 사용합니다.
+
+**중요**: Tailwind CSS가 프로젝트에 포함된 이유는 Shadcn UI 컴포넌트가 Tailwind 기반이기 때문입니다. Tailwind를 선호해서 사용하는 것이 아니라, Shadcn의 의존성 때문에
+포함되어 있습니다.
+
+**Tailwind 사용이 허용되는 경우:**
+
+- Shadcn UI 컴포넌트 (`src/shared/ui/` 내부의 컴포넌트들)
+- Radix UI primitive 컴포넌트들 (Dialog, Sheet, Popover 등)
+- 프로젝트 초기에 템플릿에서 가져온 레이아웃 컴포넌트 (점진적으로 SCSS로 마이그레이션 예정)
+
+**SCSS 모듈을 사용해야 하는 경우:**
+
+- 모든 커스텀 컴포넌트 (`features`, `widgets`, `pages` 계층)
+- 비즈니스 로직이 포함된 UI 컴포넌트
+- 복잡한 스타일링이 필요한 컴포넌트
+- 새로 작성하는 모든 컴포넌트
+
+### SCSS 모듈 사용 패턴
+
+#### 파일 구조
+
+각 컴포넌트 디렉토리는 다음과 같이 구성합니다:
+
+```
+component-name/
+├── ComponentName.tsx       # 컴포넌트 로직
+├── styles.module.scss      # 스타일 정의
+└── index.ts                # export
+```
+
+#### 네이밍 컨벤션
+
+**camelCase 방식 사용:**
+
+```scss
+// styles.module.scss
+.formDrawer {
+  // 루트 컨테이너
+}
+
+.formDrawerHeader {
+  // 헤더
+}
+
+.formDrawerSection {
+  // 섹션
+}
+
+.formDrawerSectionPrimary {
+  // 섹션 primary 변형
+}
+```
+
+**클래스명 규칙:**
+
+- 모든 클래스명은 camelCase 사용
+- 컴포넌트 접두사 사용 (예: `formDrawer`, `formDrawerSection`)
+- 변형(variant)은 접미사로 추가 (예: `formDrawerSectionPrimary`)
+
+#### TypeScript 통합
+
+SCSS 모듈을 TypeScript에서 사용:
+
+```tsx
+import styles from './styles.module.scss'
+
+export function MyComponent() {
+    return (
+        <div className={styles.container}>
+            <h2 className={styles.container__title}>Title</h2>
+            <div className={styles.container__content}>Content</div>
+        </div>
+    )
+}
+```
+
+#### 조건부 클래스 적용
+
+`clsx` 유틸리티 사용 (프로젝트에 이미 설치됨):
+
+```tsx
+import clsx from 'clsx'
+import styles from './styles.module.scss'
+
+<
+div
+className = {
+    clsx(
+        styles.button,
+    isActive && styles['button--active'],
+isDisabled && styles['button--disabled']
+)
+}>
+Button
+< /div>
+```
+
+#### 반응형 디자인
+
+SCSS의 미디어 쿼리 믹스인 사용:
+
+```scss
+@mixin mobile {
+  @media screen and (max-width: 767px) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media screen and (min-width: 1024px) {
+    @content;
+  }
+}
+
+.component {
+  padding: 2rem;
+
+  @include mobile {
+    padding: 1rem;
+  }
+}
+```
+
+### Shadcn 컴포넌트 래핑
+
+Shadcn 컴포넌트를 사용할 때는 래핑하여 SCSS로 추가 스타일링:
+
+```tsx
+import {Button as ShadcnButton} from '@/shared/ui/button'
+import styles from './styles.module.scss'
+
+export function CustomButton() {
+    return (
+        <div className={styles.buttonWrapper}>
+            <ShadcnButton className={styles.buttonWrapper__button}>
+                Click me
+            </ShadcnButton>
+        </div>
+    )
+}
+```
+
+**주의:** Shadcn 컴포넌트에 직접 SCSS 클래스를 적용하면 내부 Tailwind 클래스와 충돌할 수 있습니다. 가능한 래핑 요소를 사용하세요.
+
+### 마이그레이션 전략
+
+기존 Tailwind 기반 컴포넌트를 점진적으로 SCSS 모듈로 전환:
+
+1. **새로운 컴포넌트는 반드시 SCSS 모듈 사용**
+2. 수정이 필요한 기존 컴포넌트는 리팩토링 시 SCSS로 전환
+3. Shadcn/Radix 컴포넌트는 그대로 유지
+4. 레이아웃 컴포넌트는 우선순위 낮음 (Shadcn 의존도 높음)
+
 ## 컴포넌트 개발
 
 ### 데이터 테이블 패턴
@@ -265,3 +430,137 @@ yarn dlx shadcn@latest add [컴포넌트명]
 - 라우트 레벨 에러: `GeneralError` 컴포넌트로 처리
 - 404: `NotFoundError` 컴포넌트로 처리
 - 특정 에러 페이지: 401, 403, 500, 503
+
+## Shadcn MCP 활용 가이드
+
+이 프로젝트는 Claude Code와 함께 Shadcn MCP 서버가 구성되어 있습니다. UI 컴포넌트 개발 시 적극 활용하세요.
+
+### MCP 도구 활용법
+
+#### 1. 프로젝트 레지스트리 확인
+
+```
+mcp__shadcn__get_project_registries
+```
+
+현재 프로젝트에 설정된 레지스트리 목록을 확인합니다. 기본적으로 `@shadcn` 레지스트리가 설정되어 있습니다.
+
+#### 2. 컴포넌트 검색
+
+```
+mcp__shadcn__search_items_in_registries
+- registries: ["@shadcn"]
+- query: "button" 또는 "form" 등
+```
+
+필요한 컴포넌트를 검색합니다.
+
+#### 3. 사용 예제 조회
+
+```
+mcp__shadcn__get_item_examples_from_registries
+- registries: ["@shadcn"]
+- query: "dialog-demo", "form-rhf-demo" 등
+```
+
+컴포넌트 사용 예제 코드를 조회합니다. 폼 구현 시 특히 유용합니다.
+
+**주요 예제 패턴:**
+- `{컴포넌트}-demo`: 기본 사용 예제
+- `form-rhf-demo`: React Hook Form 연동 예제
+- `form-tanstack-demo`: TanStack Form 연동 예제
+
+#### 4. 컴포넌트 상세 정보
+
+```
+mcp__shadcn__view_items_in_registries
+- items: ["@shadcn/field", "@shadcn/dialog"]
+```
+
+컴포넌트의 상세 정보와 파일 내용을 조회합니다.
+
+#### 5. 설치 명령어 확인
+
+```
+mcp__shadcn__get_add_command_for_items
+- items: ["@shadcn/field"]
+```
+
+컴포넌트 설치 명령어를 반환합니다.
+
+### 권장 컴포넌트
+
+#### Field 컴포넌트 (폼 필드 래퍼)
+
+폼 개발 시 `Field`, `FieldLabel`, `FieldError`, `FieldDescription` 컴포넌트를 사용하여 일관된 폼 UI를 구성합니다.
+
+```tsx
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/shared/ui/field'
+import { Controller } from 'react-hook-form'
+
+// React Hook Form과 함께 사용
+<Controller
+  name="title"
+  control={control}
+  render={({ field, fieldState }) => (
+    <Field data-invalid={fieldState.invalid}>
+      <FieldLabel htmlFor="title">제목 *</FieldLabel>
+      <Input
+        {...field}
+        id="title"
+        aria-invalid={fieldState.invalid}
+      />
+      <FieldDescription>제목을 입력하세요</FieldDescription>
+      {fieldState.invalid && (
+        <FieldError errors={[fieldState.error]} />
+      )}
+    </Field>
+  )}
+/>
+```
+
+#### Dialog 컴포넌트 (모달)
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/shared/ui/dialog'
+
+<Dialog open={open} onOpenChange={onOpenChange}>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>제목</DialogTitle>
+      <DialogDescription>설명</DialogDescription>
+    </DialogHeader>
+    {/* 본문 */}
+    <DialogFooter>
+      <Button variant="outline">취소</Button>
+      <Button>확인</Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+```
+
+### 새 컴포넌트 추가 시 워크플로우
+
+1. **MCP로 검색**: 필요한 컴포넌트가 있는지 검색
+2. **예제 확인**: 사용 예제를 확인하여 구현 방법 파악
+3. **설치**: 필요하면 `npx shadcn@latest add [컴포넌트]`로 추가
+4. **SCSS 모듈 적용**: Shadcn 컴포넌트를 래핑하여 SCSS 스타일 적용
+
+### 주의사항
+
+- **RTL 컴포넌트**: `dialog`, `sheet`, `sidebar` 등은 RTL 커스터마이징이 되어 있으므로 업데이트 시 수동 병합 필요
+- **덮어쓰기 주의**: `--overwrite` 플래그 사용 시 기존 커스터마이징이 사라질 수 있음
+- **SCSS 우선**: Shadcn 컴포넌트는 그대로 사용하되, 커스텀 스타일은 SCSS 모듈로 래핑하여 적용

@@ -8,7 +8,8 @@ export function useServicesList() {
     queryKey: ['admin', 'services', 'list'],
     queryFn: async () => {
       const response = await apiClient.get<Service[]>(ADMIN_API.SERVICES.LIST)
-      return response.data
+      // TanStack Query는 undefined를 허용하지 않으므로 빈 배열 반환
+      return response.data ?? []
     },
   })
 }
