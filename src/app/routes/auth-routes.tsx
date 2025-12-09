@@ -1,18 +1,33 @@
+import { type RouteObject } from 'react-router-dom'
 import { ForgotPassword } from '@/pages/auth/forgot-password'
 import { Otp } from '@/pages/auth/otp'
-// Auth Pages
 import { SignIn, SignIn2 } from '@/pages/auth/sign-in'
 import { SignUp } from '@/pages/auth/sign-up'
-import { Route } from 'react-router-dom'
+import { LoginPage } from '@/pages/login/LoginPage'
 
-export function AuthRoutes() {
-  return (
-    <>
-      <Route path='/sign-in' element={<SignIn />} />
-      <Route path='/sign-in-2' element={<SignIn2 />} />
-      <Route path='/sign-up' element={<SignUp />} />
-      <Route path='/forgot-password' element={<ForgotPassword />} />
-      <Route path='/otp' element={<Otp />} />
-    </>
-  )
-}
+export const authRoutes: RouteObject[] = [
+  {
+    path: '/login',
+    element: <LoginPage />,
+  },
+  {
+    path: '/sign-in',
+    element: <SignIn />,
+  },
+  {
+    path: '/sign-in-2',
+    element: <SignIn2 />,
+  },
+  {
+    path: '/sign-up',
+    element: <SignUp />,
+  },
+  {
+    path: '/forgot-password',
+    element: <ForgotPassword />,
+  },
+  {
+    path: '/otp',
+    element: <Otp />,
+  },
+]
