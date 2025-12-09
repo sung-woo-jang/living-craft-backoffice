@@ -12,7 +12,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
     if (!isAuth) {
       // 현재 경로를 저장하고 로그인 페이지로 이동
-      navigate(`/login?redirect=${encodeURIComponent(location.pathname)}`)
+      navigate(`/sign-in?redirect=${encodeURIComponent(location.pathname)}`)
     }
   }, [checkAuth, navigate, location.pathname])
 

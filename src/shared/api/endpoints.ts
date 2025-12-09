@@ -8,7 +8,6 @@ const API_BASE = '/api'
 // ===== 인증 API =====
 export const AUTH_API = {
   LOGIN: `${API_BASE}/admin/auth/login`,
-  LOGOUT: `${API_BASE}/admin/auth/logout`,
   REFRESH: `${API_BASE}/admin/auth/refresh`,
   ME: `${API_BASE}/admin/auth/me`,
 } as const
@@ -36,6 +35,11 @@ export const ADMIN_API = {
   // 행정구역 관리
   DISTRICTS: {
     LIST: `${API_BASE}/admin/districts`,
+  },
+
+  // 아이콘 관리
+  ICONS: {
+    LIST: `${API_BASE}/icons`,
   },
 
   // 포트폴리오 관리

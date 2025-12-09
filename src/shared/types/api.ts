@@ -59,6 +59,16 @@ export interface Reservation {
   updatedAt: string
 }
 
+// ===== 아이콘 관련 타입 =====
+
+export type IconType = 'FILL' | 'MONO' | 'COLOR'
+
+export interface Icon {
+  id: number
+  name: string
+  type: IconType
+}
+
 // ===== 서비스 관련 타입 =====
 
 export interface CityDto {

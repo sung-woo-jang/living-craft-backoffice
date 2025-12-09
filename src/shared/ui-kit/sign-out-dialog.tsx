@@ -1,7 +1,5 @@
-import { apiClient } from '@/shared/api/client'
-import { AUTH_API } from '@/shared/api/endpoints'
 import { ConfirmDialog } from '@/shared/ui-kit/confirm-dialog'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/features/auth'
 
 interface SignOutDialogProps {
@@ -11,33 +9,29 @@ interface SignOutDialogProps {
 
 export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
   const navigate = useNavigate()
-  const location = useLocation()
   const { auth } = useAuthStore()
 
-  const handleSignOut = async () => {
-    try {
-      // 백엔드 logout API 호출
-      await apiClient.post(AUTH_API.LOGOUT)
-    } catch {
-      // 에러 발생 시 무시 (토스트 알림 없음)
-    } finally {
-      // API 성공 여부와 관계없이 클라이언트 토큰 삭제
-      auth.reset()
-      // Preserve current location for redirect after sign-in
-      const currentPath = location.pathname + location.search
-      navigate(`/sign-in?redirect=${encodeURIComponent(currentPath)}`, {
-        replace: true,
-      })
-    }
+  const handleSignOut = () => {
+    // Zustand 상태 초기화
+    auth.reset()
+
+    // access_token 쿠키 삭제 (로그인 시 저장한 쿠키)
+    document.cookie =
+      'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+    document.cookie =
+      'refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+
+    // 로그인 페이지로 이동
+    navigate('/sign-in', { replace: true })
   }
 
   return (
     <ConfirmDialog
       open={open}
       onOpenChange={onOpenChange}
-      title='Sign out'
-      desc='Are you sure you want to sign out? You will need to sign in again to access your account.'
-      confirmText='Sign out'
+      title='로그아웃'
+      desc='정말 로그아웃 하시겠습니까? 다시 로그인해야 계정에 접근할 수 있습니다.'
+      confirmText='로그아웃'
       destructive
       handleConfirm={handleSignOut}
       className='sm:max-w-sm'

@@ -92,8 +92,8 @@ apiClient.interceptors.response.use(
 
         // 로그인 페이지로 리다이렉트 (현재 경로를 저장)
         const currentPath = window.location.pathname
-        if (currentPath !== '/login') {
-          window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`
+        if (currentPath !== '/sign-in') {
+          window.location.href = `/sign-in?redirect=${encodeURIComponent(currentPath)}`
         }
         break
       }

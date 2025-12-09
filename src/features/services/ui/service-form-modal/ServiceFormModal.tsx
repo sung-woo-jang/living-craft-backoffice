@@ -1,9 +1,19 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import * as z from 'zod'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Check, ChevronsUpDown } from 'lucide-react'
 import type { CreateServiceRequest, Service } from '@/shared/types/api'
+import { cn } from '@/shared/lib/utils'
 import { Button } from '@/shared/ui/button'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/shared/ui/command'
 import {
   Dialog,
   DialogContent,
@@ -19,12 +29,18 @@ import {
   FieldLabel,
 } from '@/shared/ui/field'
 import { Input } from '@/shared/ui/input'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/shared/ui/popover'
 import { Switch } from '@/shared/ui/switch'
 import { Textarea } from '@/shared/ui/textarea'
 import {
   useCreateService,
   useUpdateService,
 } from '../../api/use-services-mutation'
+import { useIconsList } from '../../api/use-icons-query'
 import { RegionFeeSelector } from '../region-fee-selector/RegionFeeSelector'
 import styles from './styles.module.scss'
 
@@ -67,6 +83,10 @@ export function ServiceFormModal({
   const isEditMode = Boolean(service)
   const createService = useCreateService()
   const updateService = useUpdateService()
+
+  // 아이콘 Combobox 상태
+  const [iconPopoverOpen, setIconPopoverOpen] = useState(false)
+  const { data: icons = [], isLoading: iconsLoading } = useIconsList()
 
   const {
     register,
@@ -217,13 +237,69 @@ export function ServiceFormModal({
                           아이콘 이름{' '}
                           <span className={styles.labelRequired}>*</span>
                         </FieldLabel>
-                        <Input
-                          {...field}
-                          id='iconName'
-                          placeholder='예: Paintbrush'
-                          aria-invalid={fieldState.invalid}
-                        />
-                        <FieldDescription>Lucide 아이콘 이름</FieldDescription>
+                        <Popover
+                          open={iconPopoverOpen}
+                          onOpenChange={setIconPopoverOpen}
+                        >
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant='outline'
+                              role='combobox'
+                              aria-expanded={iconPopoverOpen}
+                              className={cn(
+                                'w-full justify-between',
+                                !field.value && 'text-muted-foreground'
+                              )}
+                            >
+                              {field.value
+                                ? icons.find((icon) => icon.name === field.value)
+                                    ?.name || field.value
+                                : '아이콘 선택'}
+                              <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className='w-full p-0'>
+                            <Command>
+                              <CommandInput
+                                placeholder='아이콘 검색...'
+                                className='h-9'
+                              />
+                              <CommandList>
+                                <CommandEmpty>
+                                  {iconsLoading
+                                    ? '로딩 중...'
+                                    : '아이콘을 찾을 수 없습니다.'}
+                                </CommandEmpty>
+                                <CommandGroup>
+                                  {icons.map((icon) => (
+                                    <CommandItem
+                                      key={icon.id}
+                                      value={icon.name}
+                                      onSelect={(currentValue) => {
+                                        field.onChange(
+                                          currentValue === field.value
+                                            ? ''
+                                            : currentValue
+                                        )
+                                        setIconPopoverOpen(false)
+                                      }}
+                                    >
+                                      {icon.name}
+                                      <Check
+                                        className={cn(
+                                          'ml-auto h-4 w-4',
+                                          field.value === icon.name
+                                            ? 'opacity-100'
+                                            : 'opacity-0'
+                                        )}
+                                      />
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
                         {fieldState.invalid && (
                           <FieldError errors={[fieldState.error]} />
                         )}
