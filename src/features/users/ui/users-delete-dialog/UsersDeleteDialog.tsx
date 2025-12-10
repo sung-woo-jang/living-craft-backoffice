@@ -1,5 +1,3 @@
-'use client'
-
 import { useState } from 'react'
 import { type User } from '@/entities/user'
 import { showSubmittedData } from '@/shared/lib/show-submitted-data'

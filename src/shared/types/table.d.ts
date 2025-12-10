@@ -5,7 +5,6 @@ import '@tanstack/react-table'
  * 테이블 메타데이터에 커스텀 속성 추가
  */
 declare module '@tanstack/react-table' {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface TableMeta<TData extends RowData> {
     /**
      * 행 수정 핸들러

@@ -1,9 +1,7 @@
-'use client'
-
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { userRoles, type User } from '@/entities/user'
+import { type User, userRoles } from '@/entities/user'
 import { showSubmittedData } from '@/shared/lib/show-submitted-data'
 import { PasswordInput } from '@/shared/ui-kit/password-input'
 import { SelectDropdown } from '@/shared/ui-kit/select-dropdown'
