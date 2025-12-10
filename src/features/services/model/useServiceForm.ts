@@ -1,9 +1,27 @@
 import { useEffect, useMemo } from 'react'
 import * as z from 'zod'
-import { useForm, type UseFormReturn } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { Service } from '@/shared/types/api'
+import { ScheduleMode, type Service } from '@/shared/types/api'
 import { useServicesList } from '../api/use-services-query'
+
+// DayCode Zod 타입
+const dayCodeSchema = z.enum(['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'])
+
+// 스케줄 스키마 정의 - 필수 필드와 선택 필드 분리
+const scheduleSchema = z.object({
+  estimateScheduleMode: z.nativeEnum(ScheduleMode),
+  estimateAvailableDays: z.array(dayCodeSchema).optional(),
+  estimateStartTime: z.string().optional(),
+  estimateEndTime: z.string().optional(),
+  estimateSlotDuration: z.number().optional(),
+  constructionScheduleMode: z.nativeEnum(ScheduleMode),
+  constructionAvailableDays: z.array(dayCodeSchema).optional(),
+  constructionStartTime: z.string().optional(),
+  constructionEndTime: z.string().optional(),
+  constructionSlotDuration: z.number().optional(),
+  bookingPeriodMonths: z.number().min(1).max(12),
+})
 
 // Zod 스키마 정의
 export const serviceFormSchema = z.object({
@@ -27,6 +45,7 @@ export const serviceFormSchema = z.object({
       })
     )
     .min(1, '최소 1개 이상의 지역을 선택해야 합니다'),
+  schedule: scheduleSchema.optional(),
 })
 
 export type ServiceFormValues = z.infer<typeof serviceFormSchema>
@@ -39,7 +58,7 @@ interface UseServiceFormOptions {
 export function useServiceForm({
   service,
   isOpen,
-}: UseServiceFormOptions): UseFormReturn<ServiceFormValues> {
+}: UseServiceFormOptions) {
   const isEditMode = Boolean(service)
 
   // 서비스 목록 조회
@@ -66,6 +85,19 @@ export function useServiceForm({
       requiresTimeSelection: false,
       sortOrder: nextSortOrder,
       regions: [],
+      schedule: {
+        estimateScheduleMode: ScheduleMode.GLOBAL,
+        estimateAvailableDays: [],
+        estimateStartTime: '18:00',
+        estimateEndTime: '22:00',
+        estimateSlotDuration: 60,
+        constructionScheduleMode: ScheduleMode.GLOBAL,
+        constructionAvailableDays: [],
+        constructionStartTime: '09:00',
+        constructionEndTime: '18:00',
+        constructionSlotDuration: 60,
+        bookingPeriodMonths: 3,
+      },
     },
   })
 
@@ -81,6 +113,39 @@ export function useServiceForm({
           }))
       )
 
+      // 스케줄 데이터 변환
+      const scheduleData = service.schedule
+        ? {
+            estimateScheduleMode: service.schedule.estimateScheduleMode,
+            estimateAvailableDays: service.schedule.estimateAvailableDays || [],
+            estimateStartTime: service.schedule.estimateStartTime || '18:00',
+            estimateEndTime: service.schedule.estimateEndTime || '22:00',
+            estimateSlotDuration: service.schedule.estimateSlotDuration || 60,
+            constructionScheduleMode: service.schedule.constructionScheduleMode,
+            constructionAvailableDays:
+              service.schedule.constructionAvailableDays || [],
+            constructionStartTime:
+              service.schedule.constructionStartTime || '09:00',
+            constructionEndTime:
+              service.schedule.constructionEndTime || '18:00',
+            constructionSlotDuration:
+              service.schedule.constructionSlotDuration || 60,
+            bookingPeriodMonths: service.schedule.bookingPeriodMonths || 3,
+          }
+        : {
+            estimateScheduleMode: ScheduleMode.GLOBAL,
+            estimateAvailableDays: [],
+            estimateStartTime: '18:00',
+            estimateEndTime: '22:00',
+            estimateSlotDuration: 60,
+            constructionScheduleMode: ScheduleMode.GLOBAL,
+            constructionAvailableDays: [],
+            constructionStartTime: '09:00',
+            constructionEndTime: '18:00',
+            constructionSlotDuration: 60,
+            bookingPeriodMonths: 3,
+          }
+
       form.reset({
         title: service.title,
         description: service.description,
@@ -90,6 +155,7 @@ export function useServiceForm({
         requiresTimeSelection: service.requiresTimeSelection,
         sortOrder: service.sortOrder,
         regions: flattenedRegions,
+        schedule: scheduleData,
       })
     } else if (!isOpen) {
       form.reset()

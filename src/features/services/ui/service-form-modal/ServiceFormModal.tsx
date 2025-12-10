@@ -27,6 +27,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/shared/ui/dialog'
+import { DurationPicker } from '@/shared/ui/duration-picker'
 import {
   Field,
   FieldDescription,
@@ -34,7 +35,6 @@ import {
   FieldGroup,
   FieldLabel,
 } from '@/shared/ui/field'
-import { DurationPicker } from '@/shared/ui/duration-picker'
 import { Input } from '@/shared/ui/input'
 import { Switch } from '@/shared/ui/switch'
 import { Textarea } from '@/shared/ui/textarea'
@@ -45,6 +45,7 @@ import {
 } from '../../api/use-services-mutation'
 import { useServiceForm, type ServiceFormValues } from '../../model'
 import { RegionFeeSelector } from '../region-fee-selector/RegionFeeSelector'
+import { ScheduleSelector } from '../schedule-selector'
 import styles from './styles.module.scss'
 
 interface ServiceFormModalProps {
@@ -101,6 +102,10 @@ export function ServiceFormModal({
     }
   }
 
+  const handleFormSubmit = () => {
+    handleSubmit(onSubmit)()
+  }
+
   const isPending = createService.isPending || updateService.isPending
 
   return (
@@ -119,11 +124,7 @@ export function ServiceFormModal({
           </DialogHeader>
 
           <div className={styles.modalBody}>
-            <form
-              id='service-form'
-              onSubmit={handleSubmit(onSubmit)}
-              className={styles.form}
-            >
+            <div className={styles.form}>
               {/* 기본 정보 */}
               <div className={styles.section}>
                 <h3 className={styles.sectionTitle}>기본 정보</h3>
@@ -215,7 +216,10 @@ export function ServiceFormModal({
                               <ComboboxList className='max-h-[400px]'>
                                 <ComboboxGroup>
                                   {iconData.map((icon) => (
-                                    <ComboboxItem key={icon.value} value={icon.value}>
+                                    <ComboboxItem
+                                      key={icon.value}
+                                      value={icon.value}
+                                    >
                                       {icon.label}
                                     </ComboboxItem>
                                   ))}
@@ -242,12 +246,12 @@ export function ServiceFormModal({
                           <ColorPicker
                             value={field.value}
                             onChange={field.onChange}
-                            className="w-[380px] rounded-lg border bg-background p-4 shadow-sm"
+                            className='bg-background w-[380px] rounded-lg border p-4 shadow-sm'
                           >
-                            <ColorPickerSelection className="h-[280px] mb-4 rounded-lg" />
-                            <ColorPickerHue className="mb-3" />
-                            <ColorPickerAlpha className="mb-4" />
-                            <div className="flex items-center gap-2">
+                            <ColorPickerSelection className='mb-4 h-[280px] rounded-lg' />
+                            <ColorPickerHue className='mb-3' />
+                            <ColorPickerAlpha className='mb-4' />
+                            <div className='flex items-center gap-2'>
                               <ColorPickerOutput />
                               <ColorPickerFormat />
                             </div>
@@ -327,7 +331,13 @@ export function ServiceFormModal({
                 <RegionFeeSelector />
                 {errors.regions && <FieldError errors={[errors.regions]} />}
               </div>
-            </form>
+
+              {/* 예약 일정 설정 */}
+              <div className={styles.section}>
+                <h3 className={styles.sectionTitle}>예약 일정 설정</h3>
+                <ScheduleSelector />
+              </div>
+            </div>
           </div>
 
           <div className={styles.footer}>
@@ -339,7 +349,11 @@ export function ServiceFormModal({
             >
               취소
             </Button>
-            <Button type='submit' form='service-form' disabled={isPending}>
+            <Button
+              type='button'
+              onClick={handleFormSubmit}
+              disabled={isPending}
+            >
               {isPending ? '저장 중...' : isEditMode ? '수정하기' : '추가하기'}
             </Button>
           </div>

@@ -1,8 +1,5 @@
 'use client'
 
-import Color from 'color'
-import { PipetteIcon } from 'lucide-react'
-import * as Slider from '@radix-ui/react-slider'
 import {
   type ComponentProps,
   createContext,
@@ -15,6 +12,8 @@ import {
   useRef,
   useState,
 } from 'react'
+import * as Slider from '@radix-ui/react-slider'
+import { cn } from '@/shared/lib/utils'
 import { Button } from '@/shared/ui/button'
 import { Input } from '@/shared/ui/input'
 import {
@@ -24,7 +23,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/ui/select'
-import { cn } from '@/shared/lib/utils'
+import Color from 'color'
+import { PipetteIcon } from 'lucide-react'
 
 interface ColorPickerContextValue {
   hue: number
@@ -143,7 +143,9 @@ export const ColorPickerSelection = memo(
     }, [hue])
 
     const currentColor = useMemo(() => {
-      return Color.hsl(hue, saturation, lightness).alpha(alpha / 100).hex()
+      return Color.hsl(hue, saturation, lightness)
+        .alpha(alpha / 100)
+        .hex()
     }, [hue, saturation, lightness, alpha])
 
     const handlePointerMove = useCallback(
@@ -203,13 +205,13 @@ export const ColorPickerSelection = memo(
       >
         {/* 왼쪽 상단 현재 색상 프리뷰 */}
         <div
-          className="pointer-events-none absolute left-2.5 top-2.5 h-6 w-6 rounded-full border-2 border-white shadow-md"
+          className='pointer-events-none absolute top-2.5 left-2.5 h-6 w-6 rounded-full border-2 border-white shadow-md'
           style={{ backgroundColor: currentColor }}
         />
 
         {/* 선택 인디케이터 */}
         <div
-          className="-translate-x-1/2 -translate-y-1/2 pointer-events-none absolute h-3 w-3 rounded-full border-2 border-white"
+          className='pointer-events-none absolute h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white'
           style={{
             left: `${positionX * 100}%`,
             top: `${positionY * 100}%`,
@@ -240,10 +242,10 @@ export const ColorPickerHue = ({
       value={[hue]}
       {...(props as any)}
     >
-      <Slider.Track className="relative my-0.5 h-3 w-full grow rounded-full bg-[linear-gradient(90deg,#FF0000,#FFFF00,#00FF00,#00FFFF,#0000FF,#FF00FF,#FF0000)]">
-        <Slider.Range className="absolute h-full" />
+      <Slider.Track className='relative my-0.5 h-3 w-full grow rounded-full bg-[linear-gradient(90deg,#FF0000,#FFFF00,#00FF00,#00FFFF,#0000FF,#FF00FF,#FF0000)]'>
+        <Slider.Range className='absolute h-full' />
       </Slider.Track>
-      <Slider.Thumb className="block h-4 w-4 rounded-full border border-primary/50 bg-background shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" />
+      <Slider.Thumb className='border-primary/50 bg-background focus-visible:ring-ring block h-4 w-4 rounded-full border shadow transition-colors focus-visible:ring-1 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50' />
     </Slider.Root>
   )
 }
@@ -266,16 +268,16 @@ export const ColorPickerAlpha = ({
       {...(props as any)}
     >
       <Slider.Track
-        className="relative my-0.5 h-3 w-full grow rounded-full"
+        className='relative my-0.5 h-3 w-full grow rounded-full'
         style={{
           background:
             'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYGAQYcAP3uCTZhw1gGGYhAGBZIA/nYDCgBDAm9BGDWAAJyRCgLaBCAAgXwixzAS0pgAAAABJRU5ErkJggg==") left center',
         }}
       >
-        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent to-black/50" />
-        <Slider.Range className="absolute h-full rounded-full bg-transparent" />
+        <div className='absolute inset-0 rounded-full bg-gradient-to-r from-transparent to-black/50' />
+        <Slider.Range className='absolute h-full rounded-full bg-transparent' />
       </Slider.Track>
-      <Slider.Thumb className="block h-4 w-4 rounded-full border border-primary/50 bg-background shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" />
+      <Slider.Thumb className='border-primary/50 bg-background focus-visible:ring-ring block h-4 w-4 rounded-full border shadow transition-colors focus-visible:ring-1 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50' />
     </Slider.Root>
   )
 }
@@ -306,11 +308,11 @@ export const ColorPickerEyeDropper = ({
 
   return (
     <Button
-      className={cn('shrink-0 text-muted-foreground', className)}
+      className={cn('text-muted-foreground shrink-0', className)}
       onClick={handleEyeDropper}
-      size="icon"
-      variant="outline"
-      type="button"
+      size='icon'
+      variant='outline'
+      type='button'
       {...(props as any)}
     >
       <PipetteIcon size={16} />
@@ -330,12 +332,12 @@ export const ColorPickerOutput = ({
 
   return (
     <Select onValueChange={setMode} value={mode}>
-      <SelectTrigger className="h-8 w-20 shrink-0 text-xs" {...(props as any)}>
-        <SelectValue placeholder="Mode" />
+      <SelectTrigger className='h-8 w-20 shrink-0 text-xs' {...(props as any)}>
+        <SelectValue placeholder='Mode' />
       </SelectTrigger>
       <SelectContent>
         {formats.map((format) => (
-          <SelectItem className="text-xs" key={format} value={format}>
+          <SelectItem className='text-xs' key={format} value={format}>
             {format.toUpperCase()}
           </SelectItem>
         ))}
@@ -348,17 +350,17 @@ type PercentageInputProps = ComponentProps<typeof Input>
 
 const PercentageInput = ({ className, ...props }: PercentageInputProps) => {
   return (
-    <div className="relative">
+    <div className='relative'>
       <Input
         readOnly
-        type="text"
+        type='text'
         {...(props as any)}
         className={cn(
-          'h-8 w-[3.25rem] rounded-l-none bg-secondary px-2 text-xs shadow-none',
+          'bg-secondary h-8 w-[3.25rem] rounded-l-none px-2 text-xs shadow-none',
           className
         )}
       />
-      <span className="-translate-y-1/2 absolute top-1/2 right-2 text-muted-foreground text-xs">
+      <span className='text-muted-foreground absolute top-1/2 right-2 -translate-y-1/2 text-xs'>
         %
       </span>
     </div>
@@ -379,15 +381,15 @@ export const ColorPickerFormat = ({
     return (
       <div
         className={cn(
-          '-space-x-px relative flex w-full items-center rounded-md shadow-sm',
+          'relative flex w-full items-center -space-x-px rounded-md shadow-sm',
           className
         )}
         {...(props as any)}
       >
         <Input
-          className="h-8 rounded-r-none bg-secondary px-2 text-xs shadow-none"
+          className='bg-secondary h-8 rounded-r-none px-2 text-xs shadow-none'
           readOnly
-          type="text"
+          type='text'
           value={hex}
         />
         <PercentageInput value={alpha} />
@@ -403,7 +405,7 @@ export const ColorPickerFormat = ({
     return (
       <div
         className={cn(
-          '-space-x-px flex items-center rounded-md shadow-sm',
+          'flex items-center -space-x-px rounded-md shadow-sm',
           className
         )}
         {...(props as any)}
@@ -411,13 +413,13 @@ export const ColorPickerFormat = ({
         {rgb.map((value, index) => (
           <Input
             className={cn(
-              'h-8 rounded-r-none bg-secondary px-2 text-xs shadow-none',
+              'bg-secondary h-8 rounded-r-none px-2 text-xs shadow-none',
               index && 'rounded-l-none',
               className
             )}
             key={index}
             readOnly
-            type="text"
+            type='text'
             value={value}
           />
         ))}
@@ -437,9 +439,9 @@ export const ColorPickerFormat = ({
         {...(props as any)}
       >
         <Input
-          className="h-8 w-full bg-secondary px-2 text-xs shadow-none"
+          className='bg-secondary h-8 w-full px-2 text-xs shadow-none'
           readOnly
-          type="text"
+          type='text'
           value={`rgba(${rgb.join(', ')}, ${alpha}%)`}
           {...(props as any)}
         />
@@ -455,7 +457,7 @@ export const ColorPickerFormat = ({
     return (
       <div
         className={cn(
-          '-space-x-px flex items-center rounded-md shadow-sm',
+          'flex items-center -space-x-px rounded-md shadow-sm',
           className
         )}
         {...(props as any)}
@@ -463,13 +465,13 @@ export const ColorPickerFormat = ({
         {hsl.map((value, index) => (
           <Input
             className={cn(
-              'h-8 rounded-r-none bg-secondary px-2 text-xs shadow-none',
+              'bg-secondary h-8 rounded-r-none px-2 text-xs shadow-none',
               index && 'rounded-l-none',
               className
             )}
             key={index}
             readOnly
-            type="text"
+            type='text'
             value={value}
           />
         ))}

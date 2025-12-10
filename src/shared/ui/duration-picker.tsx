@@ -2,11 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Button } from '@/shared/ui/button'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/shared/ui/popover'
+import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover'
 import {
   Select,
   SelectContent,
@@ -205,7 +201,10 @@ export function DurationPicker({
         </Button>
       </PopoverTrigger>
       <PopoverContent className='w-[320px] p-4'>
-        <Tabs value={selectedType} onValueChange={(v) => setSelectedType(v as DurationType)}>
+        <Tabs
+          value={selectedType}
+          onValueChange={(v) => setSelectedType(v as DurationType)}
+        >
           <TabsList className='grid w-full grid-cols-4'>
             <TabsTrigger value='FIXED'>시간</TabsTrigger>
             <TabsTrigger value='RANGE'>범위</TabsTrigger>
@@ -291,7 +290,7 @@ export function DurationPicker({
 
           {/* ALL_DAY: 하루종일 */}
           <TabsContent value='ALL_DAY' className='mt-4'>
-            <p className='text-sm text-muted-foreground'>
+            <p className='text-muted-foreground text-sm'>
               하루 종일 작업이 진행됩니다.
             </p>
           </TabsContent>

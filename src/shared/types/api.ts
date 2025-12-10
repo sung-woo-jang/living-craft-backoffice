@@ -95,6 +95,8 @@ export interface Service {
   isActive: boolean
   sortOrder: number
   serviceableRegions: ServiceableRegionDto[]
+  schedule?: ServiceSchedule | null
+  holidays?: ServiceHoliday[]
   createdAt: string
   updatedAt: string
 }
@@ -113,6 +115,7 @@ export interface CreateServiceRequest {
   requiresTimeSelection: boolean
   sortOrder?: number
   regions: ServiceRegionInput[]
+  schedule?: ServiceScheduleInput
 }
 
 export interface UpdateServiceRequest {
@@ -124,6 +127,7 @@ export interface UpdateServiceRequest {
   requiresTimeSelection?: boolean
   sortOrder?: number
   regions?: ServiceRegionInput[]
+  schedule?: ServiceScheduleInput
 }
 
 // ===== 행정구역 관련 타입 =====
@@ -291,4 +295,63 @@ export interface CustomerFilters {
   search?: string
   page?: number
   limit?: number
+}
+
+// ===== 서비스 스케줄 관련 타입 =====
+
+export enum ScheduleMode {
+  GLOBAL = 'global',
+  WEEKDAYS = 'weekdays',
+  WEEKENDS = 'weekends',
+  EVERYDAY = 'everyday',
+  CUSTOM = 'custom',
+  EVERYDAY_EXCEPT = 'everyday_except',
+}
+
+export type DayCode = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
+
+export interface ServiceSchedule {
+  id: number
+  serviceId: number
+  estimateScheduleMode: ScheduleMode
+  estimateAvailableDays: DayCode[] | null
+  estimateStartTime: string | null
+  estimateEndTime: string | null
+  estimateSlotDuration: number | null
+  constructionScheduleMode: ScheduleMode
+  constructionAvailableDays: DayCode[] | null
+  constructionStartTime: string | null
+  constructionEndTime: string | null
+  constructionSlotDuration: number | null
+  bookingPeriodMonths: number
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ServiceScheduleInput {
+  estimateScheduleMode: ScheduleMode
+  estimateAvailableDays?: DayCode[]
+  estimateStartTime?: string
+  estimateEndTime?: string
+  estimateSlotDuration?: number
+  constructionScheduleMode: ScheduleMode
+  constructionAvailableDays?: DayCode[]
+  constructionStartTime?: string
+  constructionEndTime?: string
+  constructionSlotDuration?: number
+  bookingPeriodMonths?: number
+}
+
+export interface ServiceHoliday {
+  id: number
+  serviceId: number
+  date: string
+  reason: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ServiceHolidayInput {
+  date: string
+  reason: string
 }
