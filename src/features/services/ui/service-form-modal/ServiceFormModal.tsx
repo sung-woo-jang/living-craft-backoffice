@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import * as z from 'zod'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Check, ChevronsUpDown } from 'lucide-react'
-import type { CreateServiceRequest, Service } from '@/shared/types/api'
 import { cn } from '@/shared/lib/utils'
+import type { CreateServiceRequest, Service } from '@/shared/types/api'
 import { Button } from '@/shared/ui/button'
 import {
   Command,
@@ -29,18 +28,16 @@ import {
   FieldLabel,
 } from '@/shared/ui/field'
 import { Input } from '@/shared/ui/input'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/shared/ui/popover'
+import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover'
 import { Switch } from '@/shared/ui/switch'
 import { Textarea } from '@/shared/ui/textarea'
+import { Check, ChevronsUpDown } from 'lucide-react'
+import { useDebouncedIconsSearch } from '../../api/use-icons-query'
 import {
   useCreateService,
   useUpdateService,
 } from '../../api/use-services-mutation'
-import { useIconsList } from '../../api/use-icons-query'
+import { useServicesList } from '../../api/use-services-query'
 import { RegionFeeSelector } from '../region-fee-selector/RegionFeeSelector'
 import styles from './styles.module.scss'
 
@@ -84,9 +81,23 @@ export function ServiceFormModal({
   const createService = useCreateService()
   const updateService = useUpdateService()
 
+  // 서비스 목록 조회
+  const { data: services = [] } = useServicesList()
+
+  // 다음 sortOrder 계산 (신규 추가 모드일 때만)
+  const nextSortOrder = useMemo(() => {
+    if (isEditMode) return service?.sortOrder || 0
+    return Math.max(...services.map((s) => s.sortOrder || 0), 0) + 1
+  }, [services, isEditMode, service])
+
   // 아이콘 Combobox 상태
   const [iconPopoverOpen, setIconPopoverOpen] = useState(false)
-  const { data: icons = [], isLoading: iconsLoading } = useIconsList()
+  const [iconSearchQuery, setIconSearchQuery] = useState('')
+  const {
+    data: icons = [],
+    isLoading: iconsLoading,
+    isError: iconsError,
+  } = useDebouncedIconsSearch(iconSearchQuery)
 
   const {
     register,
@@ -105,7 +116,7 @@ export function ServiceFormModal({
       iconBgColor: '#3B82F6',
       duration: '',
       requiresTimeSelection: false,
-      sortOrder: 0,
+      sortOrder: nextSortOrder,
       regions: [],
     },
   })
@@ -116,12 +127,13 @@ export function ServiceFormModal({
       // serviceableRegions 계층 구조를 평면화하여 regions 배열 생성
       // serviceableRegions는 시/도 레벨, cities는 시/군/구 레벨
       // DB에는 시/군/구(SIGUNGU) 레벨만 저장되므로 cities를 평면화해야 함
-      const flattenedRegions = service.serviceableRegions.flatMap((region) =>
-        region.cities.map((city) => ({
-          districtId: parseInt(city.id),
-          // 시/군/구별 개별 출장비가 있으면 사용, 없으면 시/도 기본 출장비 사용
-          estimateFee: city.estimateFee ?? region.estimateFee,
-        }))
+      const flattenedRegions = (service.serviceableRegions || []).flatMap(
+        (region) =>
+          region.cities.map((city) => ({
+            districtId: parseInt(city.id),
+            // 시/군/구별 개별 출장비가 있으면 사용, 없으면 시/도 기본 출장비 사용
+            estimateFee: city.estimateFee ?? region.estimateFee,
+          }))
       )
 
       reset({
@@ -260,26 +272,31 @@ export function ServiceFormModal({
                               )}
                             >
                               {field.value
-                                ? icons.find((icon) => icon.name === field.value)
-                                    ?.name || field.value
+                                ? icons.find(
+                                    (icon) => icon.name === field.value
+                                  )?.name || field.value
                                 : '아이콘 선택'}
                               <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
                             </Button>
                           </PopoverTrigger>
-                          <PopoverContent className='w-full p-0'>
-                            <Command>
+                          <PopoverContent className='w-[400px] p-0'>
+                            <Command className='overflow-visible'>
                               <CommandInput
                                 placeholder='아이콘 검색...'
                                 className='h-9'
+                                value={iconSearchQuery}
+                                onValueChange={setIconSearchQuery}
                               />
-                              <CommandList>
+                              <CommandList className='max-h-[400px]'>
                                 <CommandEmpty>
                                   {iconsLoading
-                                    ? '로딩 중...'
-                                    : '아이콘을 찾을 수 없습니다.'}
+                                    ? '검색 중...'
+                                    : iconSearchQuery.length < 2
+                                      ? '최소 2글자 이상 입력하세요'
+                                      : '아이콘을 찾을 수 없습니다.'}
                                 </CommandEmpty>
                                 <CommandGroup>
-                                  {icons.map((icon) => (
+                                  {icons.slice(0, 100).map((icon) => (
                                     <CommandItem
                                       key={icon.id}
                                       value={icon.name}

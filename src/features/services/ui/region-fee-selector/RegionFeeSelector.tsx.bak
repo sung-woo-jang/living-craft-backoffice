@@ -54,14 +54,11 @@ export function RegionFeeSelector({ value, onChange }: RegionFeeSelectorProps) {
 
     // Case 1: 특정 시/군/구 선택
     if (selectedSigungu) {
-      // 중복 시 기존 항목 제거 후 새 값으로 교체
-      const filteredValue = value.filter(
-        (r) => r.districtId !== selectedSigungu
-      )
-      onChange([
-        ...filteredValue,
-        { districtId: selectedSigungu, estimateFee: fee },
-      ])
+      // 중복 체크
+      if (value.some((r) => r.districtId === selectedSigungu)) {
+        return
+      }
+      onChange([...value, { districtId: selectedSigungu, estimateFee: fee }])
     }
     // Case 2: "전체 (시/도 전체)" 선택
     else {

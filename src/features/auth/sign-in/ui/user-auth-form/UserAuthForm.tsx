@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { apiClient } from '@/shared/api/client'
 import { cn } from '@/shared/lib/utils'
 import { PasswordInput } from '@/shared/ui-kit/password-input'
 import { Button } from '@/shared/ui/button'
@@ -18,12 +19,13 @@ import { Loader2, LogIn } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/features/auth'
-import { apiClient } from '@/shared/api/client'
 
 const formSchema = z.object({
   email: z.email({
     error: (iss) =>
-      iss.input === '' ? '이메일을 입력해주세요' : '올바른 이메일 형식이 아닙니다',
+      iss.input === ''
+        ? '이메일을 입력해주세요'
+        : '올바른 이메일 형식이 아닙니다',
   }),
   password: z
     .string()

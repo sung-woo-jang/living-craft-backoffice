@@ -85,3 +85,35 @@
     height: 0;
   }
 }
+
+/* cmdk 스크롤 지원 (Command 컴포넌트) */
+/* Popover 내부 Command의 overflow 문제 해결 */
+[data-slot='popover-content'] [data-slot='command'] {
+  overflow: visible !important;
+  max-height: 500px;
+}
+
+[cmdk-list] {
+  min-height: 200px;
+  max-height: 400px;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+/* cmdk 스크롤바 스타일링 */
+[cmdk-list]::-webkit-scrollbar {
+  width: 8px;
+}
+
+[cmdk-list]::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+[cmdk-list]::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+[cmdk-list]::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}

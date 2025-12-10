@@ -466,6 +466,7 @@ mcp__shadcn__get_item_examples_from_registries
 컴포넌트 사용 예제 코드를 조회합니다. 폼 구현 시 특히 유용합니다.
 
 **주요 예제 패턴:**
+
 - `{컴포넌트}-demo`: 기본 사용 예제
 - `form-rhf-demo`: React Hook Form 연동 예제
 - `form-tanstack-demo`: TanStack Form 연동 예제
@@ -496,32 +497,36 @@ mcp__shadcn__get_add_command_for_items
 
 ```tsx
 import {
-  Field,
-  FieldDescription,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
+    Field,
+    FieldDescription,
+    FieldError,
+    FieldGroup,
+    FieldLabel,
 } from '@/shared/ui/field'
-import { Controller } from 'react-hook-form'
+import {Controller} from 'react-hook-form'
 
 // React Hook Form과 함께 사용
-<Controller
-  name="title"
-  control={control}
-  render={({ field, fieldState }) => (
+<
+Controller
+name = "title"
+control = {control}
+render = {({field, fieldState})
+=>
+(
     <Field data-invalid={fieldState.invalid}>
-      <FieldLabel htmlFor="title">제목 *</FieldLabel>
-      <Input
-        {...field}
-        id="title"
-        aria-invalid={fieldState.invalid}
-      />
-      <FieldDescription>제목을 입력하세요</FieldDescription>
-      {fieldState.invalid && (
-        <FieldError errors={[fieldState.error]} />
-      )}
+        <FieldLabel htmlFor="title">제목 *</FieldLabel>
+        <Input
+            {...field}
+            id="title"
+            aria-invalid={fieldState.invalid}
+        />
+        <FieldDescription>제목을 입력하세요</FieldDescription>
+        {fieldState.invalid && (
+            <FieldError errors={[fieldState.error]}/>
+        )}
     </Field>
-  )}
+)
+}
 />
 ```
 
@@ -529,26 +534,30 @@ import { Controller } from 'react-hook-form'
 
 ```tsx
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
 } from '@/shared/ui/dialog'
 
-<Dialog open={open} onOpenChange={onOpenChange}>
-  <DialogContent>
-    <DialogHeader>
-      <DialogTitle>제목</DialogTitle>
-      <DialogDescription>설명</DialogDescription>
-    </DialogHeader>
-    {/* 본문 */}
-    <DialogFooter>
-      <Button variant="outline">취소</Button>
-      <Button>확인</Button>
-    </DialogFooter>
-  </DialogContent>
+<
+Dialog
+open = {open}
+onOpenChange = {onOpenChange} >
+    < DialogContent >
+    < DialogHeader >
+    < DialogTitle > 제목 < /DialogTitle>
+<DialogDescription>설명</DialogDescription>
+</DialogHeader>
+{/* 본문 */
+}
+<DialogFooter>
+    <Button variant="outline">취소</Button>
+    <Button>확인</Button>
+</DialogFooter>
+</DialogContent>
 </Dialog>
 ```
 
@@ -564,3 +573,5 @@ import {
 - **RTL 컴포넌트**: `dialog`, `sheet`, `sidebar` 등은 RTL 커스터마이징이 되어 있으므로 업데이트 시 수동 병합 필요
 - **덮어쓰기 주의**: `--overwrite` 플래그 사용 시 기존 커스터마이징이 사라질 수 있음
 - **SCSS 우선**: Shadcn 컴포넌트는 그대로 사용하되, 커스텀 스타일은 SCSS 모듈로 래핑하여 적용
+
+

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   type ColumnFiltersState,
   type SortingState,
@@ -12,6 +12,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { arrayMove } from '@/shared/lib/array-utils'
 import type { Service } from '@/shared/types/api'
 import {
   DataTablePagination,
@@ -25,6 +26,18 @@ import {
   TableHeader,
   TableRow,
 } from '@/shared/ui/table'
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { useUpdateServiceOrder } from '../../api/use-update-service-order'
+import { DraggableTableRow } from '../draggable-table-row'
 import { servicesColumns } from '../services-columns'
 
 interface ServicesTableProps {
@@ -38,9 +51,61 @@ export function ServicesTable({ data, onEdit }: ServicesTableProps) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [sorting, setSorting] = useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = useState('')
+  const [localData, setLocalData] = useState(data)
+  const updateOrder = useUpdateServiceOrder()
+
+  // data가 변경되면 localData 동기화
+  useEffect(() => {
+    setLocalData(data)
+  }, [data])
+
+  // DnD 센서 설정
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // 8px 이동 후 드래그 시작
+      },
+    }),
+    useSensor(KeyboardSensor)
+  )
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+
+    const oldIndex = localData.findIndex((item) => item.id === active.id)
+    const newIndex = localData.findIndex((item) => item.id === over.id)
+
+    // 배열 순서 변경 (낙관적 업데이트)
+    const newData = arrayMove(localData, oldIndex, newIndex)
+
+    // sortOrder 재계산
+    const updatedData = newData.map((item, index) => ({
+      ...item,
+      sortOrder: index + 1,
+    }))
+
+    setLocalData(updatedData)
+
+    // API 호출
+    updateOrder.mutate(
+      {
+        serviceOrders: updatedData.map((item) => ({
+          id: item.id,
+          sortOrder: item.sortOrder,
+        })),
+      },
+      {
+        onError: () => {
+          // 실패 시 롤백
+          setLocalData(data)
+        },
+      }
+    )
+  }
 
   const table = useReactTable({
-    data,
+    data: localData,
     columns: servicesColumns,
     state: {
       sorting,
@@ -97,54 +162,68 @@ export function ServicesTable({ data, onEdit }: ServicesTableProps) {
         ]}
       />
       <div className='rounded-md border'>
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={localData.map((item) => item.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            <Table>
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {/* 드래그 핸들 헤더 추가 */}
+                    <TableHead className='w-12' />
+                    {headerGroup.headers.map((header) => {
+                      return (
+                        <TableHead key={header.id} colSpan={header.colSpan}>
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                        </TableHead>
+                      )
+                    })}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <DraggableTableRow
+                      key={row.id}
+                      row={row}
+                      onClick={() => onEdit(row.original)}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
                           )}
-                    </TableHead>
-                  )
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                        </TableCell>
+                      ))}
+                    </DraggableTableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={servicesColumns.length + 1}
+                      className='h-24 text-center'
+                    >
+                      결과가 없습니다.
                     </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={servicesColumns.length}
-                  className='h-24 text-center'
-                >
-                  결과가 없습니다.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </SortableContext>
+        </DndContext>
       </div>
       <DataTablePagination table={table} />
     </div>

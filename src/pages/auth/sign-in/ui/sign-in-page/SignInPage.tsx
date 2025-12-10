@@ -20,9 +20,7 @@ export function SignIn() {
           <CardTitle className='text-lg tracking-tight'>
             Living Craft 백오피스
           </CardTitle>
-          <CardDescription>
-            관리자 계정으로 로그인하세요
-          </CardDescription>
+          <CardDescription>관리자 계정으로 로그인하세요</CardDescription>
         </CardHeader>
         <CardContent>
           <UserAuthForm redirectTo={redirect} />
