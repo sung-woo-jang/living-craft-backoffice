@@ -84,16 +84,46 @@ export interface ServiceableRegionDto {
   cities: CityDto[]
 }
 
+// 백엔드 serviceRegions 응답 타입
+export interface ServiceRegionDto {
+  id: number
+  serviceId: number
+  districtId: number
+  estimateFee: string | number
+  district?: {
+    id: number
+    name: string
+    fullName: string
+    parent?: {
+      id: number
+      name: string
+    }
+  }
+}
+
+// 백엔드 icon 응답 타입
+export interface ServiceIconDto {
+  id: number
+  name: string
+  type: IconType
+}
+
 export interface Service {
   id: string
   title: string
   description: string
+  // 백엔드 응답용 (객체)
+  icon?: ServiceIconDto | null
+  // 폼 데이터용 (문자열) - 백엔드에서 직접 반환하지 않음
   iconName: string
   iconBgColor: string
   duration: string // "하루 종일", "2-3시간" 등
   requiresTimeSelection: boolean
   isActive: boolean
   sortOrder: number
+  // 백엔드 응답 원본
+  serviceRegions?: ServiceRegionDto[]
+  // 변환된 데이터 (기존 호환)
   serviceableRegions: ServiceableRegionDto[]
   schedule?: ServiceSchedule | null
   holidays?: ServiceHoliday[]

@@ -1,4 +1,4 @@
-import { useFormContext, Controller, type FieldPath } from 'react-hook-form'
+import { useFormContext, Controller, useWatch, type FieldPath } from 'react-hook-form'
 import { ScheduleMode, type DayCode } from '@/shared/types/api'
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
@@ -87,32 +87,36 @@ const SLOT_DURATIONS = [
 ]
 
 function ScheduleSection({ type, title }: ScheduleSectionProps) {
-  const { control, watch } = useFormContext<ServiceFormValues>()
+  const { control } = useFormContext<ServiceFormValues>()
 
-  const modeField =
+  // 타입 안전한 필드 경로 정의
+  const modeField: FieldPath<ServiceFormValues> =
     type === 'estimate'
       ? 'schedule.estimateScheduleMode'
       : 'schedule.constructionScheduleMode'
-  const daysField =
+  const daysField: FieldPath<ServiceFormValues> =
     type === 'estimate'
       ? 'schedule.estimateAvailableDays'
       : 'schedule.constructionAvailableDays'
-  const startTimeField =
+  const startTimeField: FieldPath<ServiceFormValues> =
     type === 'estimate'
       ? 'schedule.estimateStartTime'
       : 'schedule.constructionStartTime'
-  const endTimeField =
+  const endTimeField: FieldPath<ServiceFormValues> =
     type === 'estimate'
       ? 'schedule.estimateEndTime'
       : 'schedule.constructionEndTime'
-  const slotDurationField =
+  const slotDurationField: FieldPath<ServiceFormValues> =
     type === 'estimate'
       ? 'schedule.estimateSlotDuration'
       : 'schedule.constructionSlotDuration'
 
-  const currentMode = watch(
-    modeField as keyof ServiceFormValues
-  ) as ScheduleMode
+  // useWatch로 스케줄 모드 구독 (타입 안전)
+  const currentMode =
+    (useWatch({
+      control,
+      name: modeField,
+    }) as ScheduleMode | undefined) ?? ScheduleMode.GLOBAL
 
   const showDaySelector =
     currentMode === ScheduleMode.CUSTOM ||
@@ -124,7 +128,7 @@ function ScheduleSection({ type, title }: ScheduleSectionProps) {
       <h4 className={styles.scheduleSectionTitle}>{title}</h4>
 
       <Controller
-        name={modeField as FieldPath<ServiceFormValues>}
+        name={modeField}
         control={control}
         render={({ field }) => (
           <RadioGroup
@@ -158,11 +162,11 @@ function ScheduleSection({ type, title }: ScheduleSectionProps) {
               : '제외할 요일 선택'}
           </Label>
           <Controller
-            name={daysField as FieldPath<ServiceFormValues>}
+            name={daysField}
             control={control}
             render={({ field }) => (
               <DaySelector
-                value={(field.value as DayCode[] | undefined) ?? []}
+                value={Array.isArray(field.value) ? (field.value as DayCode[]) : []}
                 onChange={field.onChange}
                 mode={
                   currentMode === ScheduleMode.EVERYDAY_EXCEPT
@@ -183,7 +187,7 @@ function ScheduleSection({ type, title }: ScheduleSectionProps) {
                 시작 시간
               </Label>
               <Controller
-                name={startTimeField as FieldPath<ServiceFormValues>}
+                name={startTimeField}
                 control={control}
                 render={({ field }) => (
                   <Select
@@ -210,7 +214,7 @@ function ScheduleSection({ type, title }: ScheduleSectionProps) {
                 종료 시간
               </Label>
               <Controller
-                name={endTimeField as FieldPath<ServiceFormValues>}
+                name={endTimeField}
                 control={control}
                 render={({ field }) => (
                   <Select
@@ -237,7 +241,7 @@ function ScheduleSection({ type, title }: ScheduleSectionProps) {
                 슬롯 간격
               </Label>
               <Controller
-                name={slotDurationField as FieldPath<ServiceFormValues>}
+                name={slotDurationField}
                 control={control}
                 render={({ field }) => (
                   <Select

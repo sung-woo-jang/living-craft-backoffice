@@ -2,7 +2,11 @@ import { useEffect, useMemo } from 'react'
 import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ScheduleMode, type Service } from '@/shared/types/api'
+import {
+  ScheduleMode,
+  type Service,
+  type ServiceSchedule,
+} from '@/shared/types/api'
 import { useServicesList } from '../api/use-services-query'
 
 // DayCode Zod 타입
@@ -50,117 +54,146 @@ export const serviceFormSchema = z.object({
 
 export type ServiceFormValues = z.infer<typeof serviceFormSchema>
 
+// ===== 헬퍼 함수 및 상수 =====
+
+/** 스케줄 기본값 */
+const DEFAULT_SCHEDULE: NonNullable<ServiceFormValues['schedule']> = {
+  estimateScheduleMode: ScheduleMode.GLOBAL,
+  estimateAvailableDays: [],
+  estimateStartTime: '18:00',
+  estimateEndTime: '22:00',
+  estimateSlotDuration: 60,
+  constructionScheduleMode: ScheduleMode.GLOBAL,
+  constructionAvailableDays: [],
+  constructionStartTime: '09:00',
+  constructionEndTime: '18:00',
+  constructionSlotDuration: 60,
+  bookingPeriodMonths: 3,
+}
+
+/** 폼 기본값 생성 */
+function getDefaultFormValues(sortOrder: number): ServiceFormValues {
+  return {
+    title: '',
+    description: '',
+    iconName: '',
+    iconBgColor: '#3B82F6',
+    duration: '',
+    requiresTimeSelection: false,
+    sortOrder,
+    regions: [],
+    schedule: { ...DEFAULT_SCHEDULE },
+  }
+}
+
+/** API 응답의 스케줄을 폼 값으로 변환 */
+function transformScheduleFromApi(
+  schedule: ServiceSchedule | null | undefined
+): NonNullable<ServiceFormValues['schedule']> {
+  if (!schedule) {
+    return { ...DEFAULT_SCHEDULE }
+  }
+
+  return {
+    estimateScheduleMode: schedule.estimateScheduleMode,
+    estimateAvailableDays: schedule.estimateAvailableDays ?? [],
+    estimateStartTime: schedule.estimateStartTime ?? '18:00',
+    estimateEndTime: schedule.estimateEndTime ?? '22:00',
+    estimateSlotDuration: schedule.estimateSlotDuration ?? 60,
+    constructionScheduleMode: schedule.constructionScheduleMode,
+    constructionAvailableDays: schedule.constructionAvailableDays ?? [],
+    constructionStartTime: schedule.constructionStartTime ?? '09:00',
+    constructionEndTime: schedule.constructionEndTime ?? '18:00',
+    constructionSlotDuration: schedule.constructionSlotDuration ?? 60,
+    bookingPeriodMonths: schedule.bookingPeriodMonths ?? 3,
+  }
+}
+
+/** 서비스의 regions를 폼 값으로 변환 (백엔드 응답 형태 지원) */
+function transformRegionsFromApi(service: Service): ServiceFormValues['regions'] {
+  // 백엔드 serviceRegions 형태인 경우 (원본 응답)
+  if (service.serviceRegions && service.serviceRegions.length > 0) {
+    return service.serviceRegions.map((region) => ({
+      districtId: region.district?.id ?? region.districtId,
+      estimateFee:
+        typeof region.estimateFee === 'string'
+          ? parseInt(region.estimateFee) || 0
+          : region.estimateFee || 0,
+    }))
+  }
+
+  // 기존 serviceableRegions 형태인 경우 (변환된 데이터)
+  if (service.serviceableRegions && service.serviceableRegions.length > 0) {
+    return service.serviceableRegions.flatMap((region) =>
+      region.cities.map((city) => ({
+        districtId: parseInt(city.id),
+        estimateFee: city.estimateFee ?? region.estimateFee,
+      }))
+    )
+  }
+
+  return []
+}
+
+// ===== 훅 =====
+
 interface UseServiceFormOptions {
   service?: Service
   isOpen: boolean
 }
 
-export function useServiceForm({
-  service,
-  isOpen,
-}: UseServiceFormOptions) {
+export function useServiceForm({ service, isOpen }: UseServiceFormOptions) {
   const isEditMode = Boolean(service)
 
-  // 서비스 목록 조회
+  // 서비스 목록 조회 (sortOrder 계산용)
   const { data: services = [] } = useServicesList()
 
-  // 다음 sortOrder 계산 (신규 추가 모드일 때만)
+  // 다음 sortOrder 계산
   const nextSortOrder = useMemo(() => {
-    if (isEditMode) {
-      // 수정 모드: 기존 sortOrder 사용 (null이면 1)
-      return service?.sortOrder || 1
+    if (isEditMode && service) {
+      return service.sortOrder || 1
     }
     // 신규 추가: 최대값 + 1 (최소 1)
-    return Math.max(...services.map((s) => s.sortOrder || 0), 0) + 1
+    const maxOrder = Math.max(...services.map((s) => s.sortOrder || 0), 0)
+    return maxOrder + 1
   }, [services, isEditMode, service])
 
   const form = useForm<ServiceFormValues>({
     resolver: zodResolver(serviceFormSchema),
-    defaultValues: {
-      title: '',
-      description: '',
-      iconName: '',
-      iconBgColor: '#3B82F6',
-      duration: '',
-      requiresTimeSelection: false,
-      sortOrder: nextSortOrder,
-      regions: [],
-      schedule: {
-        estimateScheduleMode: ScheduleMode.GLOBAL,
-        estimateAvailableDays: [],
-        estimateStartTime: '18:00',
-        estimateEndTime: '22:00',
-        estimateSlotDuration: 60,
-        constructionScheduleMode: ScheduleMode.GLOBAL,
-        constructionAvailableDays: [],
-        constructionStartTime: '09:00',
-        constructionEndTime: '18:00',
-        constructionSlotDuration: 60,
-        bookingPeriodMonths: 3,
-      },
-    },
+    defaultValues: getDefaultFormValues(1), // 초기값은 1 (useEffect에서 업데이트)
   })
 
-  // 수정 모드일 때 기존 데이터 로드
+  // 모달 열림/닫힘 및 service 변경 시 폼 상태 동기화
   useEffect(() => {
-    if (service && isOpen) {
-      // serviceableRegions 계층 구조를 평면화하여 regions 배열 생성
-      const flattenedRegions = (service.serviceableRegions || []).flatMap(
-        (region) =>
-          region.cities.map((city) => ({
-            districtId: parseInt(city.id),
-            estimateFee: city.estimateFee ?? region.estimateFee,
-          }))
-      )
+    if (!isOpen) {
+      // 모달이 닫힐 때는 아무것도 하지 않음
+      // (다음 오픈 시 적절히 초기화됨)
+      return
+    }
 
-      // 스케줄 데이터 변환
-      const scheduleData = service.schedule
-        ? {
-            estimateScheduleMode: service.schedule.estimateScheduleMode,
-            estimateAvailableDays: service.schedule.estimateAvailableDays || [],
-            estimateStartTime: service.schedule.estimateStartTime || '18:00',
-            estimateEndTime: service.schedule.estimateEndTime || '22:00',
-            estimateSlotDuration: service.schedule.estimateSlotDuration || 60,
-            constructionScheduleMode: service.schedule.constructionScheduleMode,
-            constructionAvailableDays:
-              service.schedule.constructionAvailableDays || [],
-            constructionStartTime:
-              service.schedule.constructionStartTime || '09:00',
-            constructionEndTime:
-              service.schedule.constructionEndTime || '18:00',
-            constructionSlotDuration:
-              service.schedule.constructionSlotDuration || 60,
-            bookingPeriodMonths: service.schedule.bookingPeriodMonths || 3,
-          }
-        : {
-            estimateScheduleMode: ScheduleMode.GLOBAL,
-            estimateAvailableDays: [],
-            estimateStartTime: '18:00',
-            estimateEndTime: '22:00',
-            estimateSlotDuration: 60,
-            constructionScheduleMode: ScheduleMode.GLOBAL,
-            constructionAvailableDays: [],
-            constructionStartTime: '09:00',
-            constructionEndTime: '18:00',
-            constructionSlotDuration: 60,
-            bookingPeriodMonths: 3,
-          }
+    // 모달이 열릴 때
+    if (service) {
+      // 수정 모드: 서비스 데이터로 폼 리셋
+      // icon 객체에서 name 추출 (백엔드 응답 지원)
+      const iconName = service.icon?.name || service.iconName || ''
 
       form.reset({
         title: service.title,
         description: service.description,
-        iconName: service.iconName,
+        iconName,
         iconBgColor: service.iconBgColor,
         duration: service.duration,
         requiresTimeSelection: service.requiresTimeSelection,
         sortOrder: service.sortOrder,
-        regions: flattenedRegions,
-        schedule: scheduleData,
+        regions: transformRegionsFromApi(service),
+        schedule: transformScheduleFromApi(service.schedule),
       })
-    } else if (!isOpen) {
-      form.reset()
+    } else {
+      // 생성 모드: 기본값으로 폼 완전 초기화 (nextSortOrder 반영)
+      form.reset(getDefaultFormValues(nextSortOrder))
     }
-  }, [service, isOpen, form])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [service, isOpen, nextSortOrder])
 
   return form
 }

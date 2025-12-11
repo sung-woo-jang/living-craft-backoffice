@@ -76,6 +76,14 @@ export function ServiceFormModal({
   const { data: icons = [], isLoading: iconsLoading } =
     useDebouncedIconsSearch(iconSearchQuery)
 
+  // 모달 닫힐 때 로컬 상태 초기화
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      setIconSearchQuery('')
+    }
+    onOpenChange(open)
+  }
+
   // Combobox용 데이터 변환
   const iconData = useMemo(
     () =>
@@ -109,7 +117,7 @@ export function ServiceFormModal({
   const isPending = createService.isPending || updateService.isPending
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className={styles.modalContent}>
         <FormProvider {...form}>
           <DialogHeader>
