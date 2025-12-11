@@ -1,7 +1,13 @@
 import { useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import type { District, ServiceRegionInput } from '@/shared/types/api'
+import type { GroupedServiceRegion } from '@/shared/types/api'
 import { Button } from '@/shared/ui/button'
+import { Checkbox } from '@/shared/ui/checkbox'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/shared/ui/collapsible'
 import {
   Combobox,
   ComboboxContent,
@@ -10,21 +16,32 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
-  ComboboxSeparator,
   ComboboxTrigger,
 } from '@/shared/ui/combobox'
 import { Input } from '@/shared/ui/input'
-import { MapPin, X } from 'lucide-react'
+import { ChevronDown, MapPin, Trash2, X } from 'lucide-react'
 import { useDistricts } from '../../api/use-districts'
+import { groupRegionsBySido } from '../../lib/region-utils'
 import type { ServiceFormValues } from '../../model'
 import styles from './styles.module.scss'
 
 export function RegionFeeSelector() {
   const { watch, setValue } = useFormContext<ServiceFormValues>()
   const value = watch('regions')
+
+  // 폼 상태
   const [selectedSido, setSelectedSido] = useState<string>('')
   const [selectedSigungu, setSelectedSigungu] = useState<string>('')
   const [estimateFee, setEstimateFee] = useState<string>('0')
+  const [setSidoFee, setSetSidoFee] = useState<boolean>(true)
+  const [setExceptionFee, setSetExceptionFee] = useState<boolean>(false)
+
+  // 아코디언 열림 상태
+  const [openItems, setOpenItems] = useState<Set<number>>(new Set())
+
+  // 인라인 편집 상태
+  const [editingDistrictId, setEditingDistrictId] = useState<number | null>(null)
+  const [editingFee, setEditingFee] = useState<string>('')
 
   // 시/도 목록 조회
   const { data: sidoList = [] } = useDistricts({ level: 'SIDO' })
@@ -36,7 +53,7 @@ export function RegionFeeSelector() {
     parentId: sidoId || undefined,
   })
 
-  // 선택된 지역 정보 조회 (태그 표시용)
+  // 전체 지역 조회 (그룹핑용)
   const { data: allDistricts = [] } = useDistricts()
 
   // Combobox용 데이터 변환
@@ -50,101 +67,300 @@ export function RegionFeeSelector() {
   )
 
   const sigunguData = useMemo(() => {
-    const data = sigunguList.map((sigungu) => ({
+    return sigunguList.map((sigungu) => ({
       label: sigungu.name,
       value: sigungu.id.toString(),
     }))
-    // "__ALL__" 옵션을 맨 앞에 추가
-    return [{ label: '전체 (시/도 전체)', value: '__ALL__' }, ...data]
   }, [sigunguList])
 
-  const selectedRegions = value
-    .map((region) => {
-      const district = allDistricts.find((d) => d.id === region.districtId)
-      return district ? { ...region, district } : null
-    })
-    .filter((r): r is ServiceRegionInput & { district: District } => r !== null)
+  // 선택된 지역을 시/도별로 그룹화
+  const groupedRegions = useMemo(
+    () => groupRegionsBySido(value, allDistricts),
+    [value, allDistricts]
+  )
 
+  // 아코디언 토글
+  const toggleAccordion = (sidoId: number) => {
+    setOpenItems((prev) => {
+      const newSet = new Set(prev)
+      if (newSet.has(sidoId)) {
+        newSet.delete(sidoId)
+      } else {
+        newSet.add(sidoId)
+      }
+      return newSet
+    })
+  }
+
+  // 지역 추가 핸들러
   const handleAddRegion = () => {
-    if (!selectedSido) {
-      return
-    }
+    if (!selectedSido) return
 
     const fee = parseFloat(estimateFee)
-    if (isNaN(fee) || fee < 0) {
-      return
-    }
+    if (isNaN(fee) || fee < 0) return
 
-    // Case 1: 특정 시/군/구 선택
-    if (selectedSigungu && selectedSigungu !== '__ALL__') {
-      const sigunguId = parseInt(selectedSigungu)
-      // 중복 시 기존 항목 제거 후 새 값으로 교체
-      const filteredValue = value.filter((r) => r.districtId !== sigunguId)
-      setValue('regions', [
-        ...filteredValue,
-        { districtId: sigunguId, estimateFee: fee },
-      ])
-    }
-    // Case 2: "전체 (시/도 전체)" 선택
-    else {
-      if (sigunguList.length === 0) {
-        return
-      }
+    const sidoIdNum = parseInt(selectedSido)
 
-      // 중복 체크: 이미 추가된 SIGUNGU ID 목록
-      const existingDistrictIds = new Set(value.map((r) => r.districtId))
+    // Case 1: 시/도 전체에 기본 출장비 설정
+    if (setSidoFee && !setExceptionFee) {
+      // 기존 해당 시/도 관련 데이터 모두 제거
+      const filteredValue = value.filter((r) => {
+        const district = allDistricts.find((d) => d.id === r.districtId)
+        if (!district) return true
+        if (district.level === 'SIDO' && district.id === sidoIdNum) return false
+        if (district.level === 'SIGUNGU' && district.parentId === sidoIdNum)
+          return false
+        return true
+      })
 
-      // 중복되지 않은 SIGUNGU만 필터링
-      const newRegions = sigunguList
-        .filter((sigungu) => !existingDistrictIds.has(sigungu.id))
-        .map((sigungu) => ({
+      // SIDO 레코드 추가 + 모든 SIGUNGU 레코드 추가
+      const newRegions = [
+        { districtId: sidoIdNum, estimateFee: fee },
+        ...sigunguList.map((sigungu) => ({
           districtId: sigungu.id,
           estimateFee: fee,
-        }))
+        })),
+      ]
 
-      if (newRegions.length === 0) {
-        return
+      setValue('regions', [...filteredValue, ...newRegions])
+
+      // 새로 추가된 시/도 아코디언 열기
+      setOpenItems((prev) => new Set(prev).add(sidoIdNum))
+    }
+    // Case 2: 특정 구/군에 예외 출장비 설정
+    else if (setExceptionFee && selectedSigungu) {
+      const sigunguIdNum = parseInt(selectedSigungu)
+
+      // 해당 구/군이 이미 있으면 업데이트, 없으면 추가
+      const existingIndex = value.findIndex(
+        (r) => r.districtId === sigunguIdNum
+      )
+      if (existingIndex >= 0) {
+        const updatedValue = [...value]
+        updatedValue[existingIndex] = {
+          ...updatedValue[existingIndex],
+          estimateFee: fee,
+        }
+        setValue('regions', updatedValue)
+      } else {
+        setValue('regions', [
+          ...value,
+          { districtId: sigunguIdNum, estimateFee: fee },
+        ])
       }
-
-      setValue('regions', [...value, ...newRegions])
     }
 
     // 폼 초기화
     setSelectedSido('')
     setSelectedSigungu('')
     setEstimateFee('0')
+    setSetSidoFee(true)
+    setSetExceptionFee(false)
   }
 
-  const handleRemoveRegion = (districtId: number) => {
+  // 시/도 전체 삭제
+  const handleRemoveSido = (
+    e: React.MouseEvent,
+    sidoId: number,
+    group: GroupedServiceRegion
+  ) => {
+    e.stopPropagation()
+
+    // 해당 시/도의 SIDO 레코드와 모든 SIGUNGU 레코드 삭제
+    const districtIdsToRemove = new Set<number>([sidoId])
+    group.sigungus.forEach((s) => districtIdsToRemove.add(s.districtId))
+
+    setValue(
+      'regions',
+      value.filter((r) => !districtIdsToRemove.has(r.districtId))
+    )
+  }
+
+  // 구/군 개별 삭제
+  const handleRemoveSigungu = (districtId: number) => {
     setValue(
       'regions',
       value.filter((r) => r.districtId !== districtId)
     )
   }
 
+  // 인라인 편집 시작
+  const handleStartEdit = (districtId: number, currentFee: number) => {
+    setEditingDistrictId(districtId)
+    setEditingFee(currentFee.toString())
+  }
+
+  // 인라인 편집 저장
+  const handleSaveFee = (districtId: number) => {
+    const newFee = parseFloat(editingFee)
+    if (!isNaN(newFee) && newFee >= 0) {
+      const updatedValue = value.map((r) =>
+        r.districtId === districtId ? { ...r, estimateFee: newFee } : r
+      )
+      setValue('regions', updatedValue)
+    }
+    setEditingDistrictId(null)
+    setEditingFee('')
+  }
+
+  // 인라인 편집 키보드 핸들링
+  const handleKeyDown = (
+    e: React.KeyboardEvent,
+    districtId: number
+  ) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      handleSaveFee(districtId)
+    } else if (e.key === 'Escape') {
+      setEditingDistrictId(null)
+      setEditingFee('')
+    }
+  }
+
+  // 시/도 기본 출장비 표시 텍스트
+  const getSidoFeeText = (group: GroupedServiceRegion): string => {
+    if (group.sidoEstimateFee !== null) {
+      return `기본: ${group.sidoEstimateFee.toLocaleString()}원`
+    }
+    // 모든 구/군의 출장비가 같으면 그 값 표시
+    if (group.sigungus.length > 0) {
+      const fees = group.sigungus.map((s) => s.estimateFee)
+      const uniqueFees = [...new Set(fees)]
+      if (uniqueFees.length === 1) {
+        return `공통: ${uniqueFees[0].toLocaleString()}원`
+      }
+      return `${Math.min(...fees).toLocaleString()} ~ ${Math.max(...fees).toLocaleString()}원`
+    }
+    return ''
+  }
+
   return (
     <div className={styles.container}>
-      {/* 선택된 지역 목록 */}
-      {selectedRegions.length > 0 ? (
-        <div className={styles.selectedRegions}>
-          {selectedRegions.map((region) => (
-            <div key={region.districtId} className={styles.regionTag}>
-              <span className={styles.regionTagText}>
-                <span className={styles.regionName}>
-                  {region.district.name}
-                </span>
-                <span className={styles.regionFee}>
-                  {region.estimateFee.toLocaleString()}원
-                </span>
-              </span>
-              <button
-                type='button'
-                onClick={() => handleRemoveRegion(region.districtId)}
-                className={styles.removeButton}
-              >
-                <X size={12} />
-              </button>
-            </div>
+      {/* 선택된 지역 목록 (아코디언) */}
+      {groupedRegions.length > 0 ? (
+        <div className={styles.regionAccordion}>
+          {groupedRegions.map((group) => (
+            <Collapsible
+              key={group.sidoId}
+              open={openItems.has(group.sidoId)}
+              onOpenChange={() => toggleAccordion(group.sidoId)}
+            >
+              <div className={styles.accordionItem}>
+                <CollapsibleTrigger asChild>
+                  <button type='button' className={styles.accordionHeader}>
+                    <div className={styles.accordionHeaderLeft}>
+                      <ChevronDown
+                        size={16}
+                        className={styles.accordionChevron}
+                        data-open={openItems.has(group.sidoId)}
+                      />
+                      <span className={styles.accordionSidoName}>
+                        {group.sidoName}
+                      </span>
+                      <span className={styles.accordionSidoCount}>
+                        {group.sigungus.length}개 구/군
+                      </span>
+                    </div>
+                    <div className={styles.accordionHeaderRight}>
+                      <span className={styles.accordionSidoFee}>
+                        {getSidoFeeText(group)}
+                      </span>
+                      <button
+                        type='button'
+                        onClick={(e) =>
+                          handleRemoveSido(e, group.sidoId, group)
+                        }
+                        className={styles.accordionDeleteBtn}
+                        title='시/도 전체 삭제'
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </button>
+                </CollapsibleTrigger>
+
+                <CollapsibleContent className={styles.accordionContent}>
+                  <div className={styles.sigunguList}>
+                    {group.sigungus.map((sigungu) => {
+                      const isException =
+                        group.sidoEstimateFee !== null &&
+                        sigungu.estimateFee !== group.sidoEstimateFee
+
+                      return (
+                        <div
+                          key={sigungu.districtId}
+                          className={styles.sigunguItem}
+                        >
+                          <span className={styles.sigunguName}>
+                            {sigungu.districtName}
+                          </span>
+                          <div className={styles.sigunguFeeWrapper}>
+                            {editingDistrictId === sigungu.districtId ? (
+                              <div className={styles.sigunguFeeEdit}>
+                                <Input
+                                  type='number'
+                                  value={editingFee}
+                                  onChange={(e) => setEditingFee(e.target.value)}
+                                  onKeyDown={(e) =>
+                                    handleKeyDown(e, sigungu.districtId)
+                                  }
+                                  onBlur={() => handleSaveFee(sigungu.districtId)}
+                                  autoFocus
+                                  min='0'
+                                  step='1000'
+                                  className={styles.sigunguFeeInput}
+                                />
+                                <span className={styles.sigunguFeeEditSuffix}>
+                                  원
+                                </span>
+                              </div>
+                            ) : (
+                              <button
+                                type='button'
+                                onClick={() =>
+                                  handleStartEdit(
+                                    sigungu.districtId,
+                                    sigungu.estimateFee
+                                  )
+                                }
+                                className={styles.sigunguFeeBtn}
+                                title='클릭하여 수정'
+                              >
+                                {isException ? (
+                                  <span
+                                    className={`${styles.sigunguFee} ${styles.sigunguFeeException}`}
+                                  >
+                                    {sigungu.estimateFee.toLocaleString()}원 (예외)
+                                  </span>
+                                ) : group.sidoEstimateFee !== null ? (
+                                  <span className={styles.sigunguFeeDefault}>
+                                    기본값 적용
+                                  </span>
+                                ) : (
+                                  <span className={styles.sigunguFee}>
+                                    {sigungu.estimateFee.toLocaleString()}원
+                                  </span>
+                                )}
+                              </button>
+                            )}
+                            <button
+                              type='button'
+                              onClick={() =>
+                                handleRemoveSigungu(sigungu.districtId)
+                              }
+                              className={styles.sigunguDeleteBtn}
+                              title='삭제'
+                            >
+                              <X size={12} />
+                            </button>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </CollapsibleContent>
+              </div>
+            </Collapsible>
           ))}
         </div>
       ) : (
@@ -157,97 +373,157 @@ export function RegionFeeSelector() {
 
       {/* 지역 추가 폼 */}
       <div className={styles.addForm}>
-        <div className={styles.selectRow}>
-          <div className={styles.fieldGroup}>
-            <label className={styles.label}>시/도</label>
-            <Combobox
-              data={sidoData}
-              type='시/도'
-              value={selectedSido}
-              onValueChange={(val) => {
-                setSelectedSido(val)
-                setSelectedSigungu('') // 시/도 변경 시 시/군/구 초기화
-              }}
-            >
-              <ComboboxTrigger className='w-full' />
-              <ComboboxContent>
-                <ComboboxInput placeholder='시/도 검색...' />
-                <ComboboxEmpty>검색 결과가 없습니다.</ComboboxEmpty>
-                <ComboboxList>
-                  <ComboboxGroup>
-                    {sidoData.map((sido) => (
-                      <ComboboxItem key={sido.value} value={sido.value}>
-                        {sido.label}
-                      </ComboboxItem>
-                    ))}
-                  </ComboboxGroup>
-                </ComboboxList>
-              </ComboboxContent>
-            </Combobox>
-          </div>
-
-          <div className={styles.fieldGroup}>
-            <label className={styles.label}>시/군/구 (선택)</label>
-            <Combobox
-              data={sigunguData}
-              type='시/군/구'
-              value={selectedSigungu}
-              onValueChange={setSelectedSigungu}
-            >
-              <ComboboxTrigger className='w-full' disabled={!selectedSido}>
-                {selectedSigungu
-                  ? sigunguData.find((s) => s.value === selectedSigungu)?.label
-                  : selectedSido
-                    ? '전체 (시/도 전체)'
-                    : '시/도를 먼저 선택'}
-              </ComboboxTrigger>
-              <ComboboxContent>
-                <ComboboxInput placeholder='시/군/구 검색...' />
-                <ComboboxEmpty>검색 결과가 없습니다.</ComboboxEmpty>
-                <ComboboxList>
-                  <ComboboxGroup>
-                    {/* "__ALL__" 옵션 */}
-                    <ComboboxItem value='__ALL__'>
-                      전체 (시/도 전체)
+        {/* 시/도 선택 */}
+        <div className={styles.fieldGroup}>
+          <label className={styles.label}>시/도 선택</label>
+          <Combobox
+            data={sidoData}
+            type='시/도'
+            value={selectedSido}
+            onValueChange={(val) => {
+              setSelectedSido(val)
+              setSelectedSigungu('')
+            }}
+          >
+            <ComboboxTrigger className='w-full' />
+            <ComboboxContent>
+              <ComboboxInput placeholder='시/도 검색...' />
+              <ComboboxEmpty>검색 결과가 없습니다.</ComboboxEmpty>
+              <ComboboxList>
+                <ComboboxGroup>
+                  {sidoData.map((sido) => (
+                    <ComboboxItem key={sido.value} value={sido.value}>
+                      {sido.label}
                     </ComboboxItem>
-
-                    {/* 구분선 */}
-                    {sigunguList.length > 0 && <ComboboxSeparator />}
-
-                    {/* 시/군/구 목록 */}
-                    {sigunguList.map((sigungu) => (
-                      <ComboboxItem
-                        key={sigungu.id}
-                        value={sigungu.id.toString()}
-                      >
-                        {sigungu.name}
-                      </ComboboxItem>
-                    ))}
-                  </ComboboxGroup>
-                </ComboboxList>
-              </ComboboxContent>
-            </Combobox>
-          </div>
+                  ))}
+                </ComboboxGroup>
+              </ComboboxList>
+            </ComboboxContent>
+          </Combobox>
         </div>
 
-        <div className={styles.feeRow}>
-          <div className={styles.feeInputWrapper}>
-            <label className={styles.label}>출장비</label>
-            <Input
-              type='number'
-              placeholder='0'
-              value={estimateFee}
-              onChange={(e) => setEstimateFee(e.target.value)}
-              min='0'
-              step='1000'
-              className={styles.feeInput}
-            />
-            <span className={styles.feeSuffix}>원</span>
-          </div>
+        {/* 옵션 선택 */}
+        {selectedSido && (
+          <>
+            {/* 시/도 전체 기본 출장비 설정 */}
+            <div className={styles.addFormSection}>
+              <div className={styles.checkboxRow}>
+                <Checkbox
+                  id='setSidoFee'
+                  checked={setSidoFee}
+                  onCheckedChange={(checked) => {
+                    setSetSidoFee(checked === true)
+                    if (checked) {
+                      setSetExceptionFee(false)
+                    }
+                  }}
+                />
+                <label htmlFor='setSidoFee' className={styles.checkboxLabel}>
+                  시/도 전체에 기본 출장비 설정
+                </label>
+              </div>
+
+              {setSidoFee && !setExceptionFee && (
+                <div className={styles.indentedField}>
+                  <div className={styles.feeInputWrapper}>
+                    <label className={styles.label}>기본 출장비</label>
+                    <Input
+                      type='number'
+                      placeholder='0'
+                      value={estimateFee}
+                      onChange={(e) => setEstimateFee(e.target.value)}
+                      min='0'
+                      step='1000'
+                      className={styles.feeInput}
+                    />
+                    <span className={styles.feeSuffix}>원</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* 특정 구/군 예외 출장비 설정 */}
+            <div className={styles.addFormSection}>
+              <div className={styles.checkboxRow}>
+                <Checkbox
+                  id='setExceptionFee'
+                  checked={setExceptionFee}
+                  onCheckedChange={(checked) => {
+                    setSetExceptionFee(checked === true)
+                    if (checked) {
+                      setSetSidoFee(false)
+                    }
+                  }}
+                />
+                <label
+                  htmlFor='setExceptionFee'
+                  className={styles.checkboxLabel}
+                >
+                  특정 구/군에 예외 출장비 설정
+                </label>
+              </div>
+
+              {setExceptionFee && (
+                <div className={styles.indentedField}>
+                  <div className={styles.selectRow}>
+                    <div className={styles.fieldGroup}>
+                      <label className={styles.label}>구/군 선택</label>
+                      <Combobox
+                        data={sigunguData}
+                        type='구/군'
+                        value={selectedSigungu}
+                        onValueChange={setSelectedSigungu}
+                      >
+                        <ComboboxTrigger className='w-full' />
+                        <ComboboxContent>
+                          <ComboboxInput placeholder='구/군 검색...' />
+                          <ComboboxEmpty>검색 결과가 없습니다.</ComboboxEmpty>
+                          <ComboboxList>
+                            <ComboboxGroup>
+                              {sigunguData.map((sigungu) => (
+                                <ComboboxItem
+                                  key={sigungu.value}
+                                  value={sigungu.value}
+                                >
+                                  {sigungu.label}
+                                </ComboboxItem>
+                              ))}
+                            </ComboboxGroup>
+                          </ComboboxList>
+                        </ComboboxContent>
+                      </Combobox>
+                    </div>
+
+                    <div className={styles.feeInputWrapper}>
+                      <label className={styles.label}>예외 출장비</label>
+                      <Input
+                        type='number'
+                        placeholder='0'
+                        value={estimateFee}
+                        onChange={(e) => setEstimateFee(e.target.value)}
+                        min='0'
+                        step='1000'
+                        className={styles.feeInput}
+                      />
+                      <span className={styles.feeSuffix}>원</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+
+        {/* 추가 버튼 */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Button
             type='button'
             onClick={handleAddRegion}
-            disabled={!selectedSido || !estimateFee}
+            disabled={
+              !selectedSido ||
+              !estimateFee ||
+              (setExceptionFee && !selectedSigungu)
+            }
             variant='secondary'
             className={styles.addButton}
           >

@@ -202,6 +202,22 @@ export interface ServiceRegionInput {
   estimateFee: number
 }
 
+/**
+ * 시/도별 그룹화된 지역 정보 (UI 표시용)
+ * RegionFeeSelector에서 아코디언 UI를 위해 사용
+ */
+export interface GroupedServiceRegion {
+  sidoId: number
+  sidoName: string
+  /** 시/도 레벨 출장비 (null이면 개별 설정만 있음) */
+  sidoEstimateFee: number | null
+  sigungus: {
+    districtId: number
+    districtName: string
+    estimateFee: number
+  }[]
+}
+
 export interface CreateServiceRequest {
   title: string
   description: string

@@ -3,7 +3,6 @@ import type { ServiceAdminListItem } from '@/shared/types/api'
 import { DataTableColumnHeader } from '@/shared/ui-kit/data-table'
 import { Badge } from '@/shared/ui/badge'
 import { Checkbox } from '@/shared/ui/checkbox'
-import { DataTableRowActions } from '../data-table-row-actions'
 
 /**
  * 서비스 테이블 컬럼 정의 (관리자 목록용 - 간소화된 데이터)
@@ -96,11 +95,7 @@ export const servicesColumns: ColumnDef<ServiceAdminListItem>[] = [
         return <span className='text-muted-foreground'>-</span>
       }
 
-      return (
-        <Badge variant='outline'>
-          {count}개 지역
-        </Badge>
-      )
+      return <Badge variant='outline'>{count}개 지역</Badge>
     },
   },
   {
@@ -123,13 +118,6 @@ export const servicesColumns: ColumnDef<ServiceAdminListItem>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='정렬 순서' />
     ),
-    cell: ({ row }) => {
-      const order = row.getValue('sortOrder') as number
-      return order
-    },
-  },
-  {
-    id: 'actions',
-    cell: ({ row, table }) => <DataTableRowActions row={row} table={table} />,
+    cell: ({ row }) => row.getValue('sortOrder') as number,
   },
 ]

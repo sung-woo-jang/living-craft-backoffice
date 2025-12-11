@@ -9,7 +9,6 @@ import {
 import { DataTableColumnHeader } from '@/shared/ui-kit/data-table'
 import { Badge } from '@/shared/ui/badge'
 import { Checkbox } from '@/shared/ui/checkbox'
-import { DataTableRowActions } from '../data-table-row-actions'
 
 export const reservationsColumns: ColumnDef<Reservation>[] = [
   {
@@ -168,9 +167,5 @@ export const reservationsColumns: ColumnDef<Reservation>[] = [
       <div className='w-[100px]'>{formatDate(row.getValue('createdAt'))}</div>
     ),
     enableSorting: true,
-  },
-  {
-    id: 'actions',
-    cell: ({ row }) => <DataTableRowActions row={row} />,
   },
 ]
