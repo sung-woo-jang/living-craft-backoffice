@@ -15,18 +15,18 @@ import { useServicesList } from '../api/use-services-query'
 // DayCode Zod 타입
 const dayCodeSchema = z.enum(['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'])
 
-// 스케줄 스키마 정의 - 필수 필드와 선택 필드 분리
+/**
+ * 스케줄 스키마 정의
+ *
+ * 견적 가능 일정만 설정합니다.
+ * 시공 일정은 견적 방문 후 예약관리에서 직접 지정합니다.
+ */
 const scheduleSchema = z.object({
   estimateScheduleMode: z.nativeEnum(ScheduleMode),
   estimateAvailableDays: z.array(dayCodeSchema).optional(),
   estimateStartTime: z.string().optional(),
   estimateEndTime: z.string().optional(),
   estimateSlotDuration: z.number().optional(),
-  constructionScheduleMode: z.nativeEnum(ScheduleMode),
-  constructionAvailableDays: z.array(dayCodeSchema).optional(),
-  constructionStartTime: z.string().optional(),
-  constructionEndTime: z.string().optional(),
-  constructionSlotDuration: z.number().optional(),
   bookingPeriodMonths: z.number().min(1).max(12),
 })
 
@@ -59,18 +59,13 @@ export type ServiceFormValues = z.infer<typeof serviceFormSchema>
 
 // ===== 헬퍼 함수 및 상수 =====
 
-/** 스케줄 기본값 */
+/** 스케줄 기본값 (견적 일정만 설정) */
 const DEFAULT_SCHEDULE: NonNullable<ServiceFormValues['schedule']> = {
   estimateScheduleMode: ScheduleMode.GLOBAL,
   estimateAvailableDays: [],
   estimateStartTime: '18:00',
   estimateEndTime: '22:00',
   estimateSlotDuration: 60,
-  constructionScheduleMode: ScheduleMode.GLOBAL,
-  constructionAvailableDays: [],
-  constructionStartTime: '09:00',
-  constructionEndTime: '18:00',
-  constructionSlotDuration: 60,
   bookingPeriodMonths: 3,
 }
 
@@ -89,7 +84,7 @@ function getDefaultFormValues(sortOrder: number): ServiceFormValues {
   }
 }
 
-/** API 응답의 스케줄을 폼 값으로 변환 */
+/** API 응답의 스케줄을 폼 값으로 변환 (견적 일정만) */
 function transformScheduleFromApi(
   schedule: ServiceSchedule | ServiceScheduleAdmin | null | undefined
 ): NonNullable<ServiceFormValues['schedule']> {
@@ -107,13 +102,6 @@ function transformScheduleFromApi(
     estimateStartTime: sched.estimateStartTime ?? '18:00',
     estimateEndTime: sched.estimateEndTime ?? '22:00',
     estimateSlotDuration: sched.estimateSlotDuration ?? 60,
-    constructionScheduleMode:
-      (sched.constructionScheduleMode as ScheduleMode) ?? ScheduleMode.GLOBAL,
-    constructionAvailableDays:
-      (sched.constructionAvailableDays as DayCode[]) ?? [],
-    constructionStartTime: sched.constructionStartTime ?? '09:00',
-    constructionEndTime: sched.constructionEndTime ?? '18:00',
-    constructionSlotDuration: sched.constructionSlotDuration ?? 60,
     bookingPeriodMonths: sched.bookingPeriodMonths ?? 3,
   }
 }

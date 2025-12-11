@@ -12,7 +12,8 @@
     "fix:all": "npm run lint:fix && npm run format",
     "preview": "vite preview",
     "format:check": "prettier --check .",
-    "knip": "knip"
+    "knip": "knip",
+    "ts:check": "tsc -b"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

@@ -440,17 +440,18 @@ export interface ServiceSchedule {
   updatedAt: string
 }
 
+/**
+ * 서비스 스케줄 입력 타입
+ *
+ * 견적 가능 일정만 설정합니다.
+ * 시공 일정은 견적 방문 후 예약관리에서 직접 지정합니다.
+ */
 export interface ServiceScheduleInput {
   estimateScheduleMode: ScheduleMode
   estimateAvailableDays?: DayCode[]
   estimateStartTime?: string
   estimateEndTime?: string
   estimateSlotDuration?: number
-  constructionScheduleMode: ScheduleMode
-  constructionAvailableDays?: DayCode[]
-  constructionStartTime?: string
-  constructionEndTime?: string
-  constructionSlotDuration?: number
   bookingPeriodMonths?: number
 }
 

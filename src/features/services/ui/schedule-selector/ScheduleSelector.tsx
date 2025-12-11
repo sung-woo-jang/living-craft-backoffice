@@ -1,4 +1,4 @@
-import { useFormContext, Controller, useWatch, type FieldPath } from 'react-hook-form'
+import { useFormContext, Controller, useWatch } from 'react-hook-form'
 import { ScheduleMode, type DayCode } from '@/shared/types/api'
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
@@ -14,11 +14,12 @@ import type { ServiceFormValues } from '../../model'
 import { DaySelector } from '../day-selector'
 import styles from './styles.module.scss'
 
-interface ScheduleSectionProps {
-  type: 'estimate' | 'construction'
-  title: string
-}
-
+/**
+ * 스케줄 모드 옵션
+ *
+ * 고객은 견적 문의만 예약하고, 시공 일정은 견적 방문 후
+ * 관리자가 백오피스 예약관리에서 직접 지정합니다.
+ */
 const SCHEDULE_MODES = [
   {
     value: ScheduleMode.GLOBAL,
@@ -86,36 +87,20 @@ const SLOT_DURATIONS = [
   { value: 120, label: '2시간' },
 ]
 
-function ScheduleSection({ type, title }: ScheduleSectionProps) {
+/**
+ * 견적 일정 설정 섹션
+ *
+ * 견적 가능 일정만 설정합니다.
+ * 시공 일정은 견적 방문 후 예약관리에서 직접 지정합니다.
+ */
+function EstimateScheduleSection() {
   const { control } = useFormContext<ServiceFormValues>()
 
-  // 타입 안전한 필드 경로 정의
-  const modeField: FieldPath<ServiceFormValues> =
-    type === 'estimate'
-      ? 'schedule.estimateScheduleMode'
-      : 'schedule.constructionScheduleMode'
-  const daysField: FieldPath<ServiceFormValues> =
-    type === 'estimate'
-      ? 'schedule.estimateAvailableDays'
-      : 'schedule.constructionAvailableDays'
-  const startTimeField: FieldPath<ServiceFormValues> =
-    type === 'estimate'
-      ? 'schedule.estimateStartTime'
-      : 'schedule.constructionStartTime'
-  const endTimeField: FieldPath<ServiceFormValues> =
-    type === 'estimate'
-      ? 'schedule.estimateEndTime'
-      : 'schedule.constructionEndTime'
-  const slotDurationField: FieldPath<ServiceFormValues> =
-    type === 'estimate'
-      ? 'schedule.estimateSlotDuration'
-      : 'schedule.constructionSlotDuration'
-
-  // useWatch로 스케줄 모드 구독 (타입 안전)
+  // useWatch로 스케줄 모드 구독
   const currentMode =
     (useWatch({
       control,
-      name: modeField,
+      name: 'schedule.estimateScheduleMode',
     }) as ScheduleMode | undefined) ?? ScheduleMode.GLOBAL
 
   const showDaySelector =
@@ -125,10 +110,10 @@ function ScheduleSection({ type, title }: ScheduleSectionProps) {
 
   return (
     <div className={styles.scheduleSection}>
-      <h4 className={styles.scheduleSectionTitle}>{title}</h4>
+      <h4 className={styles.scheduleSectionTitle}>견적 가능 일정</h4>
 
       <Controller
-        name={modeField}
+        name='schedule.estimateScheduleMode'
         control={control}
         render={({ field }) => (
           <RadioGroup
@@ -140,10 +125,10 @@ function ScheduleSection({ type, title }: ScheduleSectionProps) {
               <div key={mode.value} className={styles.radioItem}>
                 <RadioGroupItem
                   value={mode.value}
-                  id={`${type}-${mode.value}`}
+                  id={`estimate-${mode.value}`}
                 />
                 <div className={styles.radioLabel}>
-                  <Label htmlFor={`${type}-${mode.value}`}>{mode.label}</Label>
+                  <Label htmlFor={`estimate-${mode.value}`}>{mode.label}</Label>
                   <span className={styles.radioDescription}>
                     {mode.description}
                   </span>
@@ -162,7 +147,7 @@ function ScheduleSection({ type, title }: ScheduleSectionProps) {
               : '제외할 요일 선택'}
           </Label>
           <Controller
-            name={daysField}
+            name='schedule.estimateAvailableDays'
             control={control}
             render={({ field }) => (
               <DaySelector
@@ -183,18 +168,18 @@ function ScheduleSection({ type, title }: ScheduleSectionProps) {
         <div className={styles.timeSettings}>
           <div className={styles.timeRow}>
             <div className={styles.timeField}>
-              <Label htmlFor={`${type}-start`} className={styles.subLabel}>
+              <Label htmlFor='estimate-start' className={styles.subLabel}>
                 시작 시간
               </Label>
               <Controller
-                name={startTimeField}
+                name='schedule.estimateStartTime'
                 control={control}
                 render={({ field }) => (
                   <Select
                     value={field.value as string}
                     onValueChange={field.onChange}
                   >
-                    <SelectTrigger id={`${type}-start`}>
+                    <SelectTrigger id='estimate-start'>
                       <SelectValue placeholder='시작 시간' />
                     </SelectTrigger>
                     <SelectContent>
@@ -210,18 +195,18 @@ function ScheduleSection({ type, title }: ScheduleSectionProps) {
             </div>
 
             <div className={styles.timeField}>
-              <Label htmlFor={`${type}-end`} className={styles.subLabel}>
+              <Label htmlFor='estimate-end' className={styles.subLabel}>
                 종료 시간
               </Label>
               <Controller
-                name={endTimeField}
+                name='schedule.estimateEndTime'
                 control={control}
                 render={({ field }) => (
                   <Select
                     value={field.value as string}
                     onValueChange={field.onChange}
                   >
-                    <SelectTrigger id={`${type}-end`}>
+                    <SelectTrigger id='estimate-end'>
                       <SelectValue placeholder='종료 시간' />
                     </SelectTrigger>
                     <SelectContent>
@@ -237,18 +222,18 @@ function ScheduleSection({ type, title }: ScheduleSectionProps) {
             </div>
 
             <div className={styles.timeField}>
-              <Label htmlFor={`${type}-slot`} className={styles.subLabel}>
+              <Label htmlFor='estimate-slot' className={styles.subLabel}>
                 슬롯 간격
               </Label>
               <Controller
-                name={slotDurationField}
+                name='schedule.estimateSlotDuration'
                 control={control}
                 render={({ field }) => (
                   <Select
                     value={String(field.value ?? '')}
                     onValueChange={(val) => field.onChange(parseInt(val))}
                   >
-                    <SelectTrigger id={`${type}-slot`}>
+                    <SelectTrigger id='estimate-slot'>
                       <SelectValue placeholder='슬롯 간격' />
                     </SelectTrigger>
                     <SelectContent>
@@ -272,13 +257,18 @@ function ScheduleSection({ type, title }: ScheduleSectionProps) {
   )
 }
 
+/**
+ * 스케줄 선택 컴포넌트
+ *
+ * 견적 가능 일정만 설정합니다.
+ * 시공 일정은 견적 방문 후 예약관리에서 직접 지정합니다.
+ */
 export function ScheduleSelector() {
   const { control } = useFormContext<ServiceFormValues>()
 
   return (
     <div className={styles.container}>
-      <ScheduleSection type='estimate' title='견적 가능 일정' />
-      <ScheduleSection type='construction' title='시공 가능 일정' />
+      <EstimateScheduleSection />
 
       <div className={styles.bookingPeriod}>
         <Label htmlFor='bookingPeriod' className={styles.subLabel}>
