@@ -71,6 +71,72 @@ export interface Icon {
 
 // ===== 서비스 관련 타입 =====
 
+/**
+ * 관리자용 서비스 목록 아이템 (간소화)
+ * GET /api/services/admin 응답
+ */
+export interface ServiceAdminListItem {
+  id: number
+  title: string
+  description: string
+  iconName: string
+  iconBgColor: string
+  duration: string
+  requiresTimeSelection: boolean
+  isActive: boolean
+  sortOrder: number
+  regionsCount: number
+  createdAt: string
+  updatedAt: string
+}
+
+/**
+ * 관리자용 서비스 지역 (수정 페이지용)
+ */
+export interface ServiceRegionAdmin {
+  districtId: number
+  districtFullName: string
+  districtName: string
+  estimateFee: number
+}
+
+/**
+ * 관리자용 서비스 스케줄 (수정 페이지용)
+ */
+export interface ServiceScheduleAdmin {
+  estimateScheduleMode: string
+  estimateAvailableDays: string[] | null
+  estimateStartTime: string | null
+  estimateEndTime: string | null
+  estimateSlotDuration: number | null
+  constructionScheduleMode: string
+  constructionAvailableDays: string[] | null
+  constructionStartTime: string | null
+  constructionEndTime: string | null
+  constructionSlotDuration: number | null
+  bookingPeriodMonths: number
+}
+
+/**
+ * 관리자용 서비스 상세 (수정 페이지용)
+ * GET /api/services/admin/:id 응답
+ */
+export interface ServiceAdminDetail {
+  id: number
+  title: string
+  description: string
+  icon: Icon
+  iconBgColor: string
+  duration: string
+  requiresTimeSelection: boolean
+  isActive: boolean
+  sortOrder: number
+  regions: ServiceRegionAdmin[]
+  schedule: ServiceScheduleAdmin | null
+  createdAt: string
+  updatedAt: string
+}
+
 export interface CityDto {
   id: string
   name: string

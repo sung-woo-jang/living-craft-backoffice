@@ -22,14 +22,15 @@ export const ADMIN_API = {
     CANCEL: (id: string) => `${API_BASE}/admin/reservations/${id}/cancel`,
   },
 
-  // 서비스 관리
+  // 서비스 관리 (백엔드: /api/services/admin/*)
   SERVICES: {
-    LIST: `${API_BASE}/admin/services`,
-    CREATE: `${API_BASE}/admin/services`,
-    DETAIL: (id: string) => `${API_BASE}/admin/services/${id}`,
-    UPDATE: (id: string) => `${API_BASE}/admin/services/${id}`,
-    DELETE: (id: string) => `${API_BASE}/admin/services/${id}/delete`,
-    TOGGLE: (id: string) => `${API_BASE}/admin/services/${id}/toggle`,
+    LIST: `${API_BASE}/services/admin`,
+    CREATE: `${API_BASE}/services/admin`,
+    DETAIL: (id: number | string) => `${API_BASE}/services/admin/${id}`,
+    UPDATE: (id: number | string) => `${API_BASE}/services/admin/${id}/update`,
+    DELETE: (id: number | string) => `${API_BASE}/services/admin/${id}/delete`,
+    TOGGLE: (id: number | string) => `${API_BASE}/services/admin/${id}/toggle`,
+    ORDER: `${API_BASE}/services/admin/order`,
   },
 
   // 행정구역 관리

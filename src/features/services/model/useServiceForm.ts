@@ -4,8 +4,11 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   ScheduleMode,
+  type DayCode,
   type Service,
+  type ServiceAdminDetail,
   type ServiceSchedule,
+  type ServiceScheduleAdmin,
 } from '@/shared/types/api'
 import { useServicesList } from '../api/use-services-query'
 
@@ -88,24 +91,30 @@ function getDefaultFormValues(sortOrder: number): ServiceFormValues {
 
 /** API 응답의 스케줄을 폼 값으로 변환 */
 function transformScheduleFromApi(
-  schedule: ServiceSchedule | null | undefined
+  schedule: ServiceSchedule | ServiceScheduleAdmin | null | undefined
 ): NonNullable<ServiceFormValues['schedule']> {
   if (!schedule) {
     return { ...DEFAULT_SCHEDULE }
   }
 
+  // 타입 가드를 사용하여 안전하게 속성 접근
+  const sched = schedule as ServiceSchedule & ServiceScheduleAdmin
+
   return {
-    estimateScheduleMode: schedule.estimateScheduleMode,
-    estimateAvailableDays: schedule.estimateAvailableDays ?? [],
-    estimateStartTime: schedule.estimateStartTime ?? '18:00',
-    estimateEndTime: schedule.estimateEndTime ?? '22:00',
-    estimateSlotDuration: schedule.estimateSlotDuration ?? 60,
-    constructionScheduleMode: schedule.constructionScheduleMode,
-    constructionAvailableDays: schedule.constructionAvailableDays ?? [],
-    constructionStartTime: schedule.constructionStartTime ?? '09:00',
-    constructionEndTime: schedule.constructionEndTime ?? '18:00',
-    constructionSlotDuration: schedule.constructionSlotDuration ?? 60,
-    bookingPeriodMonths: schedule.bookingPeriodMonths ?? 3,
+    estimateScheduleMode:
+      (sched.estimateScheduleMode as ScheduleMode) ?? ScheduleMode.GLOBAL,
+    estimateAvailableDays: (sched.estimateAvailableDays as DayCode[]) ?? [],
+    estimateStartTime: sched.estimateStartTime ?? '18:00',
+    estimateEndTime: sched.estimateEndTime ?? '22:00',
+    estimateSlotDuration: sched.estimateSlotDuration ?? 60,
+    constructionScheduleMode:
+      (sched.constructionScheduleMode as ScheduleMode) ?? ScheduleMode.GLOBAL,
+    constructionAvailableDays:
+      (sched.constructionAvailableDays as DayCode[]) ?? [],
+    constructionStartTime: sched.constructionStartTime ?? '09:00',
+    constructionEndTime: sched.constructionEndTime ?? '18:00',
+    constructionSlotDuration: sched.constructionSlotDuration ?? 60,
+    bookingPeriodMonths: sched.bookingPeriodMonths ?? 3,
   }
 }
 
@@ -133,6 +142,20 @@ function transformRegionsFromApi(service: Service): ServiceFormValues['regions']
   }
 
   return []
+}
+
+/** ServiceAdminDetail의 regions를 폼 값으로 변환 */
+function transformRegionsFromAdminDetail(
+  service: ServiceAdminDetail
+): ServiceFormValues['regions'] {
+  if (!service.regions || service.regions.length === 0) {
+    return []
+  }
+
+  return service.regions.map((region) => ({
+    districtId: region.districtId,
+    estimateFee: region.estimateFee,
+  }))
 }
 
 // ===== 훅 =====
@@ -194,6 +217,73 @@ export function useServiceForm({ service, isOpen }: UseServiceFormOptions) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [service, isOpen, nextSortOrder])
+
+  return form
+}
+
+// ===== 페이지용 훅 (ServiceFormPage에서 사용) =====
+
+interface UseServiceFormPageOptions {
+  /** ServiceAdminDetail 데이터 (수정 모드일 때) */
+  serviceDetail?: ServiceAdminDetail
+  /** 데이터 로딩 여부 */
+  isLoading?: boolean
+}
+
+/**
+ * 서비스 폼 페이지용 훅
+ * 모달과 달리 isOpen 상태가 필요 없고, ServiceAdminDetail 타입을 직접 사용
+ */
+export function useServiceFormPage({
+  serviceDetail,
+  isLoading,
+}: UseServiceFormPageOptions) {
+  const isEditMode = Boolean(serviceDetail)
+
+  // 서비스 목록 조회 (sortOrder 계산용)
+  const { data: services = [] } = useServicesList()
+
+  // 다음 sortOrder 계산
+  const nextSortOrder = useMemo(() => {
+    if (isEditMode && serviceDetail) {
+      return serviceDetail.sortOrder || 1
+    }
+    // 신규 추가: 최대값 + 1 (최소 1)
+    const maxOrder = Math.max(...services.map((s) => s.sortOrder || 0), 0)
+    return maxOrder + 1
+  }, [services, isEditMode, serviceDetail])
+
+  const form = useForm<ServiceFormValues>({
+    resolver: zodResolver(serviceFormSchema),
+    defaultValues: getDefaultFormValues(1),
+  })
+
+  // serviceDetail 또는 nextSortOrder 변경 시 폼 상태 동기화
+  useEffect(() => {
+    // 로딩 중이면 대기
+    if (isLoading) return
+
+    if (serviceDetail) {
+      // 수정 모드: 서비스 데이터로 폼 리셋
+      const iconName = serviceDetail.icon?.name || ''
+
+      form.reset({
+        title: serviceDetail.title,
+        description: serviceDetail.description,
+        iconName,
+        iconBgColor: serviceDetail.iconBgColor,
+        duration: serviceDetail.duration,
+        requiresTimeSelection: serviceDetail.requiresTimeSelection,
+        sortOrder: serviceDetail.sortOrder,
+        regions: transformRegionsFromAdminDetail(serviceDetail),
+        schedule: transformScheduleFromApi(serviceDetail.schedule),
+      })
+    } else {
+      // 생성 모드: 기본값으로 폼 초기화
+      form.reset(getDefaultFormValues(nextSortOrder))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [serviceDetail, isLoading, nextSortOrder])
 
   return form
 }

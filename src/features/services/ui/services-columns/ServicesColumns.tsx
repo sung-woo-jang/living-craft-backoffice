@@ -1,15 +1,14 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { formatCurrency } from '@/shared/lib/format'
-import type { Service, ServiceableRegionDto } from '@/shared/types/api'
+import type { ServiceAdminListItem } from '@/shared/types/api'
 import { DataTableColumnHeader } from '@/shared/ui-kit/data-table'
 import { Badge } from '@/shared/ui/badge'
 import { Checkbox } from '@/shared/ui/checkbox'
 import { DataTableRowActions } from '../data-table-row-actions'
 
 /**
- * 서비스 테이블 컬럼 정의
+ * 서비스 테이블 컬럼 정의 (관리자 목록용 - 간소화된 데이터)
  */
-export const servicesColumns: ColumnDef<Service>[] = [
+export const servicesColumns: ColumnDef<ServiceAdminListItem>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -88,63 +87,20 @@ export const servicesColumns: ColumnDef<Service>[] = [
     filterFn: (row, id, value) => value.includes(row.getValue(id)),
   },
   {
-    accessorKey: 'serviceableRegions',
+    accessorKey: 'regionsCount',
     header: '서비스 지역',
     cell: ({ row }) => {
-      const regions =
-        (row.getValue('serviceableRegions') as ServiceableRegionDto[]) || []
+      const count = row.getValue('regionsCount') as number
 
-      if (regions.length === 0) {
+      if (count === 0) {
         return <span className='text-muted-foreground'>-</span>
       }
 
-      const regionNames = regions.map((r) => r.name)
-
       return (
-        <div className='flex flex-wrap gap-1'>
-          {regionNames.slice(0, 2).map((name) => (
-            <Badge key={name} variant='outline'>
-              {name}
-            </Badge>
-          ))}
-          {regionNames.length > 2 && (
-            <Badge variant='outline'>+{regionNames.length - 2}개</Badge>
-          )}
-        </div>
+        <Badge variant='outline'>
+          {count}개 지역
+        </Badge>
       )
-    },
-  },
-  {
-    id: 'estimateFees',
-    header: '출장비',
-    cell: ({ row }) => {
-      const regions = row.original.serviceableRegions || []
-      if (regions.length === 0) {
-        return <span className='text-muted-foreground'>미설정</span>
-      }
-
-      // 모든 지역의 기본 출장비를 수집
-      const allFees: number[] = []
-      regions.forEach((region) => {
-        allFees.push(region.estimateFee)
-        region.cities.forEach((city) => {
-          if (city.estimateFee !== null) {
-            allFees.push(city.estimateFee)
-          }
-        })
-      })
-
-      if (allFees.length === 0) {
-        return <span className='text-muted-foreground'>미설정</span>
-      }
-
-      const minFee = Math.min(...allFees)
-      const maxFee = Math.max(...allFees)
-
-      if (minFee === maxFee) {
-        return formatCurrency(minFee)
-      }
-      return `${formatCurrency(minFee)} ~ ${formatCurrency(maxFee)}`
     },
   },
   {

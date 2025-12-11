@@ -1,5 +1,5 @@
 import type { Row } from '@tanstack/react-table'
-import type { Service } from '@/shared/types/api'
+import type { ServiceAdminListItem } from '@/shared/types/api'
 import { TableRow, TableCell } from '@/shared/ui/table'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
@@ -8,7 +8,7 @@ import { GripVertical } from 'lucide-react'
 import styles from './styles.module.scss'
 
 interface DraggableTableRowProps {
-  row: Row<Service>
+  row: Row<ServiceAdminListItem>
   children: React.ReactNode
   onClick?: () => void
 }

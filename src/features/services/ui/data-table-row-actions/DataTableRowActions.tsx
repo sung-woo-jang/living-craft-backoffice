@@ -1,5 +1,5 @@
 import { type Row, type Table } from '@tanstack/react-table'
-import type { Service } from '@/shared/types/api'
+import type { ServiceAdminListItem } from '@/shared/types/api'
 import { Button } from '@/shared/ui/button'
 import {
   DropdownMenu,
@@ -15,8 +15,8 @@ import {
 } from '../../api/use-services-mutation'
 
 interface DataTableRowActionsProps {
-  row: Row<Service>
-  table: Table<Service>
+  row: Row<ServiceAdminListItem>
+  table: Table<ServiceAdminListItem>
 }
 
 export function DataTableRowActions({ row, table }: DataTableRowActionsProps) {
@@ -25,7 +25,7 @@ export function DataTableRowActions({ row, table }: DataTableRowActionsProps) {
   const toggleService = useToggleService()
 
   const onEdit = table.options.meta?.onEdit as
-    | ((service: Service) => void)
+    | ((service: ServiceAdminListItem) => void)
     | undefined
 
   const handleEdit = () => {
@@ -37,11 +37,11 @@ export function DataTableRowActions({ row, table }: DataTableRowActionsProps) {
       return
     }
 
-    deleteService.mutate(service.id)
+    deleteService.mutate(String(service.id))
   }
 
   const handleToggleActive = () => {
-    toggleService.mutate(service.id)
+    toggleService.mutate(String(service.id))
   }
 
   const isLoading = deleteService.isPending || toggleService.isPending

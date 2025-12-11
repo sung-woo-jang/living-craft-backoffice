@@ -1,27 +1,22 @@
-import { useState } from 'react'
-import type { Service } from '@/shared/types/api'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '@/shared/ui/button'
 import { Plus } from 'lucide-react'
 import { useServicesList } from '@/features/services/api/use-services-query'
-import { ServiceFormModal } from '@/features/services/ui/service-form-modal'
 import { ServicesTable } from '@/features/services/ui/services-table'
 
 /**
  * 서비스 관리 페이지
  */
 export function ServicesPage() {
+  const navigate = useNavigate()
   const { data, isLoading, error } = useServicesList()
-  const [formOpen, setFormOpen] = useState(false)
-  const [editService, setEditService] = useState<Service | undefined>(undefined)
 
   const handleCreateService = () => {
-    setEditService(undefined)
-    setFormOpen(true)
+    navigate('/services/new')
   }
 
-  const handleEditService = (service: Service) => {
-    setEditService(service)
-    setFormOpen(true)
+  const handleEditService = (serviceId: number) => {
+    navigate(`/services/${serviceId}/edit`)
   }
 
   return (
@@ -69,12 +64,6 @@ export function ServicesPage() {
             <p className='text-muted-foreground'>등록된 서비스가 없습니다.</p>
           </div>
         )}
-
-      <ServiceFormModal
-        open={formOpen}
-        onOpenChange={setFormOpen}
-        service={editService}
-      />
     </div>
   )
 }

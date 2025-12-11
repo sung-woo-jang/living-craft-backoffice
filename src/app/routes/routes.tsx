@@ -4,7 +4,7 @@ import { Dashboard } from '@/pages/dashboard'
 import { PortfoliosPage } from '@/pages/portfolios'
 import { ReservationsPage } from '@/pages/reservations'
 import { ReviewsPage } from '@/pages/reviews'
-import { ServicesPage } from '@/pages/services'
+import { ServiceFormPage, ServicesPage } from '@/pages/services'
 import { OperatingHoursPage } from '@/pages/settings/operating-hours'
 import { ProtectedRoute } from '@/shared/components/protected-route'
 import { createBrowserRouter } from 'react-router-dom'
@@ -44,6 +44,14 @@ export const router = createBrowserRouter([
           {
             path: 'services',
             element: <ServicesPage />,
+          },
+          {
+            path: 'services/new',
+            element: <ServiceFormPage />,
+          },
+          {
+            path: 'services/:id/edit',
+            element: <ServiceFormPage />,
           },
           {
             path: 'portfolios',

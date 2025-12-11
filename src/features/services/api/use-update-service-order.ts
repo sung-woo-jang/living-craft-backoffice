@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 interface ServiceOrderItem {
-  id: string
+  id: number
   sortOrder: number
 }
 

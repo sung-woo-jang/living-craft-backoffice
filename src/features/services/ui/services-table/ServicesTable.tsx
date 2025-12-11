@@ -13,7 +13,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { arrayMove } from '@/shared/lib/array-utils'
-import type { Service } from '@/shared/types/api'
+import type { ServiceAdminListItem } from '@/shared/types/api'
 import {
   DataTablePagination,
   DataTableToolbar,
@@ -41,8 +41,8 @@ import { DraggableTableRow } from '../draggable-table-row'
 import { servicesColumns } from '../services-columns'
 
 interface ServicesTableProps {
-  data: Service[]
-  onEdit: (service: Service) => void
+  data: ServiceAdminListItem[]
+  onEdit: (serviceId: number) => void
 }
 
 export function ServicesTable({ data, onEdit }: ServicesTableProps) {
@@ -104,7 +104,7 @@ export function ServicesTable({ data, onEdit }: ServicesTableProps) {
     )
   }
 
-  const table = useReactTable({
+  const table = useReactTable<ServiceAdminListItem>({
     data: localData,
     columns: servicesColumns,
     state: {
@@ -133,7 +133,7 @@ export function ServicesTable({ data, onEdit }: ServicesTableProps) {
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     meta: {
-      onEdit,
+      onEdit: (row: ServiceAdminListItem) => onEdit(row.id),
     },
   })
 
@@ -198,7 +198,7 @@ export function ServicesTable({ data, onEdit }: ServicesTableProps) {
                     <DraggableTableRow
                       key={row.id}
                       row={row}
-                      onClick={() => onEdit(row.original)}
+                      onClick={() => onEdit(row.original.id)}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
