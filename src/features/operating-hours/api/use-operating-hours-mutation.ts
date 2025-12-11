@@ -1,8 +1,9 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { apiClient } from '@/shared/api/client'
-import { ADMIN_API } from '@/shared/api/endpoints'
-import type { OperatingHours } from '@/shared/types/api'
+import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+
+import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
+import { useStandardMutation } from '@/shared/hooks/custom-query'
+import type { OperatingHours } from '@/shared/types/api'
 
 /**
  * 운영 시간 수정
@@ -10,9 +11,13 @@ import { toast } from 'sonner'
 export function useUpdateOperatingHours() {
   const queryClient = useQueryClient()
 
-  return useMutation({
-    mutationFn: async (data: OperatingHours) => {
-      await apiClient.post(ADMIN_API.SETTINGS.OPERATING_HOURS.UPDATE, data)
+  return useStandardMutation<void, Error, OperatingHours>({
+    mutationFn: async (data) => {
+      const response = await axiosInstance.post<ApiResponse<void>>(
+        ADMIN_API.SETTINGS.OPERATING_HOURS.UPDATE,
+        data
+      )
+      return response.data
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -29,9 +34,13 @@ export function useUpdateOperatingHours() {
 export function useAddHoliday() {
   const queryClient = useQueryClient()
 
-  return useMutation({
-    mutationFn: async (data: { date: string; reason: string }) => {
-      await apiClient.post(ADMIN_API.SETTINGS.HOLIDAYS.CREATE, data)
+  return useStandardMutation<void, Error, { date: string; reason: string }>({
+    mutationFn: async (data) => {
+      const response = await axiosInstance.post<ApiResponse<void>>(
+        ADMIN_API.SETTINGS.HOLIDAYS.CREATE,
+        data
+      )
+      return response.data
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -48,9 +57,12 @@ export function useAddHoliday() {
 export function useDeleteHoliday() {
   const queryClient = useQueryClient()
 
-  return useMutation({
-    mutationFn: async (date: string) => {
-      await apiClient.post(ADMIN_API.SETTINGS.HOLIDAYS.DELETE(date))
+  return useStandardMutation<void, Error, string>({
+    mutationFn: async (date) => {
+      const response = await axiosInstance.post<ApiResponse<void>>(
+        ADMIN_API.SETTINGS.HOLIDAYS.DELETE(date)
+      )
+      return response.data
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

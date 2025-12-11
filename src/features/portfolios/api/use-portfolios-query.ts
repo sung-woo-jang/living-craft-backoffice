@@ -1,13 +1,12 @@
-import { useQuery } from '@tanstack/react-query'
-import { apiClient } from '@/shared/api/client'
-import { ADMIN_API } from '@/shared/api/endpoints'
+import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
+import { useStandardQuery } from '@/shared/hooks/custom-query'
 import type { Portfolio } from '@/shared/types/api'
 
 export function usePortfoliosList() {
-  return useQuery({
+  return useStandardQuery<Portfolio[]>({
     queryKey: ['admin', 'portfolios', 'list'],
     queryFn: async () => {
-      const response = await apiClient.get<Portfolio[]>(
+      const response = await axiosInstance.get<ApiResponse<Portfolio[]>>(
         ADMIN_API.PORTFOLIOS.LIST
       )
       return response.data

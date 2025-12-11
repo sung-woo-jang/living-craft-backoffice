@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { apiClient } from '@/shared/api/client'
-import { ADMIN_API } from '@/shared/api/endpoints'
+
+import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
+import { useStandardQuery } from '@/shared/hooks/custom-query'
 import type { Icon, IconType } from '@/shared/types/api'
 
 interface UseIconsParams {
@@ -15,7 +15,7 @@ interface UseIconsParams {
  * @returns 아이콘 목록 쿼리 결과
  */
 export function useIconsList(params?: UseIconsParams) {
-  return useQuery({
+  return useStandardQuery<Icon[]>({
     queryKey: ['admin', 'icons', 'list', params],
     queryFn: async () => {
       const searchParams = new URLSearchParams()
@@ -31,8 +31,8 @@ export function useIconsList(params?: UseIconsParams) {
         searchParams.toString() ? `?${searchParams.toString()}` : ''
       }`
 
-      const response = await apiClient.get<Icon[]>(url)
-      return response.data ?? []
+      const response = await axiosInstance.get<ApiResponse<Icon[]>>(url)
+      return response.data
     },
     staleTime: 60 * 1000, // 1분 캐싱 (아이콘은 자주 변경되지 않음)
   })
@@ -57,19 +57,20 @@ export function useDebouncedIconsSearch(search: string, delay = 300) {
     }
   }, [search, delay])
 
-  return useQuery({
+  return useStandardQuery<Icon[]>({
     queryKey: ['admin', 'icons', 'search', debouncedSearch],
     queryFn: async () => {
       if (!debouncedSearch || debouncedSearch.length < 2) {
-        return []
+        // 빈 ApiResponse 반환
+        return { success: true, message: '', data: [], timestamp: '' }
       }
 
       const searchParams = new URLSearchParams()
       searchParams.append('search', debouncedSearch)
 
       const url = `${ADMIN_API.ICONS.LIST}?${searchParams.toString()}`
-      const response = await apiClient.get<Icon[]>(url)
-      return response.data ?? []
+      const response = await axiosInstance.get<ApiResponse<Icon[]>>(url)
+      return response.data
     },
     staleTime: 30 * 1000, // 30초 캐싱
     enabled: debouncedSearch.length >= 2, // 2글자 이상일 때만 활성화

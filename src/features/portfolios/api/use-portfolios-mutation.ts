@@ -1,14 +1,18 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { apiClient } from '@/shared/api/client'
-import { ADMIN_API } from '@/shared/api/endpoints'
+import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+
+import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
+import { useStandardMutation } from '@/shared/hooks/custom-query'
 
 export function useDeletePortfolio() {
   const queryClient = useQueryClient()
 
-  return useMutation({
-    mutationFn: async (id: string) => {
-      await apiClient.post(ADMIN_API.PORTFOLIOS.DELETE(id))
+  return useStandardMutation<void, Error, string>({
+    mutationFn: async (id) => {
+      const response = await axiosInstance.post<ApiResponse<void>>(
+        ADMIN_API.PORTFOLIOS.DELETE(id)
+      )
+      return response.data
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'portfolios'] })

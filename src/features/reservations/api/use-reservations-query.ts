@@ -1,16 +1,15 @@
-import { useQuery } from '@tanstack/react-query'
 import type { Reservation } from '@/entities/reservation'
-import { apiClient } from '@/shared/api/client'
-import { ADMIN_API } from '@/shared/api/endpoints'
+import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
+import { useStandardQuery } from '@/shared/hooks/custom-query'
 
 /**
  * 예약 목록 조회
  */
 export function useReservationsList() {
-  return useQuery({
+  return useStandardQuery<Reservation[]>({
     queryKey: ['admin', 'reservations', 'list'],
     queryFn: async () => {
-      const response = await apiClient.get<Reservation[]>(
+      const response = await axiosInstance.get<ApiResponse<Reservation[]>>(
         ADMIN_API.RESERVATIONS.LIST
       )
       return response.data
@@ -22,10 +21,10 @@ export function useReservationsList() {
  * 예약 상세 조회
  */
 export function useReservationDetail(id: string) {
-  return useQuery({
+  return useStandardQuery<Reservation>({
     queryKey: ['admin', 'reservations', 'detail', id],
     queryFn: async () => {
-      const response = await apiClient.get<Reservation>(
+      const response = await axiosInstance.get<ApiResponse<Reservation>>(
         ADMIN_API.RESERVATIONS.DETAIL(id)
       )
       return response.data

@@ -1,6 +1,5 @@
-import { useQuery } from '@tanstack/react-query'
-import { apiClient } from '@/shared/api/client'
-import { ADMIN_API } from '@/shared/api/endpoints'
+import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
+import { useStandardQuery } from '@/shared/hooks/custom-query'
 import type { ServiceAdminDetail, ServiceAdminListItem } from '@/shared/types/api'
 
 /**
@@ -8,12 +7,13 @@ import type { ServiceAdminDetail, ServiceAdminListItem } from '@/shared/types/ap
  * 테이블 표시에 필요한 최소 정보만 반환
  */
 export function useServicesList() {
-  return useQuery({
+  return useStandardQuery<ServiceAdminListItem[]>({
     queryKey: ['admin', 'services', 'list'],
     queryFn: async () => {
-      const response =
-        await apiClient.get<ServiceAdminListItem[]>(ADMIN_API.SERVICES.LIST)
-      return response.data ?? []
+      const response = await axiosInstance.get<ApiResponse<ServiceAdminListItem[]>>(
+        ADMIN_API.SERVICES.LIST
+      )
+      return response.data
     },
   })
 }
@@ -23,11 +23,11 @@ export function useServicesList() {
  * regions, schedule, icon 등 전체 정보 반환
  */
 export function useServiceDetail(id: number | string | undefined) {
-  return useQuery({
+  return useStandardQuery<ServiceAdminDetail>({
     queryKey: ['admin', 'services', 'detail', id],
     queryFn: async () => {
       if (!id) throw new Error('서비스 ID가 필요합니다.')
-      const response = await apiClient.get<ServiceAdminDetail>(
+      const response = await axiosInstance.get<ApiResponse<ServiceAdminDetail>>(
         ADMIN_API.SERVICES.DETAIL(id)
       )
       return response.data

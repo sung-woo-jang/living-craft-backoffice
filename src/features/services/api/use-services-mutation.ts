@@ -1,18 +1,23 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { apiClient } from '@/shared/api/client'
-import { ADMIN_API } from '@/shared/api/endpoints'
+import { useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
+
+import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
+import { useStandardMutation } from '@/shared/hooks/custom-query'
 import type {
   CreateServiceRequest,
   UpdateServiceRequest,
 } from '@/shared/types/api'
-import { toast } from 'sonner'
 
 export function useCreateService() {
   const queryClient = useQueryClient()
 
-  return useMutation({
-    mutationFn: async (data: CreateServiceRequest) => {
-      await apiClient.post(ADMIN_API.SERVICES.CREATE, data)
+  return useStandardMutation<void, Error, CreateServiceRequest>({
+    mutationFn: async (data) => {
+      const response = await axiosInstance.post<ApiResponse<void>>(
+        ADMIN_API.SERVICES.CREATE,
+        data
+      )
+      return response.data
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'services'] })
@@ -24,15 +29,13 @@ export function useCreateService() {
 export function useUpdateService() {
   const queryClient = useQueryClient()
 
-  return useMutation({
-    mutationFn: async ({
-      id,
-      data,
-    }: {
-      id: string
-      data: UpdateServiceRequest
-    }) => {
-      await apiClient.post(ADMIN_API.SERVICES.UPDATE(id), data)
+  return useStandardMutation<void, Error, { id: string; data: UpdateServiceRequest }>({
+    mutationFn: async ({ id, data }) => {
+      const response = await axiosInstance.post<ApiResponse<void>>(
+        ADMIN_API.SERVICES.UPDATE(id),
+        data
+      )
+      return response.data
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'services'] })
@@ -44,9 +47,12 @@ export function useUpdateService() {
 export function useDeleteService() {
   const queryClient = useQueryClient()
 
-  return useMutation({
-    mutationFn: async (id: string) => {
-      await apiClient.post(ADMIN_API.SERVICES.DELETE(id))
+  return useStandardMutation<void, Error, string>({
+    mutationFn: async (id) => {
+      const response = await axiosInstance.post<ApiResponse<void>>(
+        ADMIN_API.SERVICES.DELETE(id)
+      )
+      return response.data
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'services'] })
@@ -58,9 +64,12 @@ export function useDeleteService() {
 export function useToggleService() {
   const queryClient = useQueryClient()
 
-  return useMutation({
-    mutationFn: async (id: string) => {
-      await apiClient.post(ADMIN_API.SERVICES.TOGGLE(id))
+  return useStandardMutation<void, Error, string>({
+    mutationFn: async (id) => {
+      const response = await axiosInstance.post<ApiResponse<void>>(
+        ADMIN_API.SERVICES.TOGGLE(id)
+      )
+      return response.data
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'services'] })

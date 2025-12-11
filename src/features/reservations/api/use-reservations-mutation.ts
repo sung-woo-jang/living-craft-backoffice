@@ -1,8 +1,9 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { apiClient } from '@/shared/api/client'
-import { ADMIN_API } from '@/shared/api/endpoints'
-import type { ReservationStatus } from '@/shared/types/api'
+import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+
+import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
+import { useStandardMutation } from '@/shared/hooks/custom-query'
+import type { ReservationStatus } from '@/shared/types/api'
 
 /**
  * 예약 상태 변경
@@ -10,15 +11,13 @@ import { toast } from 'sonner'
 export function useUpdateReservationStatus() {
   const queryClient = useQueryClient()
 
-  return useMutation({
-    mutationFn: async ({
-      id,
-      status,
-    }: {
-      id: string
-      status: ReservationStatus
-    }) => {
-      await apiClient.post(ADMIN_API.RESERVATIONS.STATUS(id), { status })
+  return useStandardMutation<void, Error, { id: string; status: ReservationStatus }>({
+    mutationFn: async ({ id, status }) => {
+      const response = await axiosInstance.post<ApiResponse<void>>(
+        ADMIN_API.RESERVATIONS.STATUS(id),
+        { status }
+      )
+      return response.data
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'reservations'] })
@@ -33,9 +32,13 @@ export function useUpdateReservationStatus() {
 export function useCancelReservation() {
   const queryClient = useQueryClient()
 
-  return useMutation({
-    mutationFn: async ({ id, reason }: { id: string; reason?: string }) => {
-      await apiClient.post(ADMIN_API.RESERVATIONS.CANCEL(id), { reason })
+  return useStandardMutation<void, Error, { id: string; reason?: string }>({
+    mutationFn: async ({ id, reason }) => {
+      const response = await axiosInstance.post<ApiResponse<void>>(
+        ADMIN_API.RESERVATIONS.CANCEL(id),
+        { reason }
+      )
+      return response.data
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'reservations'] })

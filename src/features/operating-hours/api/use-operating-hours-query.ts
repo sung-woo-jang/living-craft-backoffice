@@ -1,16 +1,15 @@
-import { useQuery } from '@tanstack/react-query'
-import { apiClient } from '@/shared/api/client'
-import { ADMIN_API } from '@/shared/api/endpoints'
-import type { OperatingHours, Holiday } from '@/shared/types/api'
+import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
+import { useStandardQuery } from '@/shared/hooks/custom-query'
+import type { Holiday, OperatingHours } from '@/shared/types/api'
 
 /**
  * 운영 시간 조회
  */
 export function useOperatingHours() {
-  return useQuery({
+  return useStandardQuery<OperatingHours>({
     queryKey: ['admin', 'settings', 'operating-hours'],
     queryFn: async () => {
-      const response = await apiClient.get<OperatingHours>(
+      const response = await axiosInstance.get<ApiResponse<OperatingHours>>(
         ADMIN_API.SETTINGS.OPERATING_HOURS.GET
       )
       return response.data
@@ -22,10 +21,10 @@ export function useOperatingHours() {
  * 휴무일 목록 조회
  */
 export function useHolidays() {
-  return useQuery({
+  return useStandardQuery<Holiday[]>({
     queryKey: ['admin', 'settings', 'holidays'],
     queryFn: async () => {
-      const response = await apiClient.get<Holiday[]>(
+      const response = await axiosInstance.get<ApiResponse<Holiday[]>>(
         ADMIN_API.SETTINGS.HOLIDAYS.LIST
       )
       return response.data

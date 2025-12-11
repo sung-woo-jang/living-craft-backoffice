@@ -1,23 +1,26 @@
-import { useQuery } from '@tanstack/react-query'
-import { apiClient } from '@/shared/api/client'
-import { ADMIN_API } from '@/shared/api/endpoints'
-import type { Customer } from '@/shared/types/api'
+import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
+import { useStandardQuery } from '@/shared/hooks/custom-query'
+import type { Customer, CustomerDetail } from '@/shared/types/api'
 
 export function useCustomersList() {
-  return useQuery({
+  return useStandardQuery<Customer[]>({
     queryKey: ['admin', 'customers', 'list'],
     queryFn: async () => {
-      const response = await apiClient.get<Customer[]>(ADMIN_API.CUSTOMERS.LIST)
+      const response = await axiosInstance.get<ApiResponse<Customer[]>>(
+        ADMIN_API.CUSTOMERS.LIST
+      )
       return response.data
     },
   })
 }
 
 export function useCustomerDetail(id: string) {
-  return useQuery({
+  return useStandardQuery<CustomerDetail>({
     queryKey: ['admin', 'customers', 'detail', id],
     queryFn: async () => {
-      const response = await apiClient.get(ADMIN_API.CUSTOMERS.DETAIL(id))
+      const response = await axiosInstance.get<ApiResponse<CustomerDetail>>(
+        ADMIN_API.CUSTOMERS.DETAIL(id)
+      )
       return response.data
     },
     enabled: !!id,

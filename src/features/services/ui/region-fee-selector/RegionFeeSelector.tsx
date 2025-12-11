@@ -44,17 +44,20 @@ export function RegionFeeSelector() {
   const [editingFee, setEditingFee] = useState<string>('')
 
   // 시/도 목록 조회
-  const { data: sidoList = [] } = useDistricts({ level: 'SIDO' })
+  const { data: sidoResponse } = useDistricts({ level: 'SIDO' })
+  const sidoList = sidoResponse?.data ?? []
 
   // 선택된 시/도의 시/군/구 목록 조회
   const sidoId = selectedSido ? parseInt(selectedSido) : null
-  const { data: sigunguList = [] } = useDistricts({
+  const { data: sigunguResponse } = useDistricts({
     level: 'SIGUNGU',
     parentId: sidoId || undefined,
   })
+  const sigunguList = sigunguResponse?.data ?? []
 
   // 전체 지역 조회 (그룹핑용)
-  const { data: allDistricts = [] } = useDistricts()
+  const { data: allDistrictsResponse } = useDistricts()
+  const allDistricts = allDistrictsResponse?.data ?? []
 
   // Combobox용 데이터 변환
   const sidoData = useMemo(

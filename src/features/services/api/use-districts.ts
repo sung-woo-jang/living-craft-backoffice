@@ -1,6 +1,5 @@
-import { useQuery } from '@tanstack/react-query'
-import { apiClient } from '@/shared/api/client'
-import { ADMIN_API } from '@/shared/api/endpoints'
+import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
+import { useStandardQuery } from '@/shared/hooks/custom-query'
 import type { District, DistrictLevel } from '@/shared/types/api'
 
 interface UseDistrictsParams {
@@ -9,7 +8,7 @@ interface UseDistrictsParams {
 }
 
 export function useDistricts(params?: UseDistrictsParams) {
-  return useQuery({
+  return useStandardQuery<District[]>({
     queryKey: ['admin', 'districts', params],
     queryFn: async () => {
       const searchParams = new URLSearchParams()
@@ -24,12 +23,8 @@ export function useDistricts(params?: UseDistrictsParams) {
 
       const url = `${ADMIN_API.DISTRICTS.LIST}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`
 
-      // 인터셉터가 이미 SuccessResponse.data를 추출했으므로
-      // response.data가 바로 District[] 배열
-      const response = await apiClient.get<District[]>(url)
-
-      // TanStack Query는 undefined를 허용하지 않으므로 빈 배열 반환
-      return response.data ?? []
+      const response = await axiosInstance.get<ApiResponse<District[]>>(url)
+      return response.data
     },
   })
 }

@@ -1,4 +1,7 @@
 import { QueryClientProvider } from '@tanstack/react-query'
+
+import { AxiosInterceptor } from '@/shared/api'
+
 import { DirectionProvider } from './direction-provider'
 import { FontProvider } from './font-provider'
 import { queryClient } from './query-provider'
@@ -11,11 +14,13 @@ type ProvidersProps = {
 export function Providers({ children }: ProvidersProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <FontProvider>
-          <DirectionProvider>{children}</DirectionProvider>
-        </FontProvider>
-      </ThemeProvider>
+      <AxiosInterceptor>
+        <ThemeProvider>
+          <FontProvider>
+            <DirectionProvider>{children}</DirectionProvider>
+          </FontProvider>
+        </ThemeProvider>
+      </AxiosInterceptor>
     </QueryClientProvider>
   )
 }

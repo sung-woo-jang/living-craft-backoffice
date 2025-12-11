@@ -49,7 +49,8 @@ export function ServiceFormPage() {
   const isEditMode = Boolean(id)
 
   // 수정 모드일 때 서비스 상세 데이터 조회
-  const { data: serviceDetail, isLoading } = useServiceDetail(id)
+  const { data: serviceDetailResponse, isLoading } = useServiceDetail(id)
+  const serviceDetail = serviceDetailResponse?.data
 
   // 폼 훅
   const form = useServiceFormPage({
@@ -69,8 +70,9 @@ export function ServiceFormPage() {
 
   // 아이콘 검색 상태
   const [iconSearchQuery, setIconSearchQuery] = useState('')
-  const { data: icons = [], isLoading: iconsLoading } =
+  const { data: iconsResponse, isLoading: iconsLoading } =
     useDebouncedIconsSearch(iconSearchQuery)
+  const icons = iconsResponse?.data ?? []
 
   // Combobox용 데이터 변환
   const iconData = useMemo(

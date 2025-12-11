@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { apiClient } from '@/shared/api/client'
+import { axiosInstance, AUTH_API, type ApiResponse } from '@/shared/api'
 import { useAuthStore } from '@/shared/stores/auth-store'
 import { Button } from '@/shared/ui/button'
 import {
@@ -29,11 +29,13 @@ export function LoginPage() {
     setIsLoading(true)
 
     try {
-      const response = await apiClient.post('/api/admin/auth/login', {
+      const response = await axiosInstance.post<
+        ApiResponse<{ accessToken: string }>
+      >(AUTH_API.LOGIN, {
         email,
         password,
       })
-      const { accessToken } = response.data
+      const { accessToken } = response.data.data
 
       // 쿠키에 토큰 저장 (7일 유효)
       const expires = new Date()

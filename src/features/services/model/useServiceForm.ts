@@ -157,7 +157,8 @@ export function useServiceForm({ service, isOpen }: UseServiceFormOptions) {
   const isEditMode = Boolean(service)
 
   // 서비스 목록 조회 (sortOrder 계산용)
-  const { data: services = [] } = useServicesList()
+  const { data: servicesResponse } = useServicesList()
+  const services = servicesResponse?.data ?? []
 
   // 다음 sortOrder 계산
   const nextSortOrder = useMemo(() => {
@@ -229,7 +230,8 @@ export function useServiceFormPage({
   const isEditMode = Boolean(serviceDetail)
 
   // 서비스 목록 조회 (sortOrder 계산용)
-  const { data: services = [] } = useServicesList()
+  const { data: servicesResponse } = useServicesList()
+  const services = servicesResponse?.data ?? []
 
   // 다음 sortOrder 계산
   const nextSortOrder = useMemo(() => {

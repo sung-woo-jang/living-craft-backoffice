@@ -10,15 +10,18 @@ import { TimeSlotForm } from '@/features/operating-hours/ui/time-slot-form'
  */
 export function OperatingHoursPage() {
   const {
-    data: operatingHours,
+    data: operatingHoursResponse,
     isLoading: isLoadingHours,
     error: hoursError,
   } = useOperatingHours()
   const {
-    data: holidays,
+    data: holidaysResponse,
     isLoading: isLoadingHolidays,
     error: holidaysError,
   } = useHolidays()
+
+  const operatingHours = operatingHoursResponse?.data
+  const holidays = holidaysResponse?.data
 
   const isLoading = isLoadingHours || isLoadingHolidays
   const error = hoursError || holidaysError

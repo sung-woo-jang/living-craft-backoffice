@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { apiClient } from '@/shared/api/client'
+import { axiosInstance, AUTH_API, type ApiResponse } from '@/shared/api'
 import { cn } from '@/shared/lib/utils'
 import { PasswordInput } from '@/shared/ui-kit/password-input'
 import { Button } from '@/shared/ui/button'
@@ -58,12 +58,14 @@ export function UserAuthForm({
     setIsLoading(true)
 
     try {
-      const response = await apiClient.post('/api/admin/auth/login', {
+      const response = await axiosInstance.post<
+        ApiResponse<{ accessToken: string; user: { uuid: string; email: string; role: string } }>
+      >(AUTH_API.LOGIN, {
         email: data.email,
         password: data.password,
       })
 
-      const { accessToken, user } = response.data
+      const { accessToken, user } = response.data.data
 
       // 쿠키에 토큰 저장 (7일 유효)
       const expires = new Date()

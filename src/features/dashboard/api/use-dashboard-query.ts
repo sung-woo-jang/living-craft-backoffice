@@ -1,6 +1,5 @@
-import { useQuery } from '@tanstack/react-query'
-import { apiClient } from '@/shared/api/client'
-import { ADMIN_API } from '@/shared/api/endpoints'
+import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
+import { useStandardQuery } from '@/shared/hooks/custom-query'
 import type { DashboardStats } from '@/shared/types/api'
 
 /**
@@ -8,10 +7,10 @@ import type { DashboardStats } from '@/shared/types/api'
  * 5초마다 자동 갱신
  */
 export function useDashboardStats() {
-  return useQuery({
+  return useStandardQuery<DashboardStats>({
     queryKey: ['admin', 'dashboard', 'stats'],
     queryFn: async () => {
-      const response = await apiClient.get<DashboardStats>(
+      const response = await axiosInstance.get<ApiResponse<DashboardStats>>(
         ADMIN_API.DASHBOARD.STATS
       )
       return response.data

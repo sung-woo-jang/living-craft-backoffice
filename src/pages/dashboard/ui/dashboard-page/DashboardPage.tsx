@@ -17,7 +17,8 @@ import { StatsCards } from '@/features/dashboard/ui/stats-cards'
  * Living Craft 대시보드 페이지
  */
 export function Dashboard() {
-  const { data: stats, isLoading, error } = useDashboardStats()
+  const { data: statsResponse, isLoading, error } = useDashboardStats()
+  const stats = statsResponse?.data
 
   return (
     <>
