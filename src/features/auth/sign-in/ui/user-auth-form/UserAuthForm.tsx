@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { axiosInstance, AUTH_API, type ApiResponse } from '@/shared/api'
+import { axiosInstance, AUTH_API } from '@/shared/api'
 import { cn } from '@/shared/lib/utils'
 import { PasswordInput } from '@/shared/ui-kit/password-input'
 import { Button } from '@/shared/ui/button'
@@ -58,9 +58,10 @@ export function UserAuthForm({
     setIsLoading(true)
 
     try {
-      const response = await axiosInstance.post<
-        ApiResponse<{ accessToken: string; user: { uuid: string; email: string; role: string } }>
-      >(AUTH_API.LOGIN, {
+      const response = await axiosInstance.post<{
+        accessToken: string
+        user: { uuid: string; email: string; role: string }
+      }>(AUTH_API.LOGIN, {
         email: data.email,
         password: data.password,
       })

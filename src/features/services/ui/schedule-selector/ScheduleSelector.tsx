@@ -151,7 +151,9 @@ function EstimateScheduleSection() {
             control={control}
             render={({ field }) => (
               <DaySelector
-                value={Array.isArray(field.value) ? (field.value as DayCode[]) : []}
+                value={
+                  Array.isArray(field.value) ? (field.value as DayCode[]) : []
+                }
                 onChange={field.onChange}
                 mode={
                   currentMode === ScheduleMode.EVERYDAY_EXCEPT

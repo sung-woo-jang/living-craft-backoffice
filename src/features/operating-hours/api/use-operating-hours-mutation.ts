@@ -1,9 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
-
-import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
+import { axiosInstance, ADMIN_API } from '@/shared/api'
 import { useStandardMutation } from '@/shared/hooks/custom-query'
 import type { OperatingHours } from '@/shared/types/api'
+import { toast } from 'sonner'
 
 /**
  * 운영 시간 수정
@@ -13,7 +12,7 @@ export function useUpdateOperatingHours() {
 
   return useStandardMutation<void, Error, OperatingHours>({
     mutationFn: async (data) => {
-      const response = await axiosInstance.post<ApiResponse<void>>(
+      const response = await axiosInstance.post<void>(
         ADMIN_API.SETTINGS.OPERATING_HOURS.UPDATE,
         data
       )
@@ -36,7 +35,7 @@ export function useAddHoliday() {
 
   return useStandardMutation<void, Error, { date: string; reason: string }>({
     mutationFn: async (data) => {
-      const response = await axiosInstance.post<ApiResponse<void>>(
+      const response = await axiosInstance.post<void>(
         ADMIN_API.SETTINGS.HOLIDAYS.CREATE,
         data
       )
@@ -59,7 +58,7 @@ export function useDeleteHoliday() {
 
   return useStandardMutation<void, Error, string>({
     mutationFn: async (date) => {
-      const response = await axiosInstance.post<ApiResponse<void>>(
+      const response = await axiosInstance.post<void>(
         ADMIN_API.SETTINGS.HOLIDAYS.DELETE(date)
       )
       return response.data

@@ -107,7 +107,9 @@ function transformScheduleFromApi(
 }
 
 /** 서비스의 regions를 폼 값으로 변환 (백엔드 응답 형태 지원) */
-function transformRegionsFromApi(service: Service): ServiceFormValues['regions'] {
+function transformRegionsFromApi(
+  service: Service
+): ServiceFormValues['regions'] {
   // 백엔드 serviceRegions 형태인 경우 (원본 응답)
   if (service.serviceRegions && service.serviceRegions.length > 0) {
     return service.serviceRegions.map((region) => ({

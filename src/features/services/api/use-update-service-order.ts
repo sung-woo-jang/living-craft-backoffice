@@ -1,8 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
-
-import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
+import { axiosInstance, ADMIN_API } from '@/shared/api'
 import { useStandardMutation } from '@/shared/hooks/custom-query'
+import { toast } from 'sonner'
 
 interface ServiceOrderItem {
   id: number
@@ -18,7 +17,7 @@ export function useUpdateServiceOrder() {
 
   return useStandardMutation<void, Error, UpdateServiceOrderRequest>({
     mutationFn: async (request) => {
-      const response = await axiosInstance.post<ApiResponse<void>>(
+      const response = await axiosInstance.post<void>(
         ADMIN_API.SERVICES.ORDER,
         request
       )

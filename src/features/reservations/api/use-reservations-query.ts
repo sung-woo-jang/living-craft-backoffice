@@ -1,5 +1,5 @@
 import type { Reservation } from '@/entities/reservation'
-import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
+import { ADMIN_API, axiosInstance } from '@/shared/api'
 import { useStandardQuery } from '@/shared/hooks/custom-query'
 
 /**
@@ -9,7 +9,7 @@ export function useReservationsList() {
   return useStandardQuery<Reservation[]>({
     queryKey: ['admin', 'reservations', 'list'],
     queryFn: async () => {
-      const response = await axiosInstance.get<ApiResponse<Reservation[]>>(
+      const response = await axiosInstance.get<Reservation[]>(
         ADMIN_API.RESERVATIONS.LIST
       )
       return response.data
@@ -24,7 +24,7 @@ export function useReservationDetail(id: string) {
   return useStandardQuery<Reservation>({
     queryKey: ['admin', 'reservations', 'detail', id],
     queryFn: async () => {
-      const response = await axiosInstance.get<ApiResponse<Reservation>>(
+      const response = await axiosInstance.get<Reservation>(
         ADMIN_API.RESERVATIONS.DETAIL(id)
       )
       return response.data

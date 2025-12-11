@@ -110,7 +110,6 @@ export function getExceptionCount(group: GroupedServiceRegion): number {
   if (group.sidoEstimateFee === null) {
     return 0
   }
-  return group.sigungus.filter(
-    (s) => s.estimateFee !== group.sidoEstimateFee
-  ).length
+  return group.sigungus.filter((s) => s.estimateFee !== group.sidoEstimateFee)
+    .length
 }

@@ -1,4 +1,5 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig } from 'axios'
+import type { TypedAxiosInstance } from './axios-types'
 
 export enum ContentType {
   Json = 'application/json',
@@ -25,7 +26,13 @@ const createAxiosInstance = (
   return axios.create(config)
 }
 
-const axiosInstance = createAxiosInstance(ContentType.Json, BASE_URL)
-const formInstance = createAxiosInstance(ContentType.FormData, BASE_URL)
+const axiosInstance = createAxiosInstance(
+  ContentType.Json,
+  BASE_URL
+) as TypedAxiosInstance
+const formInstance = createAxiosInstance(
+  ContentType.FormData,
+  BASE_URL
+) as TypedAxiosInstance
 
 export { axiosInstance, formInstance }

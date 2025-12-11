@@ -1,4 +1,4 @@
-import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
+import { axiosInstance, ADMIN_API } from '@/shared/api'
 import { useStandardQuery } from '@/shared/hooks/custom-query'
 import type { District, DistrictLevel } from '@/shared/types/api'
 
@@ -23,7 +23,7 @@ export function useDistricts(params?: UseDistrictsParams) {
 
       const url = `${ADMIN_API.DISTRICTS.LIST}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`
 
-      const response = await axiosInstance.get<ApiResponse<District[]>>(url)
+      const response = await axiosInstance.get<District[]>(url)
       return response.data
     },
   })

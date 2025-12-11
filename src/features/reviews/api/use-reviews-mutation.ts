@@ -1,15 +1,14 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
-
-import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
+import { axiosInstance, ADMIN_API } from '@/shared/api'
 import { useStandardMutation } from '@/shared/hooks/custom-query'
+import { toast } from 'sonner'
 
 export function useDeleteReview() {
   const queryClient = useQueryClient()
 
   return useStandardMutation<void, Error, string>({
     mutationFn: async (id) => {
-      const response = await axiosInstance.post<ApiResponse<void>>(
+      const response = await axiosInstance.post<void>(
         ADMIN_API.REVIEWS.DELETE(id)
       )
       return response.data

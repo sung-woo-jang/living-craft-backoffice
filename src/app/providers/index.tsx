@@ -1,7 +1,5 @@
 import { QueryClientProvider } from '@tanstack/react-query'
-
 import { AxiosInterceptor } from '@/shared/api'
-
 import { DirectionProvider } from './direction-provider'
 import { FontProvider } from './font-provider'
 import { queryClient } from './query-provider'

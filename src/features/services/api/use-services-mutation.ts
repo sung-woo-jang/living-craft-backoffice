@@ -1,19 +1,18 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
-
-import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
+import { axiosInstance, ADMIN_API } from '@/shared/api'
 import { useStandardMutation } from '@/shared/hooks/custom-query'
 import type {
   CreateServiceRequest,
   UpdateServiceRequest,
 } from '@/shared/types/api'
+import { toast } from 'sonner'
 
 export function useCreateService() {
   const queryClient = useQueryClient()
 
   return useStandardMutation<void, Error, CreateServiceRequest>({
     mutationFn: async (data) => {
-      const response = await axiosInstance.post<ApiResponse<void>>(
+      const response = await axiosInstance.post<void>(
         ADMIN_API.SERVICES.CREATE,
         data
       )
@@ -29,9 +28,13 @@ export function useCreateService() {
 export function useUpdateService() {
   const queryClient = useQueryClient()
 
-  return useStandardMutation<void, Error, { id: string; data: UpdateServiceRequest }>({
+  return useStandardMutation<
+    void,
+    Error,
+    { id: string; data: UpdateServiceRequest }
+  >({
     mutationFn: async ({ id, data }) => {
-      const response = await axiosInstance.post<ApiResponse<void>>(
+      const response = await axiosInstance.post<void>(
         ADMIN_API.SERVICES.UPDATE(id),
         data
       )
@@ -49,7 +52,7 @@ export function useDeleteService() {
 
   return useStandardMutation<void, Error, string>({
     mutationFn: async (id) => {
-      const response = await axiosInstance.post<ApiResponse<void>>(
+      const response = await axiosInstance.post<void>(
         ADMIN_API.SERVICES.DELETE(id)
       )
       return response.data
@@ -66,7 +69,7 @@ export function useToggleService() {
 
   return useStandardMutation<void, Error, string>({
     mutationFn: async (id) => {
-      const response = await axiosInstance.post<ApiResponse<void>>(
+      const response = await axiosInstance.post<void>(
         ADMIN_API.SERVICES.TOGGLE(id)
       )
       return response.data

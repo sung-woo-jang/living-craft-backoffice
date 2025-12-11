@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
-import { useNavigate, useParams } from 'react-router-dom'
 import type { CreateServiceRequest } from '@/shared/types/api'
 import { Button } from '@/shared/ui/button'
 import {
@@ -32,13 +31,17 @@ import {
 import { Input } from '@/shared/ui/input'
 import { Switch } from '@/shared/ui/switch'
 import { Textarea } from '@/shared/ui/textarea'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useDebouncedIconsSearch } from '@/features/services/api/use-icons-query'
-import { useServiceDetail } from '@/features/services/api/use-services-query'
 import {
   useCreateService,
   useUpdateService,
 } from '@/features/services/api/use-services-mutation'
-import { useServiceFormPage, type ServiceFormValues } from '@/features/services/model'
+import { useServiceDetail } from '@/features/services/api/use-services-query'
+import {
+  useServiceFormPage,
+  type ServiceFormValues,
+} from '@/features/services/model'
 import { RegionFeeSelector } from '@/features/services/ui/region-fee-selector/RegionFeeSelector'
 import { ScheduleSelector } from '@/features/services/ui/schedule-selector'
 import styles from './ServiceFormPage.module.scss'
@@ -274,8 +277,7 @@ export function ServiceFormPage() {
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid}>
                         <FieldLabel htmlFor='iconBgColor'>
-                          배경색{' '}
-                          <span className={styles.labelRequired}>*</span>
+                          배경색 <span className={styles.labelRequired}>*</span>
                         </FieldLabel>
                         <ColorPicker
                           value={field.value}
@@ -395,11 +397,7 @@ export function ServiceFormPage() {
           >
             취소
           </Button>
-          <Button
-            type='button'
-            onClick={handleFormSubmit}
-            disabled={isPending}
-          >
+          <Button type='button' onClick={handleFormSubmit} disabled={isPending}>
             {isPending ? '저장 중...' : isEditMode ? '수정하기' : '추가하기'}
           </Button>
         </div>

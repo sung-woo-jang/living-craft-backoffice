@@ -1,6 +1,9 @@
-import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
+import { axiosInstance, ADMIN_API } from '@/shared/api'
 import { useStandardQuery } from '@/shared/hooks/custom-query'
-import type { ServiceAdminDetail, ServiceAdminListItem } from '@/shared/types/api'
+import type {
+  ServiceAdminDetail,
+  ServiceAdminListItem,
+} from '@/shared/types/api'
 
 /**
  * 서비스 목록 조회 (관리자용 - 간소화된 응답)
@@ -10,7 +13,7 @@ export function useServicesList() {
   return useStandardQuery<ServiceAdminListItem[]>({
     queryKey: ['admin', 'services', 'list'],
     queryFn: async () => {
-      const response = await axiosInstance.get<ApiResponse<ServiceAdminListItem[]>>(
+      const response = await axiosInstance.get<ServiceAdminListItem[]>(
         ADMIN_API.SERVICES.LIST
       )
       return response.data
@@ -27,7 +30,7 @@ export function useServiceDetail(id: number | string | undefined) {
     queryKey: ['admin', 'services', 'detail', id],
     queryFn: async () => {
       if (!id) throw new Error('서비스 ID가 필요합니다.')
-      const response = await axiosInstance.get<ApiResponse<ServiceAdminDetail>>(
+      const response = await axiosInstance.get<ServiceAdminDetail>(
         ADMIN_API.SERVICES.DETAIL(id)
       )
       return response.data

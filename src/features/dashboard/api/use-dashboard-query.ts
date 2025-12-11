@@ -1,4 +1,4 @@
-import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
+import { axiosInstance, ADMIN_API } from '@/shared/api'
 import { useStandardQuery } from '@/shared/hooks/custom-query'
 import type { DashboardStats } from '@/shared/types/api'
 
@@ -10,7 +10,7 @@ export function useDashboardStats() {
   return useStandardQuery<DashboardStats>({
     queryKey: ['admin', 'dashboard', 'stats'],
     queryFn: async () => {
-      const response = await axiosInstance.get<ApiResponse<DashboardStats>>(
+      const response = await axiosInstance.get<DashboardStats>(
         ADMIN_API.DASHBOARD.STATS
       )
       return response.data

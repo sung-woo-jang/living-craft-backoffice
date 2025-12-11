@@ -1,6 +1,6 @@
-import { useNavigate } from 'react-router-dom'
 import { Button } from '@/shared/ui/button'
 import { Plus } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { useServicesList } from '@/features/services/api/use-services-query'
 import { ServicesTable } from '@/features/services/ui/services-table'
 

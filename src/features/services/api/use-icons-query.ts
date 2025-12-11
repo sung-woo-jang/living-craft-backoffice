@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-
-import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
+import { axiosInstance, ADMIN_API } from '@/shared/api'
 import { useStandardQuery } from '@/shared/hooks/custom-query'
 import type { Icon, IconType } from '@/shared/types/api'
 
@@ -31,7 +30,7 @@ export function useIconsList(params?: UseIconsParams) {
         searchParams.toString() ? `?${searchParams.toString()}` : ''
       }`
 
-      const response = await axiosInstance.get<ApiResponse<Icon[]>>(url)
+      const response = await axiosInstance.get<Icon[]>(url)
       return response.data
     },
     staleTime: 60 * 1000, // 1분 캐싱 (아이콘은 자주 변경되지 않음)
@@ -69,7 +68,7 @@ export function useDebouncedIconsSearch(search: string, delay = 300) {
       searchParams.append('search', debouncedSearch)
 
       const url = `${ADMIN_API.ICONS.LIST}?${searchParams.toString()}`
-      const response = await axiosInstance.get<ApiResponse<Icon[]>>(url)
+      const response = await axiosInstance.get<Icon[]>(url)
       return response.data
     },
     staleTime: 30 * 1000, // 30초 캐싱
