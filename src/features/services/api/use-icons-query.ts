@@ -30,8 +30,8 @@ export function useIconsList(params?: UseIconsParams) {
         searchParams.toString() ? `?${searchParams.toString()}` : ''
       }`
 
-      const response = await axiosInstance.get<Icon[]>(url)
-      return response.data
+      const { data } = await axiosInstance.get<Icon[]>(url)
+      return data
     },
     staleTime: 60 * 1000, // 1분 캐싱 (아이콘은 자주 변경되지 않음)
   })
@@ -68,8 +68,8 @@ export function useDebouncedIconsSearch(search: string, delay = 300) {
       searchParams.append('search', debouncedSearch)
 
       const url = `${ADMIN_API.ICONS.LIST}?${searchParams.toString()}`
-      const response = await axiosInstance.get<Icon[]>(url)
-      return response.data
+      const { data } = await axiosInstance.get<Icon[]>(url)
+      return data
     },
     staleTime: 30 * 1000, // 30초 캐싱
     enabled: debouncedSearch.length >= 2, // 2글자 이상일 때만 활성화

@@ -9,10 +9,10 @@ export function useOperatingHours() {
   return useStandardQuery<OperatingHours>({
     queryKey: ['admin', 'settings', 'operating-hours'],
     queryFn: async () => {
-      const response = await axiosInstance.get<OperatingHours>(
+      const { data } = await axiosInstance.get<OperatingHours>(
         ADMIN_API.SETTINGS.OPERATING_HOURS.GET
       )
-      return response.data
+      return data
     },
   })
 }
@@ -24,10 +24,10 @@ export function useHolidays() {
   return useStandardQuery<Holiday[]>({
     queryKey: ['admin', 'settings', 'holidays'],
     queryFn: async () => {
-      const response = await axiosInstance.get<Holiday[]>(
+      const { data } = await axiosInstance.get<Holiday[]>(
         ADMIN_API.SETTINGS.HOLIDAYS.LIST
       )
-      return response.data
+      return data
     },
   })
 }

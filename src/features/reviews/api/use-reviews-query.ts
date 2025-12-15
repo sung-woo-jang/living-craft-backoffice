@@ -6,8 +6,8 @@ export function useReviewsList() {
   return useStandardQuery<Review[]>({
     queryKey: ['admin', 'reviews', 'list'],
     queryFn: async () => {
-      const response = await axiosInstance.get<Review[]>(ADMIN_API.REVIEWS.LIST)
-      return response.data
+      const { data } = await axiosInstance.get<Review[]>(ADMIN_API.REVIEWS.LIST)
+      return data
     },
   })
 }

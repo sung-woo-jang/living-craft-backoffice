@@ -6,10 +6,10 @@ export function usePortfoliosList() {
   return useStandardQuery<Portfolio[]>({
     queryKey: ['admin', 'portfolios', 'list'],
     queryFn: async () => {
-      const response = await axiosInstance.get<Portfolio[]>(
+      const { data } = await axiosInstance.get<Portfolio[]>(
         ADMIN_API.PORTFOLIOS.LIST
       )
-      return response.data
+      return data
     },
   })
 }

@@ -17,11 +17,11 @@ export function useUpdateServiceOrder() {
 
   return useStandardMutation<void, Error, UpdateServiceOrderRequest>({
     mutationFn: async (request) => {
-      const response = await axiosInstance.post<void>(
+      const { data } = await axiosInstance.post<void>(
         ADMIN_API.SERVICES.ORDER,
         request
       )
-      return response.data
+      return data
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'services'] })

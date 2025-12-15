@@ -16,11 +16,11 @@ export function useUpdateReservationStatus() {
     { id: string; status: ReservationStatus }
   >({
     mutationFn: async ({ id, status }) => {
-      const response = await axiosInstance.post<void>(
+      const { data } = await axiosInstance.post<void>(
         ADMIN_API.RESERVATIONS.STATUS(id),
         { status }
       )
-      return response.data
+      return data
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'reservations'] })
@@ -37,11 +37,11 @@ export function useCancelReservation() {
 
   return useStandardMutation<void, Error, { id: string; reason?: string }>({
     mutationFn: async ({ id, reason }) => {
-      const response = await axiosInstance.post<void>(
+      const { data } = await axiosInstance.post<void>(
         ADMIN_API.RESERVATIONS.CANCEL(id),
         { reason }
       )
-      return response.data
+      return data
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'reservations'] })

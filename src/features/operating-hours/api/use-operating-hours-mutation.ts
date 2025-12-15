@@ -11,12 +11,12 @@ export function useUpdateOperatingHours() {
   const queryClient = useQueryClient()
 
   return useStandardMutation<void, Error, OperatingHours>({
-    mutationFn: async (data) => {
-      const response = await axiosInstance.post<void>(
+    mutationFn: async (requestData) => {
+      const { data } = await axiosInstance.post<void>(
         ADMIN_API.SETTINGS.OPERATING_HOURS.UPDATE,
-        data
+        requestData
       )
-      return response.data
+      return data
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -34,12 +34,12 @@ export function useAddHoliday() {
   const queryClient = useQueryClient()
 
   return useStandardMutation<void, Error, { date: string; reason: string }>({
-    mutationFn: async (data) => {
-      const response = await axiosInstance.post<void>(
+    mutationFn: async (requestData) => {
+      const { data } = await axiosInstance.post<void>(
         ADMIN_API.SETTINGS.HOLIDAYS.CREATE,
-        data
+        requestData
       )
-      return response.data
+      return data
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -58,10 +58,10 @@ export function useDeleteHoliday() {
 
   return useStandardMutation<void, Error, string>({
     mutationFn: async (date) => {
-      const response = await axiosInstance.post<void>(
+      const { data } = await axiosInstance.post<void>(
         ADMIN_API.SETTINGS.HOLIDAYS.DELETE(date)
       )
-      return response.data
+      return data
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

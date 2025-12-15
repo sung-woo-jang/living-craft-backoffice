@@ -9,10 +9,10 @@ export function useReservationsList() {
   return useStandardQuery<Reservation[]>({
     queryKey: ['admin', 'reservations', 'list'],
     queryFn: async () => {
-      const response = await axiosInstance.get<Reservation[]>(
+      const { data } = await axiosInstance.get<Reservation[]>(
         ADMIN_API.RESERVATIONS.LIST
       )
-      return response.data
+      return data
     },
   })
 }
@@ -24,10 +24,10 @@ export function useReservationDetail(id: string) {
   return useStandardQuery<Reservation>({
     queryKey: ['admin', 'reservations', 'detail', id],
     queryFn: async () => {
-      const response = await axiosInstance.get<Reservation>(
+      const { data } = await axiosInstance.get<Reservation>(
         ADMIN_API.RESERVATIONS.DETAIL(id)
       )
-      return response.data
+      return data
     },
     enabled: !!id,
   })

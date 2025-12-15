@@ -13,10 +13,10 @@ export function useServicesList() {
   return useStandardQuery<ServiceAdminListItem[]>({
     queryKey: ['admin', 'services', 'list'],
     queryFn: async () => {
-      const response = await axiosInstance.get<ServiceAdminListItem[]>(
+      const { data } = await axiosInstance.get<ServiceAdminListItem[]>(
         ADMIN_API.SERVICES.LIST
       )
-      return response.data
+      return data
     },
   })
 }
@@ -30,10 +30,10 @@ export function useServiceDetail(id: number | string | undefined) {
     queryKey: ['admin', 'services', 'detail', id],
     queryFn: async () => {
       if (!id) throw new Error('서비스 ID가 필요합니다.')
-      const response = await axiosInstance.get<ServiceAdminDetail>(
+      const { data } = await axiosInstance.get<ServiceAdminDetail>(
         ADMIN_API.SERVICES.DETAIL(id)
       )
-      return response.data
+      return data
     },
     enabled: !!id,
   })

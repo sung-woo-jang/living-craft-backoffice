@@ -11,12 +11,12 @@ export function useCreateService() {
   const queryClient = useQueryClient()
 
   return useStandardMutation<void, Error, CreateServiceRequest>({
-    mutationFn: async (data) => {
-      const response = await axiosInstance.post<void>(
+    mutationFn: async (requestData) => {
+      const { data } = await axiosInstance.post<void>(
         ADMIN_API.SERVICES.CREATE,
-        data
+        requestData
       )
-      return response.data
+      return data
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'services'] })
@@ -33,12 +33,12 @@ export function useUpdateService() {
     Error,
     { id: string; data: UpdateServiceRequest }
   >({
-    mutationFn: async ({ id, data }) => {
-      const response = await axiosInstance.post<void>(
+    mutationFn: async ({ id, data: requestData }) => {
+      const { data } = await axiosInstance.post<void>(
         ADMIN_API.SERVICES.UPDATE(id),
-        data
+        requestData
       )
-      return response.data
+      return data
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'services'] })
@@ -52,10 +52,10 @@ export function useDeleteService() {
 
   return useStandardMutation<void, Error, string>({
     mutationFn: async (id) => {
-      const response = await axiosInstance.post<void>(
+      const { data } = await axiosInstance.post<void>(
         ADMIN_API.SERVICES.DELETE(id)
       )
-      return response.data
+      return data
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'services'] })
@@ -69,10 +69,10 @@ export function useToggleService() {
 
   return useStandardMutation<void, Error, string>({
     mutationFn: async (id) => {
-      const response = await axiosInstance.post<void>(
+      const { data } = await axiosInstance.post<void>(
         ADMIN_API.SERVICES.TOGGLE(id)
       )
-      return response.data
+      return data
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'services'] })

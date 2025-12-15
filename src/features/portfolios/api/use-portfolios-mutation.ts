@@ -8,10 +8,10 @@ export function useDeletePortfolio() {
 
   return useStandardMutation<void, Error, string>({
     mutationFn: async (id) => {
-      const response = await axiosInstance.post<void>(
+      const { data } = await axiosInstance.post<void>(
         ADMIN_API.PORTFOLIOS.DELETE(id)
       )
-      return response.data
+      return data
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'portfolios'] })

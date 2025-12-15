@@ -23,8 +23,8 @@ export function useDistricts(params?: UseDistrictsParams) {
 
       const url = `${ADMIN_API.DISTRICTS.LIST}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`
 
-      const response = await axiosInstance.get<District[]>(url)
-      return response.data
+      const { data } = await axiosInstance.get<District[]>(url)
+      return data
     },
   })
 }

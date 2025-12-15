@@ -6,10 +6,10 @@ export function useCustomersList() {
   return useStandardQuery<Customer[]>({
     queryKey: ['admin', 'customers', 'list'],
     queryFn: async () => {
-      const response = await axiosInstance.get<Customer[]>(
+      const { data } = await axiosInstance.get<Customer[]>(
         ADMIN_API.CUSTOMERS.LIST
       )
-      return response.data
+      return data
     },
   })
 }
@@ -18,10 +18,10 @@ export function useCustomerDetail(id: string) {
   return useStandardQuery<CustomerDetail>({
     queryKey: ['admin', 'customers', 'detail', id],
     queryFn: async () => {
-      const response = await axiosInstance.get<CustomerDetail>(
+      const { data } = await axiosInstance.get<CustomerDetail>(
         ADMIN_API.CUSTOMERS.DETAIL(id)
       )
-      return response.data
+      return data
     },
     enabled: !!id,
   })

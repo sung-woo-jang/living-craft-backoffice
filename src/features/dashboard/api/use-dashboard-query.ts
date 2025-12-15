@@ -10,10 +10,10 @@ export function useDashboardStats() {
   return useStandardQuery<DashboardStats>({
     queryKey: ['admin', 'dashboard', 'stats'],
     queryFn: async () => {
-      const response = await axiosInstance.get<DashboardStats>(
+      const { data } = await axiosInstance.get<DashboardStats>(
         ADMIN_API.DASHBOARD.STATS
       )
-      return response.data
+      return data
     },
     refetchInterval: 5000, // 5초마다 자동 갱신
   })
