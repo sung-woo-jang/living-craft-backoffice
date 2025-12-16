@@ -101,7 +101,7 @@ export const filmCuttingColumns: ColumnDef<CuttingProjectListItem>[] = [
       const value = row.getValue('wastePercentage') as number | null
       return (
         <div className={styles.centeredCell}>
-          {value !== null ? `${value.toFixed(1)}%` : '-'}
+          {typeof value === 'number' ? `${value.toFixed(1)}%` : '-'}
         </div>
       )
     },
@@ -117,7 +117,7 @@ export const filmCuttingColumns: ColumnDef<CuttingProjectListItem>[] = [
       const value = row.getValue('usedLength') as number | null
       return (
         <div className={styles.centeredCell}>
-          {value !== null ? `${value}mm` : '-'}
+          {typeof value === 'number' ? `${value}mm` : '-'}
         </div>
       )
     },

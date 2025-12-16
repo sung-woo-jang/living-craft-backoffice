@@ -121,6 +121,9 @@ export function formatCurrency(amount: number): string {
  * 퍼센트 포맷 (예: 85.5%)
  */
 export function formatPercent(value: number, decimals = 1): string {
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    return '-'
+  }
   return `${value.toFixed(decimals)}%`
 }
 
@@ -128,6 +131,9 @@ export function formatPercent(value: number, decimals = 1): string {
  * 평점 포맷 (예: 4.5 / 5.0)
  */
 export function formatRating(rating: number): string {
+  if (typeof rating !== 'number' || !Number.isFinite(rating)) {
+    return '- / 5.0'
+  }
   return `${rating.toFixed(1)} / 5.0`
 }
 

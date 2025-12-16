@@ -31,16 +31,28 @@ export function StatsCards({ stats }: StatsCardsProps) {
       />
       <MetricCard
         title='평균 평점'
-        value={`${stats.averageRating.value.toFixed(1)} / 5.0`}
+        value={
+          typeof stats.averageRating.value === 'number'
+            ? `${stats.averageRating.value.toFixed(1)} / 5.0`
+            : '- / 5.0'
+        }
         description={`총 ${stats.averageRating.totalReviews}개의 리뷰`}
         icon={Star}
       />
       <MetricCard
         title='완료율'
-        value={`${stats.completionRate.percentage.toFixed(1)}%`}
+        value={
+          typeof stats.completionRate.percentage === 'number'
+            ? `${stats.completionRate.percentage.toFixed(1)}%`
+            : '-%'
+        }
         description={`${stats.completionRate.completed} / ${stats.completionRate.total} 건 완료`}
         icon={CheckCircle2}
-        progress={stats.completionRate.percentage}
+        progress={
+          typeof stats.completionRate.percentage === 'number'
+            ? stats.completionRate.percentage
+            : 0
+        }
       />
     </div>
   )

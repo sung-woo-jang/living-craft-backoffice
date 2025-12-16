@@ -127,7 +127,7 @@ export async function exportToPdf(
       yOffset += 6
     }
 
-    if (options?.wastePercentage !== undefined) {
+    if (typeof options?.wastePercentage === 'number') {
       pdf.setFontSize(10)
       pdf.text(
         `손실율: ${options.wastePercentage.toFixed(2)}%`,
@@ -137,7 +137,7 @@ export async function exportToPdf(
       yOffset += 5
     }
 
-    if (options?.usedLength !== undefined) {
+    if (typeof options?.usedLength === 'number') {
       pdf.setFontSize(10)
       pdf.text(`사용 길이: ${options.usedLength}mm`, margin, yOffset)
       yOffset += 5
