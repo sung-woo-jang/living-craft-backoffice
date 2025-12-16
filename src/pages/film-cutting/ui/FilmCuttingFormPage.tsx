@@ -67,27 +67,16 @@ export function FilmCuttingFormPage() {
   // 선택된 필름 정보
   const selectedFilm = useMemo(() => {
     if (!films?.data) return undefined
-    const filmList = films.data as unknown as Array<{
-      id: number
-      name: string
-      width: number
-      length: number
-    }>
-    return filmList.find((f) => f.id.toString() === selectedFilmId)
+    return films.data.find((f) => f.id.toString() === selectedFilmId)
   }, [films, selectedFilmId])
 
   // 프로젝트 데이터 로드 시 상태 초기화
   useEffect(() => {
     if (projectDetail?.data) {
-      const detail = projectDetail.data as unknown as {
-        name: string
-        filmId: number
-        allowRotation: boolean
-        pieces: CuttingPiece[]
-      }
+      const detail = projectDetail.data
       startTransition(() => {
         setProjectName(detail.name)
-        setSelectedFilmId(detail.filmId.toString())
+        setSelectedFilmId(detail.film.id.toString())
         setAllowRotation(detail.allowRotation)
         setLocalPieces(detail.pieces)
       })
@@ -302,14 +291,7 @@ export function FilmCuttingFormPage() {
                     <SelectValue placeholder='필름을 선택하세요' />
                   </SelectTrigger>
                   <SelectContent>
-                    {(
-                      films?.data as unknown as Array<{
-                        id: number
-                        name: string
-                        width: number
-                        length: number
-                      }>
-                    )?.map((film) => (
+                    {films?.data?.map((film) => (
                       <SelectItem key={film.id} value={film.id.toString()}>
                         {film.name} ({film.width}mm × {film.length}mm)
                       </SelectItem>

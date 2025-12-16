@@ -606,7 +606,6 @@ export interface CuttingProjectFilmInfo {
 export interface CuttingProjectDetail {
   id: number
   name: string
-  filmId: number
   allowRotation: boolean
   wastePercentage: number | null
   usedLength: number | null
