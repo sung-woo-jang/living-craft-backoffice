@@ -14,6 +14,7 @@ import {
   Star,
   UserCircle,
   Clock,
+  Scissors,
 } from 'lucide-react'
 
 export const sidebarData: SidebarData = {
@@ -62,6 +63,11 @@ export const sidebarData: SidebarData = {
           title: '고객 관리',
           url: '/customers',
           icon: UserCircle,
+        },
+        {
+          title: '필름 재단',
+          url: '/film-cutting',
+          icon: Scissors,
         },
       ],
     },

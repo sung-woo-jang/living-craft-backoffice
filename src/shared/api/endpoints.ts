@@ -85,6 +85,41 @@ export const ADMIN_API = {
   UPLOAD: {
     IMAGE: '/upload',
   },
+
+  // 필름 재단 최적화
+  FILM_OPTIMIZER: {
+    // 필름지 관리
+    FILMS: {
+      LIST: '/admin/film-optimizer/films',
+      CREATE: '/admin/film-optimizer/films',
+      DETAIL: (id: number | string) => `/admin/film-optimizer/films/${id}`,
+      UPDATE: (id: number | string) =>
+        `/admin/film-optimizer/films/${id}/update`,
+      DELETE: (id: number | string) =>
+        `/admin/film-optimizer/films/${id}/delete`,
+    },
+    // 재단 프로젝트 관리
+    PROJECTS: {
+      LIST: '/admin/film-optimizer/projects',
+      CREATE: '/admin/film-optimizer/projects',
+      DETAIL: (id: number | string) => `/admin/film-optimizer/projects/${id}`,
+      UPDATE: (id: number | string) =>
+        `/admin/film-optimizer/projects/${id}/update`,
+      DELETE: (id: number | string) =>
+        `/admin/film-optimizer/projects/${id}/delete`,
+    },
+    // 재단 조각 관리
+    PIECES: {
+      ADD: (projectId: number | string) =>
+        `/admin/film-optimizer/projects/${projectId}/pieces`,
+      UPDATE: (projectId: number | string, pieceId: number | string) =>
+        `/admin/film-optimizer/projects/${projectId}/pieces/${pieceId}/update`,
+      DELETE: (projectId: number | string, pieceId: number | string) =>
+        `/admin/film-optimizer/projects/${projectId}/pieces/${pieceId}/delete`,
+      TOGGLE_COMPLETE: (projectId: number | string, pieceId: number | string) =>
+        `/admin/film-optimizer/projects/${projectId}/pieces/${pieceId}/toggle-complete`,
+    },
+  },
 } as const
 
 // ===== 고객용 API (참고용, 백오피스에서는 사용하지 않음) =====

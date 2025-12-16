@@ -1,6 +1,7 @@
 import { AuthenticatedLayout, RootLayout } from '@/app/layout'
 import { CustomersPage } from '@/pages/customers'
 import { Dashboard } from '@/pages/dashboard'
+import { FilmCuttingFormPage, FilmCuttingPage } from '@/pages/film-cutting'
 import { PortfoliosPage } from '@/pages/portfolios'
 import { ReservationsPage } from '@/pages/reservations'
 import { ReviewsPage } from '@/pages/reviews'
@@ -64,6 +65,18 @@ export const router = createBrowserRouter([
           {
             path: 'customers',
             element: <CustomersPage />,
+          },
+          {
+            path: 'film-cutting',
+            element: <FilmCuttingPage />,
+          },
+          {
+            path: 'film-cutting/new',
+            element: <FilmCuttingFormPage />,
+          },
+          {
+            path: 'film-cutting/:id',
+            element: <FilmCuttingFormPage />,
           },
           {
             path: 'settings/operating',
