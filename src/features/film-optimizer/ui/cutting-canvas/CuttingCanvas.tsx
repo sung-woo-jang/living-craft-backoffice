@@ -98,10 +98,11 @@ export const CuttingCanvas = forwardRef<CuttingCanvasRef, CuttingCanvasProps>(
         }
       }, [packingResult, filmWidth, scale])
 
-    // 조각 렌더링
+    // 조각 렌더링 (아래→위 방향으로 채움)
     const renderedPieces = useMemo(() => {
       if (!packingResult) return null
 
+      const usedLength = packingResult.usedLength
       let yOffset = 0
       const pieces: React.ReactElement[] = []
 
@@ -116,6 +117,7 @@ export const CuttingCanvas = forwardRef<CuttingCanvasRef, CuttingCanvasProps>(
               key={`${binIndex}-${rectIndex}`}
               rect={rect}
               yOffset={yOffset}
+              usedLength={usedLength}
               index={globalIndex + 1}
               color={color}
               isCompleted={isCompleted}
@@ -164,12 +166,12 @@ export const CuttingCanvas = forwardRef<CuttingCanvasRef, CuttingCanvasProps>(
             strokeWidth={2}
           />
 
-          {/* 사용 길이 표시선 (조각들 아래에 렌더링) */}
+          {/* 사용 길이 표시선 (위쪽 - 여기까지 소비됨) */}
           <line
             x1={0}
-            y1={packingResult.usedLength}
+            y1={0}
             x2={filmWidth}
-            y2={packingResult.usedLength}
+            y2={0}
             stroke="#ef4444"
             strokeWidth={2}
             strokeDasharray="10,5"
@@ -203,6 +205,7 @@ export const CuttingCanvas = forwardRef<CuttingCanvasRef, CuttingCanvasProps>(
 interface PieceRectProps {
   rect: PackedRect
   yOffset: number
+  usedLength: number
   index: number
   color: string
   isCompleted: boolean
@@ -212,14 +215,17 @@ interface PieceRectProps {
 function PieceRect({
   rect,
   yOffset,
+  usedLength,
   index,
   color,
   isCompleted,
   onClick,
 }: PieceRectProps) {
   const x = rect.x
-  const y = rect.y + yOffset
   const { width, height, rotated, label } = rect
+  // y좌표 반전: 아래(바닥)부터 위로 채움
+  const originalY = rect.y + yOffset
+  const y = usedLength - originalY - height
 
   // 라벨 텍스트
   const displayLabel = label || `#${index}`

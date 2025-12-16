@@ -1,9 +1,8 @@
-import { useRef, useState, useMemo, useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useRef, useState, useMemo, useEffect, startTransition } from 'react'
+import type { CuttingPiece, CuttingPieceInput } from '@/shared/types/api'
 import { Button } from '@/shared/ui/button'
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
-import { Switch } from '@/shared/ui/switch'
 import {
   Select,
   SelectContent,
@@ -11,7 +10,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/ui/select'
+import { Switch } from '@/shared/ui/switch'
 import { List, Plus } from 'lucide-react'
+import { useNavigate, useParams } from 'react-router-dom'
 import {
   useFilmsList,
   useCuttingProjectDetail,
@@ -21,6 +22,7 @@ import {
   useDeletePiece,
   useTogglePieceComplete,
 } from '@/features/film-optimizer/api'
+import { useBinPacker } from '@/features/film-optimizer/model'
 import {
   CuttingCanvas,
   PiecesInput,
@@ -30,8 +32,6 @@ import {
   CreateFilmDialog,
   type CuttingCanvasRef,
 } from '@/features/film-optimizer/ui'
-import { useBinPacker } from '@/features/film-optimizer/model'
-import type { CuttingPiece, CuttingPieceInput } from '@/shared/types/api'
 import styles from './FilmCuttingFormPage.module.scss'
 
 /**
@@ -85,10 +85,12 @@ export function FilmCuttingFormPage() {
         allowRotation: boolean
         pieces: CuttingPiece[]
       }
-      setProjectName(detail.name)
-      setSelectedFilmId(detail.filmId.toString())
-      setAllowRotation(detail.allowRotation)
-      setLocalPieces(detail.pieces)
+      startTransition(() => {
+        setProjectName(detail.name)
+        setSelectedFilmId(detail.filmId.toString())
+        setAllowRotation(detail.allowRotation)
+        setLocalPieces(detail.pieces)
+      })
     }
   }, [projectDetail])
 
@@ -230,9 +232,7 @@ export function FilmCuttingFormPage() {
   }
 
   const isPending =
-    createProject.isPending ||
-    updateProject.isPending ||
-    addPieces.isPending
+    createProject.isPending || updateProject.isPending || addPieces.isPending
 
   const isLoading = filmsLoading || (isEditMode && projectLoading)
 
@@ -261,10 +261,13 @@ export function FilmCuttingFormPage() {
           </p>
         </div>
         <div className={styles.headerActions}>
-          <Button variant="outline" onClick={handleCancel} disabled={isPending}>
+          <Button variant='outline' onClick={handleCancel} disabled={isPending}>
             취소
           </Button>
-          <Button onClick={handleSave} disabled={isPending || !projectName || !selectedFilmId}>
+          <Button
+            onClick={handleSave}
+            disabled={isPending || !projectName || !selectedFilmId}
+          >
             {isPending ? '저장 중...' : '저장'}
           </Button>
         </div>
@@ -279,32 +282,34 @@ export function FilmCuttingFormPage() {
             <h3 className={styles.sectionTitle}>프로젝트 설정</h3>
 
             <div className={styles.formGroup}>
-              <Label htmlFor="projectName">프로젝트명 *</Label>
+              <Label htmlFor='projectName'>프로젝트명 *</Label>
               <Input
-                id="projectName"
+                id='projectName'
                 value={projectName}
                 onChange={(e) => setProjectName(e.target.value)}
-                placeholder="예: 거실 리모델링"
+                placeholder='예: 거실 리모델링'
               />
             </div>
 
             <div className={styles.formGroup}>
-              <Label htmlFor="film">필름 선택 *</Label>
+              <Label htmlFor='film'>필름 선택 *</Label>
               <div className={styles.filmSelectRow}>
                 <Select
                   value={selectedFilmId}
                   onValueChange={setSelectedFilmId}
                 >
                   <SelectTrigger className={styles.filmSelect}>
-                    <SelectValue placeholder="필름을 선택하세요" />
+                    <SelectValue placeholder='필름을 선택하세요' />
                   </SelectTrigger>
                   <SelectContent>
-                    {(films?.data as unknown as Array<{
-                      id: number
-                      name: string
-                      width: number
-                      length: number
-                    }>)?.map((film) => (
+                    {(
+                      films?.data as unknown as Array<{
+                        id: number
+                        name: string
+                        width: number
+                        length: number
+                      }>
+                    )?.map((film) => (
                       <SelectItem key={film.id} value={film.id.toString()}>
                         {film.name} ({film.width}mm × {film.length}mm)
                       </SelectItem>
@@ -312,27 +317,26 @@ export function FilmCuttingFormPage() {
                   </SelectContent>
                 </Select>
                 <Button
-                  variant="outline"
-                  size="sm"
+                  variant='outline'
+                  size='sm'
                   onClick={() => setCreateFilmDialogOpen(true)}
                   disabled={isPending}
                   className={styles.addFilmButton}
                 >
-                  <Plus className="h-4 w-4" />
-                  새 필름
+                  <Plus className='h-4 w-4' />새 필름
                 </Button>
               </div>
             </div>
 
             <div className={styles.switchGroup}>
               <div className={styles.switchInfo}>
-                <Label htmlFor="allowRotation">회전 허용</Label>
+                <Label htmlFor='allowRotation'>회전 허용</Label>
                 <p className={styles.switchDescription}>
                   조각을 90도 회전하여 배치할 수 있습니다
                 </p>
               </div>
               <Switch
-                id="allowRotation"
+                id='allowRotation'
                 checked={allowRotation}
                 onCheckedChange={setAllowRotation}
               />
@@ -344,11 +348,11 @@ export function FilmCuttingFormPage() {
             <div className={styles.sectionHeader}>
               <h3 className={styles.sectionTitle}>조각 추가</h3>
               <Button
-                variant="outline"
-                size="sm"
+                variant='outline'
+                size='sm'
                 onClick={() => setBulkInputOpen(true)}
               >
-                <List className="h-4 w-4" />
+                <List className='h-4 w-4' />
                 일괄 입력
               </Button>
             </div>
