@@ -16,3 +16,9 @@ export { AxiosInterceptor } from './AxiosInterceptor'
 
 // 엔드포인트 내보내기
 export { AUTH_API, ADMIN_API, PUBLIC_API } from './endpoints'
+
+// QueryKey 팩토리 함수 내보내기
+export {
+  createQueryKeyFactory,
+  generateQueryKeysFromUrl,
+} from './query-key-factory'
