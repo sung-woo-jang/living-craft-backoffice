@@ -1,7 +1,7 @@
-import { Checkbox } from '@/shared/ui/checkbox'
-import { Button } from '@/shared/ui/button'
-import { Trash2 } from 'lucide-react'
 import type { CuttingPiece } from '@/shared/types/api'
+import { Button } from '@/shared/ui/button'
+import { Checkbox } from '@/shared/ui/checkbox'
+import { Trash2 } from 'lucide-react'
 import styles from './styles.module.scss'
 
 interface PiecesTableProps {
@@ -87,9 +87,7 @@ export function PiecesTable({
                 </td>
                 <td className={styles.tdCenter}>{piece.quantity}</td>
                 <td className={styles.labelCell}>
-                  {piece.label || (
-                    <span className={styles.emptyLabel}>-</span>
-                  )}
+                  {piece.label || <span className={styles.emptyLabel}>-</span>}
                 </td>
                 <td className={styles.tdCenter}>
                   <Checkbox
@@ -101,14 +99,14 @@ export function PiecesTable({
                 </td>
                 <td className={styles.tdCenter}>
                   <Button
-                    variant="ghost"
-                    size="icon"
+                    variant='ghost'
+                    size='icon'
                     onClick={() => onDelete?.(piece.id)}
                     disabled={disabled || deletingId === piece.id}
                     className={styles.deleteButton}
                     aria-label={`${piece.label || `조각 ${index + 1}`} 삭제`}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className='h-4 w-4' />
                   </Button>
                 </td>
               </tr>

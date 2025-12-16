@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Button } from '@/shared/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -7,7 +8,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/shared/ui/dialog'
-import { Button } from '@/shared/ui/button'
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
 import { Textarea } from '@/shared/ui/textarea'
@@ -121,56 +121,52 @@ export function CreateFilmDialog({
         <div className={styles.content}>
           {/* 필름 이름 (필수) */}
           <div className={styles.formGroup}>
-            <Label htmlFor="filmName">필름 이름 *</Label>
+            <Label htmlFor='filmName'>필름 이름 *</Label>
             <Input
-              id="filmName"
+              id='filmName'
               value={name}
               onChange={(e) => {
                 setName(e.target.value)
                 setErrors((prev) => ({ ...prev, name: '' }))
               }}
-              placeholder="예: 표준 인테리어 필름"
+              placeholder='예: 표준 인테리어 필름'
               disabled={disabled || createFilm.isPending}
               className={errors.name ? styles.inputError : ''}
             />
-            {errors.name && (
-              <p className={styles.errorText}>{errors.name}</p>
-            )}
+            {errors.name && <p className={styles.errorText}>{errors.name}</p>}
           </div>
 
           {/* 너비 (선택) */}
           <div className={styles.formGroup}>
-            <Label htmlFor="filmWidth">너비 (mm)</Label>
+            <Label htmlFor='filmWidth'>너비 (mm)</Label>
             <Input
-              id="filmWidth"
-              type="number"
+              id='filmWidth'
+              type='number'
               value={width}
               onChange={(e) => {
                 setWidth(e.target.value)
                 setErrors((prev) => ({ ...prev, width: '' }))
               }}
-              placeholder="1220"
+              placeholder='1220'
               disabled={disabled || createFilm.isPending}
               className={errors.width ? styles.inputError : ''}
             />
-            {errors.width && (
-              <p className={styles.errorText}>{errors.width}</p>
-            )}
+            {errors.width && <p className={styles.errorText}>{errors.width}</p>}
             <p className={styles.hint}>기본값: 1220mm</p>
           </div>
 
           {/* 길이 (선택) */}
           <div className={styles.formGroup}>
-            <Label htmlFor="filmLength">길이 (mm)</Label>
+            <Label htmlFor='filmLength'>길이 (mm)</Label>
             <Input
-              id="filmLength"
-              type="number"
+              id='filmLength'
+              type='number'
               value={length}
               onChange={(e) => {
                 setLength(e.target.value)
                 setErrors((prev) => ({ ...prev, length: '' }))
               }}
-              placeholder="60000"
+              placeholder='60000'
               disabled={disabled || createFilm.isPending}
               className={errors.length ? styles.inputError : ''}
             />
@@ -182,15 +178,15 @@ export function CreateFilmDialog({
 
           {/* 설명 (선택) */}
           <div className={styles.formGroup}>
-            <Label htmlFor="filmDescription">설명 (선택)</Label>
+            <Label htmlFor='filmDescription'>설명 (선택)</Label>
             <Textarea
-              id="filmDescription"
+              id='filmDescription'
               value={description}
               onChange={(e) => {
                 setDescription(e.target.value)
                 setErrors((prev) => ({ ...prev, description: '' }))
               }}
-              placeholder="필름에 대한 추가 정보를 입력하세요"
+              placeholder='필름에 대한 추가 정보를 입력하세요'
               rows={3}
               disabled={disabled || createFilm.isPending}
               className={errors.description ? styles.inputError : ''}
@@ -203,7 +199,7 @@ export function CreateFilmDialog({
 
         <DialogFooter>
           <Button
-            variant="outline"
+            variant='outline'
             onClick={handleClose}
             disabled={disabled || createFilm.isPending}
           >

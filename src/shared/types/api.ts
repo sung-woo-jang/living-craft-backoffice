@@ -491,7 +491,7 @@ export interface FilmListItem {
  * 필름지 상세 정보
  * GET /api/admin/film-optimizer/films/:id 응답
  */
-export interface FilmDetail extends FilmListItem {}
+export type FilmDetail = FilmListItem
 
 /**
  * 필름지 생성 요청

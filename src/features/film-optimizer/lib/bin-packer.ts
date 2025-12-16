@@ -1,10 +1,10 @@
-import { MaxRectsPacker, Rectangle } from 'maxrects-packer'
 import type {
   CuttingPiece,
   PackedBin,
   PackedRect,
   PackingResult,
 } from '@/shared/types/api'
+import { MaxRectsPacker, Rectangle } from 'maxrects-packer'
 
 /**
  * 패킹 입력 아이템
@@ -65,13 +65,18 @@ export function packPieces(
   // MaxRectsPacker 인스턴스 생성
   // 주의: maxrects-packer는 width가 가로, height가 세로
   // 우리의 경우 필름 폭이 고정이므로 width=filmWidth, height=filmMaxLength
-  const packer = new MaxRectsPacker<Rectangle>(filmWidth, filmMaxLength, padding, {
-    smart: true, // 스마트 패킹 활성화
-    pot: false, // Power of Two 비활성화
-    square: false, // 정사각형 강제 비활성화
-    allowRotation, // 회전 허용 여부
-    tag: false, // 태그 사용 안 함
-  })
+  const packer = new MaxRectsPacker<Rectangle>(
+    filmWidth,
+    filmMaxLength,
+    padding,
+    {
+      smart: true, // 스마트 패킹 활성화
+      pot: false, // Power of Two 비활성화
+      square: false, // 정사각형 강제 비활성화
+      allowRotation, // 회전 허용 여부
+      tag: false, // 태그 사용 안 함
+    }
+  )
 
   // 아이템 추가
   const rectangles: Rectangle[] = items.map((item, index) => {

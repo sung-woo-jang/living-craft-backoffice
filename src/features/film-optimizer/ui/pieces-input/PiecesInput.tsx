@@ -1,9 +1,9 @@
 import { useState } from 'react'
+import type { CuttingPieceInput } from '@/shared/types/api'
 import { Button } from '@/shared/ui/button'
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
 import { Plus } from 'lucide-react'
-import type { CuttingPieceInput } from '@/shared/types/api'
 import styles from './styles.module.scss'
 
 interface PiecesInputProps {
@@ -57,7 +57,9 @@ export function PiecesInput({
     // 필름 폭 초과 검사 (회전을 고려하여 작은 쪽이 폭보다 작으면 OK)
     const minDim = Math.min(w, h)
     if (minDim > filmWidth) {
-      setError(`조각의 최소 치수(${minDim}mm)가 필름 폭(${filmWidth}mm)을 초과합니다.`)
+      setError(
+        `조각의 최소 치수(${minDim}mm)가 필름 폭(${filmWidth}mm)을 초과합니다.`
+      )
       return
     }
 
@@ -79,13 +81,13 @@ export function PiecesInput({
       <div className={styles.inputGroup}>
         <div className={styles.inputRow}>
           <div className={styles.inputField}>
-            <Label htmlFor="piece-width" className={styles.label}>
+            <Label htmlFor='piece-width' className={styles.label}>
               폭 (mm)
             </Label>
             <Input
-              id="piece-width"
-              type="number"
-              placeholder="500"
+              id='piece-width'
+              type='number'
+              placeholder='500'
               value={width}
               onChange={(e) => setWidth(e.target.value)}
               disabled={disabled}
@@ -95,13 +97,13 @@ export function PiecesInput({
           </div>
           <span className={styles.separator}>×</span>
           <div className={styles.inputField}>
-            <Label htmlFor="piece-height" className={styles.label}>
+            <Label htmlFor='piece-height' className={styles.label}>
               높이 (mm)
             </Label>
             <Input
-              id="piece-height"
-              type="number"
-              placeholder="400"
+              id='piece-height'
+              type='number'
+              placeholder='400'
               value={height}
               onChange={(e) => setHeight(e.target.value)}
               disabled={disabled}
@@ -113,13 +115,13 @@ export function PiecesInput({
 
         <div className={styles.inputRow}>
           <div className={styles.inputFieldSmall}>
-            <Label htmlFor="piece-quantity" className={styles.label}>
+            <Label htmlFor='piece-quantity' className={styles.label}>
               수량
             </Label>
             <Input
-              id="piece-quantity"
-              type="number"
-              placeholder="1"
+              id='piece-quantity'
+              type='number'
+              placeholder='1'
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
               disabled={disabled}
@@ -127,13 +129,13 @@ export function PiecesInput({
             />
           </div>
           <div className={styles.inputFieldWide}>
-            <Label htmlFor="piece-label" className={styles.label}>
+            <Label htmlFor='piece-label' className={styles.label}>
               라벨 (선택)
             </Label>
             <Input
-              id="piece-label"
-              type="text"
-              placeholder="예: 문짝 상단"
+              id='piece-label'
+              type='text'
+              placeholder='예: 문짝 상단'
               value={label}
               onChange={(e) => setLabel(e.target.value)}
               disabled={disabled}
@@ -145,8 +147,8 @@ export function PiecesInput({
 
       {error && <p className={styles.error}>{error}</p>}
 
-      <Button type="submit" disabled={disabled} className={styles.addButton}>
-        <Plus className="h-4 w-4" />
+      <Button type='submit' disabled={disabled} className={styles.addButton}>
+        <Plus className='h-4 w-4' />
         조각 추가
       </Button>
     </form>

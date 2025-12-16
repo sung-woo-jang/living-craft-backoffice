@@ -59,8 +59,7 @@ export function useBinPacker(
 
     try {
       return calculatePackingResult(pieces, packerOptions)
-    } catch (error) {
-      console.error('패킹 계산 실패:', error)
+    } catch {
       return null
     }
   }, [pieces, filmWidth, filmMaxLength, allowRotation, padding])

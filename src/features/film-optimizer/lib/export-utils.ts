@@ -62,8 +62,7 @@ export async function exportToPng(
     link.href = dataUrl
     link.click()
   } catch (error) {
-    console.error('PNG 내보내기 실패:', error)
-    throw new Error('PNG 내보내기에 실패했습니다.')
+    throw new Error(`${error} PNG 내보내기에 실패했습니다.`)
   }
 }
 
@@ -130,7 +129,11 @@ export async function exportToPdf(
 
     if (options?.wastePercentage !== undefined) {
       pdf.setFontSize(10)
-      pdf.text(`손실율: ${options.wastePercentage.toFixed(2)}%`, margin, yOffset)
+      pdf.text(
+        `손실율: ${options.wastePercentage.toFixed(2)}%`,
+        margin,
+        yOffset
+      )
       yOffset += 5
     }
 
@@ -149,7 +152,11 @@ export async function exportToPdf(
     inlineStyles(svgElement, svgClone)
 
     // SVG를 PDF에 렌더링
-    await (pdf as unknown as { svg: (svg: SVGElement, options: object) => Promise<unknown> }).svg(svgClone, {
+    await (
+      pdf as unknown as {
+        svg: (svg: SVGElement, options: object) => Promise<unknown>
+      }
+    ).svg(svgClone, {
       x: margin,
       y: yOffset,
       width: scaledWidth,
@@ -159,8 +166,7 @@ export async function exportToPdf(
     // PDF 다운로드
     pdf.save(`${filename}.pdf`)
   } catch (error) {
-    console.error('PDF 내보내기 실패:', error)
-    throw new Error('PDF 내보내기에 실패했습니다.')
+    throw new Error(`PDF 내보내기에 실패했습니다. ${error}`)
   }
 }
 

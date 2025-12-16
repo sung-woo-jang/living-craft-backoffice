@@ -2,7 +2,11 @@ import { useState } from 'react'
 import { Button } from '@/shared/ui/button'
 import { Image, FileText } from 'lucide-react'
 import { toast } from 'sonner'
-import { exportToPng, exportToPdf, generateFilename } from '../../lib/export-utils'
+import {
+  exportToPng,
+  exportToPdf,
+  generateFilename,
+} from '../../lib/export-utils'
 import type { CuttingCanvasRef } from '../cutting-canvas'
 import styles from './styles.module.scss'
 
@@ -80,21 +84,21 @@ export function ExportButtons({
   return (
     <div className={styles.container}>
       <Button
-        variant="outline"
-        size="sm"
+        variant='outline'
+        size='sm'
         onClick={handleExportPng}
         disabled={disabled || isExporting !== null}
       >
-        <Image className="h-4 w-4" />
+        <Image className='h-4 w-4' />
         {isExporting === 'png' ? '저장 중...' : 'PNG'}
       </Button>
       <Button
-        variant="outline"
-        size="sm"
+        variant='outline'
+        size='sm'
         onClick={handleExportPdf}
         disabled={disabled || isExporting !== null}
       >
-        <FileText className="h-4 w-4" />
+        <FileText className='h-4 w-4' />
         {isExporting === 'pdf' ? '저장 중...' : 'PDF'}
       </Button>
     </div>

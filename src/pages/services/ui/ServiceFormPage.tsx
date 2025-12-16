@@ -75,17 +75,15 @@ export function ServiceFormPage() {
   const [iconSearchQuery, setIconSearchQuery] = useState('')
   const { data: iconsResponse, isLoading: iconsLoading } =
     useDebouncedIconsSearch(iconSearchQuery)
-  const icons = iconsResponse?.data ?? []
 
   // Combobox용 데이터 변환
-  const iconData = useMemo(
-    () =>
-      icons.slice(0, 100).map((icon) => ({
-        label: icon.name,
-        value: icon.name,
-      })),
-    [icons]
-  )
+  const iconData = useMemo(() => {
+    const icons = iconsResponse?.data ?? []
+    return icons.slice(0, 100).map((icon) => ({
+      label: icon.name,
+      value: icon.name,
+    }))
+  }, [iconsResponse?.data])
 
   const onSubmit = async (data: ServiceFormValues) => {
     try {

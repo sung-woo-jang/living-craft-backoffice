@@ -161,8 +161,8 @@ export const CuttingCanvas = forwardRef<CuttingCanvasRef, CuttingCanvasProps>(
             y={0}
             width={filmWidth}
             height={packingResult.usedLength}
-            fill="#f3f4f6"
-            stroke="#d1d5db"
+            fill='#f3f4f6'
+            stroke='#d1d5db'
             strokeWidth={2}
           />
 
@@ -172,9 +172,9 @@ export const CuttingCanvas = forwardRef<CuttingCanvasRef, CuttingCanvasProps>(
             y1={0}
             x2={filmWidth}
             y2={0}
-            stroke="#ef4444"
+            stroke='#ef4444'
             strokeWidth={2}
-            strokeDasharray="10,5"
+            strokeDasharray='10,5'
           />
 
           {/* 조각들 */}
@@ -262,8 +262,8 @@ function PieceRect({
           x={x + width / 2}
           y={y + height / 2 - (canFitSize ? 30 : 0)}
           className={styles.pieceLabel}
-          textAnchor="middle"
-          dominantBaseline="middle"
+          textAnchor='middle'
+          dominantBaseline='middle'
         >
           {displayLabel}
         </text>
@@ -275,8 +275,8 @@ function PieceRect({
           x={x + width / 2}
           y={y + height / 2 + 40}
           className={styles.pieceSize}
-          textAnchor="middle"
-          dominantBaseline="middle"
+          textAnchor='middle'
+          dominantBaseline='middle'
         >
           {sizeText}
         </text>
@@ -288,8 +288,8 @@ function PieceRect({
           x={x + width - 15}
           y={y + 15}
           className={styles.checkMark}
-          textAnchor="middle"
-          dominantBaseline="middle"
+          textAnchor='middle'
+          dominantBaseline='middle'
         >
           ✓
         </text>

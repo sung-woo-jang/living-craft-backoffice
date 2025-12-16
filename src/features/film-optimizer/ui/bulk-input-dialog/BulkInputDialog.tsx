@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import type { CuttingPieceInput } from '@/shared/types/api'
+import { Alert, AlertDescription } from '@/shared/ui/alert'
+import { Button } from '@/shared/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -7,11 +10,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/shared/ui/dialog'
-import { Button } from '@/shared/ui/button'
 import { Textarea } from '@/shared/ui/textarea'
-import { Alert, AlertDescription } from '@/shared/ui/alert'
 import { AlertCircle } from 'lucide-react'
-import type { CuttingPieceInput } from '@/shared/types/api'
 import { parsePiecesInput } from '../../lib/parse-pieces-input'
 import styles from './styles.module.scss'
 
@@ -92,8 +92,8 @@ export function BulkInputDialog({
               예: <code>500x400 x3 창문틀</code> → 500×400mm, 3개, 라벨 "창문틀"
             </p>
             <Button
-              variant="outline"
-              size="sm"
+              variant='outline'
+              size='sm'
               onClick={handlePasteExample}
               className={styles.exampleButton}
             >
@@ -114,8 +114,8 @@ export function BulkInputDialog({
           />
 
           {errors.length > 0 && (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
+            <Alert variant='destructive'>
+              <AlertCircle className='h-4 w-4' />
               <AlertDescription>
                 <ul className={styles.errorList}>
                   {errors.map((error, index) => (
@@ -128,7 +128,7 @@ export function BulkInputDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={handleClose} disabled={disabled}>
+          <Button variant='outline' onClick={handleClose} disabled={disabled}>
             취소
           </Button>
           <Button onClick={handleSubmit} disabled={disabled || !input.trim()}>

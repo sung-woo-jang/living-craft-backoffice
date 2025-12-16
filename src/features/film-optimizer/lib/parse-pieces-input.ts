@@ -68,7 +68,6 @@ function parseSingleLine(line: string): SingleLineResult {
   // 정규식으로 파싱
   // 패턴: 폭 x 높이 [x수량 또는 *수량] [라벨]
   const dimensionPattern = /^(\d+)\s*[xX×]\s*(\d+)/
-  const quantityPattern = /\s*[xX*×]\s*(\d+)(?!\d*[xX×])/
   const threePartPattern = /^(\d+)\s*[xX×]\s*(\d+)\s*[xX×]\s*(\d+)$/
 
   // 먼저 3파트 패턴 체크 (500x400x3)

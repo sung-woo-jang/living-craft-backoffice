@@ -40,11 +40,14 @@ export function RegionFeeSelector() {
   const [openItems, setOpenItems] = useState<Set<number>>(new Set())
 
   // 인라인 편집 상태
-  const [editingDistrictId, setEditingDistrictId] = useState<number | null>(null)
+  const [editingDistrictId, setEditingDistrictId] = useState<number | null>(
+    null
+  )
   const [editingFee, setEditingFee] = useState<string>('')
 
   // 시/도 목록 조회
   const { data: sidoResponse } = useDistricts({ level: 'SIDO' })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const sidoList = sidoResponse?.data ?? []
 
   // 선택된 시/도의 시/군/구 목록 조회
@@ -53,10 +56,12 @@ export function RegionFeeSelector() {
     level: 'SIGUNGU',
     parentId: sidoId || undefined,
   })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const sigunguList = sigunguResponse?.data ?? []
 
   // 전체 지역 조회 (그룹핑용)
   const { data: allDistrictsResponse } = useDistricts()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const allDistricts = allDistrictsResponse?.data ?? []
 
   // Combobox용 데이터 변환
@@ -69,12 +74,14 @@ export function RegionFeeSelector() {
     [sidoList]
   )
 
-  const sigunguData = useMemo(() => {
-    return sigunguList.map((sigungu) => ({
-      label: sigungu.name,
-      value: sigungu.id.toString(),
-    }))
-  }, [sigunguList])
+  const sigunguData = useMemo(
+    () =>
+      sigunguList.map((sigungu) => ({
+        label: sigungu.name,
+        value: sigungu.id.toString(),
+      })),
+    [sigunguList]
+  )
 
   // 선택된 지역을 시/도별로 그룹화
   const groupedRegions = useMemo(
@@ -207,10 +214,7 @@ export function RegionFeeSelector() {
   }
 
   // 인라인 편집 키보드 핸들링
-  const handleKeyDown = (
-    e: React.KeyboardEvent,
-    districtId: number
-  ) => {
+  const handleKeyDown = (e: React.KeyboardEvent, districtId: number) => {
     if (e.key === 'Enter') {
       e.preventDefault()
       handleSaveFee(districtId)
@@ -303,11 +307,15 @@ export function RegionFeeSelector() {
                                 <Input
                                   type='number'
                                   value={editingFee}
-                                  onChange={(e) => setEditingFee(e.target.value)}
+                                  onChange={(e) =>
+                                    setEditingFee(e.target.value)
+                                  }
                                   onKeyDown={(e) =>
                                     handleKeyDown(e, sigungu.districtId)
                                   }
-                                  onBlur={() => handleSaveFee(sigungu.districtId)}
+                                  onBlur={() =>
+                                    handleSaveFee(sigungu.districtId)
+                                  }
                                   autoFocus
                                   min='0'
                                   step='1000'
@@ -333,7 +341,8 @@ export function RegionFeeSelector() {
                                   <span
                                     className={`${styles.sigunguFee} ${styles.sigunguFeeException}`}
                                   >
-                                    {sigungu.estimateFee.toLocaleString()}원 (예외)
+                                    {sigungu.estimateFee.toLocaleString()}원
+                                    (예외)
                                   </span>
                                 ) : group.sidoEstimateFee !== null ? (
                                   <span className={styles.sigunguFeeDefault}>

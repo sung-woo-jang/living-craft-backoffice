@@ -160,7 +160,6 @@ export function useServiceForm({ service, isOpen }: UseServiceFormOptions) {
 
   // 서비스 목록 조회 (sortOrder 계산용)
   const { data: servicesResponse } = useServicesList()
-  const services = servicesResponse?.data ?? []
 
   // 다음 sortOrder 계산
   const nextSortOrder = useMemo(() => {
@@ -168,9 +167,10 @@ export function useServiceForm({ service, isOpen }: UseServiceFormOptions) {
       return service.sortOrder || 1
     }
     // 신규 추가: 최대값 + 1 (최소 1)
+    const services = servicesResponse?.data ?? []
     const maxOrder = Math.max(...services.map((s) => s.sortOrder || 0), 0)
     return maxOrder + 1
-  }, [services, isEditMode, service])
+  }, [servicesResponse?.data, isEditMode, service])
 
   const form = useForm<ServiceFormValues>({
     resolver: zodResolver(serviceFormSchema),
@@ -233,7 +233,6 @@ export function useServiceFormPage({
 
   // 서비스 목록 조회 (sortOrder 계산용)
   const { data: servicesResponse } = useServicesList()
-  const services = servicesResponse?.data ?? []
 
   // 다음 sortOrder 계산
   const nextSortOrder = useMemo(() => {
@@ -241,9 +240,10 @@ export function useServiceFormPage({
       return serviceDetail.sortOrder || 1
     }
     // 신규 추가: 최대값 + 1 (최소 1)
+    const services = servicesResponse?.data ?? []
     const maxOrder = Math.max(...services.map((s) => s.sortOrder || 0), 0)
     return maxOrder + 1
-  }, [services, isEditMode, serviceDetail])
+  }, [servicesResponse?.data, isEditMode, serviceDetail])
 
   const form = useForm<ServiceFormValues>({
     resolver: zodResolver(serviceFormSchema),

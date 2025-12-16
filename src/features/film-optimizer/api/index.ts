@@ -1,6 +1,10 @@
 // Film queries & mutations
 export { useFilmsList, useFilmDetail } from './use-films-query'
-export { useCreateFilm, useUpdateFilm, useDeleteFilm } from './use-films-mutation'
+export {
+  useCreateFilm,
+  useUpdateFilm,
+  useDeleteFilm,
+} from './use-films-mutation'
 
 // Cutting project queries & mutations
 export {
