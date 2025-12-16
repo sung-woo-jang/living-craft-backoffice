@@ -20,3 +20,11 @@ export {
   useDeletePiece,
   useTogglePieceComplete,
 } from './use-cutting-projects-mutation'
+
+// Types
+export type {
+  CuttingProjectListItem,
+  CuttingProjectDetail,
+  CuttingPiece,
+  PackingResult,
+} from './fetch-cutting-projects/types'

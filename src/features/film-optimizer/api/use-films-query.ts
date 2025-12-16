@@ -7,15 +7,14 @@ import type { FilmDetail, FilmListItem } from '@/shared/types/api'
  * GET /api/admin/film-optimizer/films
  */
 export function useFilmsList() {
-  return useQuery({
+  return useQuery<FilmListItem[], Error>({
     queryKey: ['admin', 'film-optimizer', 'films', 'list'],
     queryFn: async () => {
       const { data } = await axiosInstance.get<ApiResponse<FilmListItem[]>>(
         ADMIN_API.FILM_OPTIMIZER.FILMS.LIST
       )
-      return data
+      return (data as unknown as ApiResponse<FilmListItem[]>).data
     },
-    select: (response) => response.data,
   })
 }
 
@@ -24,16 +23,15 @@ export function useFilmsList() {
  * GET /api/admin/film-optimizer/films/:id
  */
 export function useFilmDetail(id: number | string | undefined) {
-  return useQuery({
+  return useQuery<FilmDetail, Error>({
     queryKey: ['admin', 'film-optimizer', 'films', 'detail', id],
     queryFn: async () => {
       if (!id) throw new Error('필름지 ID가 필요합니다.')
       const { data } = await axiosInstance.get<ApiResponse<FilmDetail>>(
         ADMIN_API.FILM_OPTIMIZER.FILMS.DETAIL(id)
       )
-      return data
+      return (data as unknown as ApiResponse<FilmDetail>).data
     },
-    select: (response) => response.data,
     enabled: !!id,
   })
 }

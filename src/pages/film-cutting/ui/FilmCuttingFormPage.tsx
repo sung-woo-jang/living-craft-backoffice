@@ -53,7 +53,7 @@ export function FilmCuttingFormPage() {
   const [localPieces, setLocalPieces] = useState<CuttingPiece[]>([])
 
   // 쿼리
-  const { data: films, isLoading: filmsLoading } = useFilmsList()
+  const { data: filmsList, isLoading: filmsLoading } = useFilmsList()
   const { data: projectDetail, isLoading: projectLoading } =
     useCuttingProjectDetail(id)
 
@@ -66,9 +66,9 @@ export function FilmCuttingFormPage() {
 
   // 선택된 필름 정보
   const selectedFilm = useMemo(() => {
-    if (!films?.data) return undefined
-    return films.data.find((f) => f.id.toString() === selectedFilmId)
-  }, [films, selectedFilmId])
+    if (!filmsList) return undefined
+    return filmsList.find((f) => f.id.toString() === selectedFilmId)
+  }, [filmsList, selectedFilmId])
 
   // 프로젝트 데이터 로드 시 상태 초기화
   useEffect(() => {
@@ -291,7 +291,7 @@ export function FilmCuttingFormPage() {
                     <SelectValue placeholder='필름을 선택하세요' />
                   </SelectTrigger>
                   <SelectContent>
-                    {films?.data?.map((film) => (
+                    {filmsList?.map((film) => (
                       <SelectItem key={film.id} value={film.id.toString()}>
                         {film.name} ({film.width}mm × {film.length}mm)
                       </SelectItem>

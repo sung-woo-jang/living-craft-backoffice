@@ -7,4 +7,12 @@ declare module '@tanstack/react-table' {
     tdClassName?: string
     thClassName?: string
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface TableMeta<TData> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onEdit?: any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onDelete?: any
+  }
 }
