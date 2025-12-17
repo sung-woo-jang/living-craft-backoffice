@@ -77,12 +77,16 @@ export const CuttingCanvas = forwardRef<CuttingCanvasRef, CuttingCanvasProps>(
     // SVG 뷰박스 및 크기 계산
     const { viewBoxWidth, viewBoxHeight, displayWidth, displayHeight } =
       useMemo(() => {
+        // 치수 표시를 위한 여백: 상단 40px, 우측 70px
+        const TOP_PADDING = 40
+        const RIGHT_PADDING = 70
+
         if (!packingResult || packingResult.bins.length === 0) {
           return {
-            viewBoxWidth: filmWidth,
-            viewBoxHeight: 500,
-            displayWidth: filmWidth * scale,
-            displayHeight: 500 * scale,
+            viewBoxWidth: filmWidth + RIGHT_PADDING,
+            viewBoxHeight: 500 + TOP_PADDING,
+            displayWidth: (filmWidth + RIGHT_PADDING) * scale,
+            displayHeight: (500 + TOP_PADDING) * scale,
           }
         }
 
@@ -91,10 +95,10 @@ export const CuttingCanvas = forwardRef<CuttingCanvasRef, CuttingCanvasProps>(
         const paddedHeight = Math.max(totalHeight + 100, 500)
 
         return {
-          viewBoxWidth: filmWidth,
-          viewBoxHeight: paddedHeight,
-          displayWidth: filmWidth * scale,
-          displayHeight: paddedHeight * scale,
+          viewBoxWidth: filmWidth + RIGHT_PADDING,
+          viewBoxHeight: paddedHeight + TOP_PADDING,
+          displayWidth: (filmWidth + RIGHT_PADDING) * scale,
+          displayHeight: (paddedHeight + TOP_PADDING) * scale,
         }
       }, [packingResult, filmWidth, scale])
 
@@ -158,7 +162,7 @@ export const CuttingCanvas = forwardRef<CuttingCanvasRef, CuttingCanvasProps>(
           {/* 배경 (필름 영역) */}
           <rect
             x={0}
-            y={0}
+            y={40}
             width={filmWidth}
             height={packingResult.usedLength}
             fill='#f3f4f6'
@@ -169,9 +173,9 @@ export const CuttingCanvas = forwardRef<CuttingCanvasRef, CuttingCanvasProps>(
           {/* 사용 길이 표시선 (위쪽 - 여기까지 소비됨) */}
           <line
             x1={0}
-            y1={0}
+            y1={40}
             x2={filmWidth}
-            y2={0}
+            y2={40}
             stroke='#ef4444'
             strokeWidth={2}
             strokeDasharray='10,5'
@@ -182,15 +186,21 @@ export const CuttingCanvas = forwardRef<CuttingCanvasRef, CuttingCanvasProps>(
 
           {/* 치수 표시 */}
           <text
-            x={filmWidth + 10}
-            y={packingResult.usedLength / 2}
+            x={filmWidth + 40}
+            y={packingResult.usedLength / 2 + 40}
             className={styles.dimensionText}
-            transform={`rotate(90, ${filmWidth + 10}, ${packingResult.usedLength / 2})`}
+            textAnchor='middle'
+            transform={`rotate(90, ${filmWidth + 40}, ${packingResult.usedLength / 2 + 40})`}
           >
             {packingResult.usedLength}mm
           </text>
 
-          <text x={filmWidth / 2} y={-10} className={styles.dimensionText}>
+          <text
+            x={filmWidth / 2}
+            y={20}
+            className={styles.dimensionText}
+            textAnchor='middle'
+          >
             {filmWidth}mm
           </text>
         </svg>
@@ -224,8 +234,9 @@ function PieceRect({
   const x = rect.x
   const { width, height, rotated, label } = rect
   // y좌표 반전: 아래(바닥)부터 위로 채움
+  // 상단 여백(40px)을 고려하여 오프셋 추가
   const originalY = rect.y + yOffset
-  const y = usedLength - originalY - height
+  const y = usedLength - originalY - height + 40
 
   // 라벨 텍스트
   const displayLabel = label || `#${index}`
@@ -237,6 +248,7 @@ function PieceRect({
   // 텍스트가 조각 안에 들어갈 수 있는지 확인
   const canFitText = width > 60 && height > 40
   const canFitSize = width > 80 && height > 50
+  const isNarrow = width <= 60 // 좁은 조각
 
   return (
     <g
@@ -256,43 +268,85 @@ function PieceRect({
         opacity={isCompleted ? 0.6 : 0.85}
       />
 
-      {/* 조각 번호/라벨 */}
+      {/* 조각 내부 텍스트 (충분히 넓은 경우) */}
       {canFitText && (
-        <text
-          x={x + width / 2}
-          y={y + height / 2 - (canFitSize ? 30 : 0)}
-          className={styles.pieceLabel}
-          textAnchor='middle'
-          dominantBaseline='middle'
-        >
-          {displayLabel}
-        </text>
+        <>
+          <text
+            x={x + width / 2}
+            y={y + height / 2 - (canFitSize ? 30 : 0)}
+            className={styles.pieceLabel}
+            textAnchor='middle'
+            dominantBaseline='middle'
+          >
+            {displayLabel}
+          </text>
+
+          {/* 크기 표시 */}
+          {canFitSize && (
+            <text
+              x={x + width / 2}
+              y={y + height / 2 + 40}
+              className={styles.pieceSize}
+              textAnchor='middle'
+              dominantBaseline='middle'
+            >
+              {sizeText}
+            </text>
+          )}
+
+          {/* 완료 체크 표시 */}
+          {isCompleted && (
+            <text
+              x={x + width - 15}
+              y={y + 15}
+              className={styles.checkMark}
+              textAnchor='middle'
+              dominantBaseline='middle'
+            >
+              ✓
+            </text>
+          )}
+        </>
       )}
 
-      {/* 크기 표시 */}
-      {canFitSize && (
-        <text
-          x={x + width / 2}
-          y={y + height / 2 + 40}
-          className={styles.pieceSize}
-          textAnchor='middle'
-          dominantBaseline='middle'
-        >
-          {sizeText}
-        </text>
-      )}
+      {/* 조각 외부 텍스트 (좁은 경우) */}
+      {isNarrow && (
+        <>
+          {/* 연결선 */}
+          <line
+            x1={x + width}
+            y1={y + height / 2}
+            x2={x + width + 10}
+            y2={y + height / 2}
+            stroke='#6b7280'
+            strokeWidth={1}
+            strokeDasharray='2,2'
+          />
 
-      {/* 완료 체크 표시 */}
-      {isCompleted && canFitText && (
-        <text
-          x={x + width - 15}
-          y={y + 15}
-          className={styles.checkMark}
-          textAnchor='middle'
-          dominantBaseline='middle'
-        >
-          ✓
-        </text>
+          {/* 텍스트 배경 */}
+          <rect
+            x={x + width + 12}
+            y={y + height / 2 - 15}
+            width={100}
+            height={30}
+            fill='white'
+            stroke='#d1d5db'
+            strokeWidth={1}
+            rx={4}
+            opacity={0.95}
+          />
+
+          {/* 라벨 */}
+          <text
+            x={x + width + 62}
+            y={y + height / 2}
+            className={styles.externalLabel}
+            textAnchor='middle'
+            dominantBaseline='middle'
+          >
+            {displayLabel} ({sizeText})
+          </text>
+        </>
       )}
     </g>
   )
