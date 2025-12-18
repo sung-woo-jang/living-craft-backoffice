@@ -1,7 +1,7 @@
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { useStandardQuery } from '@/shared/hooks/custom-query'
-import { reservationsKeys } from '../query-keys'
 import type { FetchReservationsResponse } from './types'
+import { generateQueryKeysFromUrl } from '@/shared/lib'
 
 /**
  * 예약 목록 조회 API
@@ -22,7 +22,7 @@ const fetchReservations = async (): Promise<
  */
 export function useFetchReservations() {
   return useStandardQuery<FetchReservationsResponse>({
-    queryKey: [...reservationsKeys.list()],
+    queryKey: [...generateQueryKeysFromUrl(ADMIN_API.RESERVATIONS.LIST)],
     queryFn: fetchReservations,
   })
 }

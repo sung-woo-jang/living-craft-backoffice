@@ -1,7 +1,7 @@
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { useStandardQuery } from '@/shared/hooks/custom-query'
-import { customersKeys } from '../query-keys'
 import type { FetchCustomersResponse } from './types'
+import { generateQueryKeysFromUrl } from '@/shared/lib'
 
 /**
  * 고객 목록 조회 API
@@ -22,7 +22,7 @@ const fetchCustomers = async (): Promise<
  */
 export function useFetchCustomers() {
   return useStandardQuery<FetchCustomersResponse>({
-    queryKey: [...customersKeys.list()],
+    queryKey: [...generateQueryKeysFromUrl(ADMIN_API.CUSTOMERS.LIST)],
     queryFn: fetchCustomers,
   })
 }

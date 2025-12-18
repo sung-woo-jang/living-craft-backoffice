@@ -1,12 +1,14 @@
 import { useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
+
 import { axiosInstance, ADMIN_API } from '@/shared/api'
 import { useStandardMutation } from '@/shared/hooks/custom-query'
+import { generateQueryKeysFromUrl } from '@/shared/lib'
 import type {
   CreateFilmRequest,
   FilmDetail,
   UpdateFilmRequest,
 } from '@/shared/types/api'
-import { toast } from 'sonner'
 
 /**
  * 필름지 생성
@@ -25,7 +27,7 @@ export function useCreateFilm() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['admin', 'film-optimizer', 'films'],
+        queryKey: generateQueryKeysFromUrl(ADMIN_API.FILM_OPTIMIZER.FILMS.LIST),
       })
       toast.success('필름지가 생성되었습니다.')
     },
@@ -53,7 +55,7 @@ export function useUpdateFilm() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['admin', 'film-optimizer', 'films'],
+        queryKey: generateQueryKeysFromUrl(ADMIN_API.FILM_OPTIMIZER.FILMS.LIST),
       })
       toast.success('필름지가 수정되었습니다.')
     },
@@ -76,7 +78,7 @@ export function useDeleteFilm() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['admin', 'film-optimizer', 'films'],
+        queryKey: generateQueryKeysFromUrl(ADMIN_API.FILM_OPTIMIZER.FILMS.LIST),
       })
       toast.success('필름지가 삭제되었습니다.')
     },

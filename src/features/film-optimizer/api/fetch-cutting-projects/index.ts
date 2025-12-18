@@ -1,7 +1,5 @@
-export {
-  useFetchCuttingProjects,
-  useFetchCuttingProjectDetail,
-} from './useFetchCuttingProjects'
+export { useFetchCuttingProjects } from './useFetchCuttingProjects'
+export { useFetchCuttingProjectDetail } from './useFetchCuttingProjectDetail'
 export type {
   CuttingProjectListItem,
   CuttingProjectDetail,

@@ -32,11 +32,11 @@ import { Input } from '@/shared/ui/input'
 import { Switch } from '@/shared/ui/switch'
 import { Textarea } from '@/shared/ui/textarea'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useDebouncedIconsSearch } from '@/features/services/api/use-icons-query'
 import {
+  useDebouncedIconsSearch,
   useCreateService,
   useUpdateService,
-} from '@/features/services/api/use-services-mutation'
+} from '@/features/services/api'
 import { useServiceDetail } from '@/features/services/api/use-services-query'
 import {
   useServiceFormPage,

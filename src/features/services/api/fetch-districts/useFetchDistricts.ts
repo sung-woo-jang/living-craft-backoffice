@@ -1,7 +1,7 @@
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { useStandardQuery } from '@/shared/hooks/custom-query'
-import { districtsKeys } from '../query-keys'
 import type { FetchDistrictsParams, FetchDistrictsResponse } from './types'
+import { generateQueryKeysFromUrl, createQueryString } from '@/shared/lib'
 
 /**
  * 행정구역 목록 조회 API
@@ -33,8 +33,12 @@ const fetchDistricts = async (
  * GET /api/admin/districts
  */
 export function useFetchDistricts(params?: FetchDistrictsParams) {
+  const queryString = createQueryString(params)
+  const url = ADMIN_API.DISTRICTS.LIST + queryString
+
   return useStandardQuery<FetchDistrictsResponse>({
-    queryKey: [...districtsKeys.list(params)],
+    // eslint-disable-next-line @tanstack/query/exhaustive-deps
+    queryKey: generateQueryKeysFromUrl(url),
     queryFn: () => fetchDistricts(params),
   })
 }

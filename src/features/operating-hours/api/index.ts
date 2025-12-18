@@ -5,14 +5,11 @@ export {
 } from './fetch-operating-hours'
 
 // ===== Mutation Hooks =====
-export {
-  useUpdateOperatingHours,
-  useAddHoliday,
-  useDeleteHoliday,
-} from './update-operating-hours'
+export { useUpdateOperatingHours } from './useUpdateOperatingHours'
+export { useAddHoliday } from './useAddHoliday'
+export { useDeleteHoliday } from './useDeleteHoliday'
 
 // ===== Query Keys =====
-export { operatingHoursKeys, holidaysKeys } from './query-keys'
 
 // ===== Types =====
 export type {
@@ -22,4 +19,4 @@ export type {
   TimeSlot,
 } from './fetch-operating-hours'
 
-export type { AddHolidayRequest } from './update-operating-hours'
+export type { AddHolidayRequest } from './useAddHoliday'

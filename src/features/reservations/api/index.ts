@@ -7,7 +7,6 @@ export { useUpdateReservationStatus } from './update-reservation-status'
 export { useCancelReservation } from './cancel-reservation'
 
 // ===== Query Keys =====
-export { reservationsKeys } from './query-keys'
 
 // ===== Types =====
 export type {

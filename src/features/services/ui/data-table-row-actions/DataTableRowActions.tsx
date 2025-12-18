@@ -12,7 +12,7 @@ import { MoreHorizontal, Pencil, Trash2, Eye } from 'lucide-react'
 import {
   useDeleteService,
   useToggleService,
-} from '../../api/use-services-mutation'
+} from '../../api'
 
 interface DataTableRowActionsProps {
   row: Row<ServiceAdminListItem>

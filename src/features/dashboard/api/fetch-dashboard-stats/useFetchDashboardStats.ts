@@ -1,7 +1,7 @@
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { useStandardQuery } from '@/shared/hooks/custom-query'
-import { dashboardKeys } from '../query-keys'
 import type { DashboardStats } from './types'
+import { generateQueryKeysFromUrl } from '@/shared/lib'
 
 /**
  * 대시보드 통계 조회 API
@@ -21,7 +21,7 @@ const fetchDashboardStats = async (): Promise<ApiResponse<DashboardStats>> => {
  */
 export function useFetchDashboardStats() {
   return useStandardQuery<DashboardStats>({
-    queryKey: [...dashboardKeys.all(), 'stats'],
+    queryKey: generateQueryKeysFromUrl(ADMIN_API.DASHBOARD.STATS),
     queryFn: fetchDashboardStats,
     refetchInterval: 5000, // 5초마다 자동 갱신
   })

@@ -1,7 +1,7 @@
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { useStandardQuery } from '@/shared/hooks/custom-query'
-import { servicesKeys } from '../query-keys'
 import type { FetchServicesListResponse } from './types'
+import { generateQueryKeysFromUrl } from '@/shared/lib'
 
 /**
  * 서비스 목록 조회 API
@@ -24,7 +24,7 @@ const fetchServicesList = async (): Promise<
  */
 export function useFetchServicesList() {
   return useStandardQuery<FetchServicesListResponse>({
-    queryKey: [...servicesKeys.list()],
+    queryKey: [...generateQueryKeysFromUrl(ADMIN_API.SERVICES.LIST)],
     queryFn: fetchServicesList,
   })
 }

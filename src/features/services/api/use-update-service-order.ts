@@ -1,7 +1,9 @@
 import { useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
+
 import { axiosInstance, ADMIN_API } from '@/shared/api'
 import { useStandardMutation } from '@/shared/hooks/custom-query'
-import { toast } from 'sonner'
+import { generateQueryKeysFromUrl } from '@/shared/lib'
 
 interface ServiceOrderItem {
   id: number
@@ -24,7 +26,9 @@ export function useUpdateServiceOrder() {
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'services'] })
+      queryClient.invalidateQueries({
+        queryKey: generateQueryKeysFromUrl(ADMIN_API.SERVICES.LIST),
+      })
       toast.success('서비스 순서가 변경되었습니다.')
     },
     onError: () => {

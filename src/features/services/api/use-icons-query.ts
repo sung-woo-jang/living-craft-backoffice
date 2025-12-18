@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
+
 import { axiosInstance, ADMIN_API } from '@/shared/api'
 import { useStandardQuery } from '@/shared/hooks/custom-query'
+import { generateQueryKeysFromUrl, createQueryString } from '@/shared/lib'
 import type { Icon, IconType } from '@/shared/types/api'
 
-interface UseIconsParams {
+interface UseIconsParams extends Record<string, unknown> {
   type?: IconType
   search?: string
 }
@@ -14,22 +16,12 @@ interface UseIconsParams {
  * @returns 아이콘 목록 쿼리 결과
  */
 export function useIconsList(params?: UseIconsParams) {
+  const queryString = createQueryString(params)
+  const url = ADMIN_API.ICONS.LIST + queryString
+
   return useStandardQuery<Icon[]>({
-    queryKey: ['admin', 'icons', 'list', params],
+    queryKey: generateQueryKeysFromUrl(url),
     queryFn: async () => {
-      const searchParams = new URLSearchParams()
-
-      if (params?.type) {
-        searchParams.append('type', params.type)
-      }
-      if (params?.search) {
-        searchParams.append('search', params.search)
-      }
-
-      const url = `${ADMIN_API.ICONS.LIST}${
-        searchParams.toString() ? `?${searchParams.toString()}` : ''
-      }`
-
       const { data } = await axiosInstance.get<Icon[]>(url)
       return data
     },
@@ -56,18 +48,20 @@ export function useDebouncedIconsSearch(search: string, delay = 300) {
     }
   }, [search, delay])
 
+  const queryString = createQueryString(
+    debouncedSearch.length >= 2 ? { search: debouncedSearch } : undefined
+  )
+  const url = ADMIN_API.ICONS.LIST + queryString
+
   return useStandardQuery<Icon[]>({
-    queryKey: ['admin', 'icons', 'search', debouncedSearch],
+    // eslint-disable-next-line @tanstack/query/exhaustive-deps
+    queryKey: generateQueryKeysFromUrl(url),
     queryFn: async () => {
       if (!debouncedSearch || debouncedSearch.length < 2) {
         // 빈 ApiResponse 반환
         return { success: true, message: '', data: [], timestamp: '' }
       }
 
-      const searchParams = new URLSearchParams()
-      searchParams.append('search', debouncedSearch)
-
-      const url = `${ADMIN_API.ICONS.LIST}?${searchParams.toString()}`
       const { data } = await axiosInstance.get<Icon[]>(url)
       return data
     },

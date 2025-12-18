@@ -1,4 +1,5 @@
-export { useFetchIcons, useDebouncedIconsSearch } from './useFetchIcons'
+export { useFetchIcons } from './useFetchIcons'
+export { useDebouncedIconsSearch } from './useDebouncedIconsSearch'
 export type {
   IconItem,
   IconType,

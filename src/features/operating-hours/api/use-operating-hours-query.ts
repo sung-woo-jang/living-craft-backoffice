@@ -1,5 +1,6 @@
 import { ADMIN_API, axiosInstance } from '@/shared/api'
 import { useStandardQuery } from '@/shared/hooks/custom-query'
+import { generateQueryKeysFromUrl } from '@/shared/lib'
 import type { Holiday, OperatingHours } from '@/shared/types/api'
 
 /**
@@ -7,7 +8,7 @@ import type { Holiday, OperatingHours } from '@/shared/types/api'
  */
 export function useOperatingHours() {
   return useStandardQuery<OperatingHours>({
-    queryKey: ['admin', 'settings', 'operating-hours'],
+    queryKey: generateQueryKeysFromUrl(ADMIN_API.SETTINGS.OPERATING_HOURS.GET),
     queryFn: async () => {
       const { data } = await axiosInstance.get<OperatingHours>(
         ADMIN_API.SETTINGS.OPERATING_HOURS.GET
@@ -22,7 +23,7 @@ export function useOperatingHours() {
  */
 export function useHolidays() {
   return useStandardQuery<Holiday[]>({
-    queryKey: ['admin', 'settings', 'holidays'],
+    queryKey: generateQueryKeysFromUrl(ADMIN_API.SETTINGS.HOLIDAYS.LIST),
     queryFn: async () => {
       const { data } = await axiosInstance.get<Holiday[]>(
         ADMIN_API.SETTINGS.HOLIDAYS.LIST

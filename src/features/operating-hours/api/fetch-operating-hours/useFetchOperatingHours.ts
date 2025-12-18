@@ -1,7 +1,7 @@
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { useStandardQuery } from '@/shared/hooks/custom-query'
-import { operatingHoursKeys, holidaysKeys } from '../query-keys'
 import type { OperatingHours, Holiday } from './types'
+import { generateQueryKeysFromUrl } from '@/shared/lib'
 
 /**
  * 운영 시간 조회 API
@@ -30,7 +30,7 @@ const fetchHolidays = async (): Promise<ApiResponse<Holiday[]>> => {
  */
 export function useFetchOperatingHours() {
   return useStandardQuery<OperatingHours>({
-    queryKey: [...operatingHoursKeys.all()],
+    queryKey: [...generateQueryKeysFromUrl(ADMIN_API.SETTINGS.OPERATING_HOURS.GET)],
     queryFn: fetchOperatingHours,
   })
 }
@@ -42,7 +42,7 @@ export function useFetchOperatingHours() {
  */
 export function useFetchHolidays() {
   return useStandardQuery<Holiday[]>({
-    queryKey: [...holidaysKeys.all()],
+    queryKey: [...generateQueryKeysFromUrl(ADMIN_API.SETTINGS.HOLIDAYS.LIST)],
     queryFn: fetchHolidays,
   })
 }

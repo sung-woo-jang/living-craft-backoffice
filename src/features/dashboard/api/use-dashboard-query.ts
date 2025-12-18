@@ -1,5 +1,6 @@
 import { axiosInstance, ADMIN_API } from '@/shared/api'
 import { useStandardQuery } from '@/shared/hooks/custom-query'
+import { generateQueryKeysFromUrl } from '@/shared/lib'
 import type { DashboardStats } from '@/shared/types/api'
 
 /**
@@ -8,7 +9,7 @@ import type { DashboardStats } from '@/shared/types/api'
  */
 export function useDashboardStats() {
   return useStandardQuery<DashboardStats>({
-    queryKey: ['admin', 'dashboard', 'stats'],
+    queryKey: generateQueryKeysFromUrl(ADMIN_API.DASHBOARD.STATS),
     queryFn: async () => {
       const { data } = await axiosInstance.get<DashboardStats>(
         ADMIN_API.DASHBOARD.STATS

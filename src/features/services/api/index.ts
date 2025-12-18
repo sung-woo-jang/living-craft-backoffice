@@ -12,7 +12,6 @@ export { useToggleService } from './toggle-service'
 export { useUpdateServiceOrder } from './update-service-order'
 
 // ===== Query Keys =====
-export { servicesKeys, iconsKeys, districtsKeys } from './query-keys'
 
 // ===== Types =====
 // fetch-services-list

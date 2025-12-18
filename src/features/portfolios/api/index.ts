@@ -5,7 +5,6 @@ export { useFetchPortfolios } from './fetch-portfolios'
 export { useDeletePortfolio } from './delete-portfolio'
 
 // ===== Query Keys =====
-export { portfoliosKeys } from './query-keys'
 
 // ===== Types =====
 export type {

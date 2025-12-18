@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { useStandardMutation } from '@/shared/hooks/custom-query'
 import { toast } from 'sonner'
-import { portfoliosKeys } from '../query-keys'
+import { generateQueryKeysFromUrl } from '@/shared/lib'
 
 /**
  * 포트폴리오 삭제 API
@@ -25,7 +25,7 @@ export function useDeletePortfolio() {
   return useStandardMutation<void, Error, string>({
     mutationFn: deletePortfolio,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [...portfoliosKeys.all()] })
+      queryClient.invalidateQueries({ queryKey: [...generateQueryKeysFromUrl(ADMIN_API.PORTFOLIOS.LIST)] })
       toast.success('포트폴리오가 삭제되었습니다.')
     },
   })

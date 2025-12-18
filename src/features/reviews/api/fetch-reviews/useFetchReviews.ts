@@ -1,7 +1,7 @@
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { useStandardQuery } from '@/shared/hooks/custom-query'
-import { reviewsKeys } from '../query-keys'
 import type { FetchReviewsResponse } from './types'
+import { generateQueryKeysFromUrl } from '@/shared/lib'
 
 /**
  * 리뷰 목록 조회 API
@@ -20,7 +20,7 @@ const fetchReviews = async (): Promise<ApiResponse<FetchReviewsResponse>> => {
  */
 export function useFetchReviews() {
   return useStandardQuery<FetchReviewsResponse>({
-    queryKey: [...reviewsKeys.list()],
+    queryKey: [...generateQueryKeysFromUrl(ADMIN_API.REVIEWS.LIST)],
     queryFn: fetchReviews,
   })
 }

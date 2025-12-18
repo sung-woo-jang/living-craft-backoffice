@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
+
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
+import { generateQueryKeysFromUrl } from '@/shared/lib'
 import type { FilmDetail, FilmListItem } from '@/shared/types/api'
 
 /**
@@ -8,7 +10,7 @@ import type { FilmDetail, FilmListItem } from '@/shared/types/api'
  */
 export function useFilmsList() {
   return useQuery<FilmListItem[], Error>({
-    queryKey: ['admin', 'film-optimizer', 'films', 'list'],
+    queryKey: generateQueryKeysFromUrl(ADMIN_API.FILM_OPTIMIZER.FILMS.LIST),
     queryFn: async () => {
       const { data } = await axiosInstance.get<ApiResponse<FilmListItem[]>>(
         ADMIN_API.FILM_OPTIMIZER.FILMS.LIST
@@ -24,7 +26,9 @@ export function useFilmsList() {
  */
 export function useFilmDetail(id: number | string | undefined) {
   return useQuery<FilmDetail, Error>({
-    queryKey: ['admin', 'film-optimizer', 'films', 'detail', id],
+    queryKey: generateQueryKeysFromUrl(
+      ADMIN_API.FILM_OPTIMIZER.FILMS.DETAIL(id || '')
+    ),
     queryFn: async () => {
       if (!id) throw new Error('필름지 ID가 필요합니다.')
       const { data } = await axiosInstance.get<ApiResponse<FilmDetail>>(

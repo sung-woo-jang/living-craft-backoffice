@@ -1,13 +1,14 @@
 import type { Reservation } from '@/entities/reservation'
 import { ADMIN_API, axiosInstance } from '@/shared/api'
 import { useStandardQuery } from '@/shared/hooks/custom-query'
+import { generateQueryKeysFromUrl } from '@/shared/lib'
 
 /**
  * 예약 목록 조회
  */
 export function useReservationsList() {
   return useStandardQuery<Reservation[]>({
-    queryKey: ['admin', 'reservations', 'list'],
+    queryKey: generateQueryKeysFromUrl(ADMIN_API.RESERVATIONS.LIST),
     queryFn: async () => {
       const { data } = await axiosInstance.get<Reservation[]>(
         ADMIN_API.RESERVATIONS.LIST
@@ -22,7 +23,7 @@ export function useReservationsList() {
  */
 export function useReservationDetail(id: string) {
   return useStandardQuery<Reservation>({
-    queryKey: ['admin', 'reservations', 'detail', id],
+    queryKey: generateQueryKeysFromUrl(ADMIN_API.RESERVATIONS.DETAIL(id)),
     queryFn: async () => {
       const { data } = await axiosInstance.get<Reservation>(
         ADMIN_API.RESERVATIONS.DETAIL(id)

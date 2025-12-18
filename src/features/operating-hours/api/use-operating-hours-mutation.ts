@@ -1,8 +1,10 @@
 import { useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
+
 import { axiosInstance, ADMIN_API } from '@/shared/api'
 import { useStandardMutation } from '@/shared/hooks/custom-query'
+import { generateQueryKeysFromUrl } from '@/shared/lib'
 import type { OperatingHours } from '@/shared/types/api'
-import { toast } from 'sonner'
 
 /**
  * 운영 시간 수정
@@ -20,7 +22,9 @@ export function useUpdateOperatingHours() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['admin', 'settings', 'operating-hours'],
+        queryKey: generateQueryKeysFromUrl(
+          ADMIN_API.SETTINGS.OPERATING_HOURS.GET
+        ),
       })
       toast.success('운영 시간이 저장되었습니다.')
     },
@@ -43,7 +47,7 @@ export function useAddHoliday() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['admin', 'settings', 'holidays'],
+        queryKey: generateQueryKeysFromUrl(ADMIN_API.SETTINGS.HOLIDAYS.LIST),
       })
       toast.success('휴무일이 추가되었습니다.')
     },
@@ -65,7 +69,7 @@ export function useDeleteHoliday() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['admin', 'settings', 'holidays'],
+        queryKey: generateQueryKeysFromUrl(ADMIN_API.SETTINGS.HOLIDAYS.LIST),
       })
       toast.success('휴무일이 삭제되었습니다.')
     },

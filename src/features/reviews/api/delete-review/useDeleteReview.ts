@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { useStandardMutation } from '@/shared/hooks/custom-query'
 import { toast } from 'sonner'
-import { reviewsKeys } from '../query-keys'
+import { generateQueryKeysFromUrl } from '@/shared/lib'
 
 /**
  * 리뷰 삭제 API
@@ -23,7 +23,7 @@ export function useDeleteReview() {
   return useStandardMutation<void, Error, string>({
     mutationFn: deleteReview,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [...reviewsKeys.all()] })
+      queryClient.invalidateQueries({ queryKey: [...generateQueryKeysFromUrl(ADMIN_API.REVIEWS.LIST)] })
       toast.success('리뷰가 삭제되었습니다.')
     },
   })
