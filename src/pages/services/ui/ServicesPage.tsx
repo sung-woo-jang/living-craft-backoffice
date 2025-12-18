@@ -49,21 +49,9 @@ export function ServicesPage() {
         </div>
       )}
 
-      {!isLoading &&
-        !error &&
-        data &&
-        Array.isArray(data) &&
-        data.length > 0 && (
-          <ServicesTable data={data} onEdit={handleEditService} />
-        )}
-
-      {!isLoading &&
-        !error &&
-        (!data || !Array.isArray(data) || data.length === 0) && (
-          <div className='flex h-[400px] items-center justify-center'>
-            <p className='text-muted-foreground'>등록된 서비스가 없습니다.</p>
-          </div>
-        )}
+      {!isLoading && !error && data && (
+        <ServicesTable data={data} onEdit={handleEditService} />
+      )}
     </div>
   )
 }

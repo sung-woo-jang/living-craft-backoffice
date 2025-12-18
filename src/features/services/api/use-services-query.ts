@@ -11,7 +11,11 @@ import type {
  * 테이블 표시에 필요한 최소 정보만 반환
  */
 export function useServicesList() {
-  return useStandardQuery<ServiceAdminListItem[]>({
+  return useStandardQuery<
+    ServiceAdminListItem[],
+    Error,
+    ServiceAdminListItem[]
+  >({
     queryKey: generateQueryKeysFromUrl(ADMIN_API.SERVICES.LIST),
     queryFn: async () => {
       const { data } = await axiosInstance.get<ServiceAdminListItem[]>(
@@ -19,6 +23,7 @@ export function useServicesList() {
       )
       return data
     },
+    select: (response) => response.data,
   })
 }
 
@@ -27,7 +32,7 @@ export function useServicesList() {
  * regions, schedule, icon 등 전체 정보 반환
  */
 export function useServiceDetail(id: number | string | undefined) {
-  return useStandardQuery<ServiceAdminDetail>({
+  return useStandardQuery<ServiceAdminDetail, Error, ServiceAdminDetail>({
     queryKey: generateQueryKeysFromUrl(
       ADMIN_API.SERVICES.DETAIL(id || '')
     ),
@@ -39,5 +44,6 @@ export function useServiceDetail(id: number | string | undefined) {
       return data
     },
     enabled: !!id,
+    select: (response) => response.data,
   })
 }

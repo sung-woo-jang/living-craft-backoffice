@@ -373,11 +373,32 @@ export const ColorPickerFormat = ({
   className,
   ...props
 }: ColorPickerFormatProps) => {
-  const { hue, saturation, lightness, alpha, mode } = useColorPicker()
+  const { hue, saturation, lightness, alpha, mode, setHue, setSaturation, setLightness, setAlpha } = useColorPicker()
   const color = Color.hsl(hue, saturation, lightness, alpha / 100)
 
   if (mode === 'hex') {
     const hex = color.hex()
+
+    const handleHexChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value
+      try {
+        const parsedColor = Color(value)
+        const [h, s, l] = parsedColor.hsl().array()
+        setHue(h)
+        setSaturation(s)
+        setLightness(l)
+      } catch {
+        // 유효하지 않은 색상 값은 무시
+      }
+    }
+
+    const handleAlphaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = parseFloat(e.target.value)
+      if (!isNaN(value) && value >= 0 && value <= 100) {
+        setAlpha(value)
+      }
+    }
+
     return (
       <div
         className={cn(
@@ -388,11 +409,27 @@ export const ColorPickerFormat = ({
       >
         <Input
           className='bg-secondary h-8 rounded-r-none px-2 text-xs shadow-none'
-          readOnly
           type='text'
           value={hex}
+          onChange={handleHexChange}
+          placeholder='#000000'
         />
-        <PercentageInput value={alpha} />
+        <div className='relative'>
+          <Input
+            type='number'
+            min={0}
+            max={100}
+            step={1}
+            value={Math.round(alpha)}
+            onChange={handleAlphaChange}
+            className={cn(
+              'bg-secondary h-8 w-[3.25rem] rounded-l-none px-2 text-xs shadow-none'
+            )}
+          />
+          <span className='text-muted-foreground absolute top-1/2 right-2 -translate-y-1/2 text-xs pointer-events-none'>
+            %
+          </span>
+        </div>
       </div>
     )
   }
@@ -402,6 +439,32 @@ export const ColorPickerFormat = ({
       .rgb()
       .array()
       .map((value) => Math.round(value))
+
+    const handleRgbChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = parseInt(e.target.value, 10)
+      if (isNaN(value) || value < 0 || value > 255) return
+
+      const newRgb = [...rgb]
+      newRgb[index] = value
+
+      try {
+        const parsedColor = Color.rgb(newRgb)
+        const [h, s, l] = parsedColor.hsl().array()
+        setHue(h)
+        setSaturation(s)
+        setLightness(l)
+      } catch {
+        // 유효하지 않은 색상 값은 무시
+      }
+    }
+
+    const handleAlphaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = parseFloat(e.target.value)
+      if (!isNaN(value) && value >= 0 && value <= 100) {
+        setAlpha(value)
+      }
+    }
+
     return (
       <div
         className={cn(
@@ -418,12 +481,30 @@ export const ColorPickerFormat = ({
               className
             )}
             key={index}
-            readOnly
-            type='text'
+            type='number'
+            min={0}
+            max={255}
+            step={1}
             value={value}
+            onChange={(e) => handleRgbChange(index, e)}
           />
         ))}
-        <PercentageInput value={alpha} />
+        <div className='relative'>
+          <Input
+            type='number'
+            min={0}
+            max={100}
+            step={1}
+            value={Math.round(alpha)}
+            onChange={handleAlphaChange}
+            className={cn(
+              'bg-secondary h-8 w-[3.25rem] rounded-l-none px-2 text-xs shadow-none'
+            )}
+          />
+          <span className='text-muted-foreground absolute top-1/2 right-2 -translate-y-1/2 text-xs pointer-events-none'>
+            %
+          </span>
+        </div>
       </div>
     )
   }
@@ -454,6 +535,30 @@ export const ColorPickerFormat = ({
       .hsl()
       .array()
       .map((value) => Math.round(value))
+
+    const handleHslChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = parseFloat(e.target.value)
+      if (isNaN(value)) return
+
+      const newHsl = [...hsl]
+      newHsl[index] = value
+
+      // H: 0-360, S/L: 0-100
+      if (index === 0 && (value < 0 || value > 360)) return
+      if (index > 0 && (value < 0 || value > 100)) return
+
+      if (index === 0) setHue(value)
+      if (index === 1) setSaturation(value)
+      if (index === 2) setLightness(value)
+    }
+
+    const handleAlphaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = parseFloat(e.target.value)
+      if (!isNaN(value) && value >= 0 && value <= 100) {
+        setAlpha(value)
+      }
+    }
+
     return (
       <div
         className={cn(
@@ -470,12 +575,30 @@ export const ColorPickerFormat = ({
               className
             )}
             key={index}
-            readOnly
-            type='text'
+            type='number'
+            min={0}
+            max={index === 0 ? 360 : 100}
+            step={1}
             value={value}
+            onChange={(e) => handleHslChange(index, e)}
           />
         ))}
-        <PercentageInput value={alpha} />
+        <div className='relative'>
+          <Input
+            type='number'
+            min={0}
+            max={100}
+            step={1}
+            value={Math.round(alpha)}
+            onChange={handleAlphaChange}
+            className={cn(
+              'bg-secondary h-8 w-[3.25rem] rounded-l-none px-2 text-xs shadow-none'
+            )}
+          />
+          <span className='text-muted-foreground absolute top-1/2 right-2 -translate-y-1/2 text-xs pointer-events-none'>
+            %
+          </span>
+        </div>
       </div>
     )
   }

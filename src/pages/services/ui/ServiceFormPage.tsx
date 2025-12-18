@@ -52,8 +52,7 @@ export function ServiceFormPage() {
   const isEditMode = Boolean(id)
 
   // 수정 모드일 때 서비스 상세 데이터 조회
-  const { data: serviceDetailResponse, isLoading } = useServiceDetail(id)
-  const serviceDetail = serviceDetailResponse?.data
+  const { data: serviceDetail, isLoading } = useServiceDetail(id)
 
   // 폼 훅
   const form = useServiceFormPage({

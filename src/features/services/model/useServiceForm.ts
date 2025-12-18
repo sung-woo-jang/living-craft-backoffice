@@ -167,10 +167,10 @@ export function useServiceForm({ service, isOpen }: UseServiceFormOptions) {
       return service.sortOrder || 1
     }
     // 신규 추가: 최대값 + 1 (최소 1)
-    const services = servicesResponse?.data ?? []
+    const services = servicesResponse ?? []
     const maxOrder = Math.max(...services.map((s) => s.sortOrder || 0), 0)
     return maxOrder + 1
-  }, [servicesResponse?.data, isEditMode, service])
+  }, [servicesResponse, isEditMode, service])
 
   const form = useForm<ServiceFormValues>({
     resolver: zodResolver(serviceFormSchema),
@@ -240,10 +240,10 @@ export function useServiceFormPage({
       return serviceDetail.sortOrder || 1
     }
     // 신규 추가: 최대값 + 1 (최소 1)
-    const services = servicesResponse?.data ?? []
+    const services = servicesResponse ?? []
     const maxOrder = Math.max(...services.map((s) => s.sortOrder || 0), 0)
     return maxOrder + 1
-  }, [servicesResponse?.data, isEditMode, serviceDetail])
+  }, [servicesResponse, isEditMode, serviceDetail])
 
   const form = useForm<ServiceFormValues>({
     resolver: zodResolver(serviceFormSchema),
