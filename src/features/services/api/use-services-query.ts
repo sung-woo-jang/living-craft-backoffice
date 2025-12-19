@@ -23,7 +23,7 @@ export function useServicesList() {
       )
       return data
     },
-    select: (response) => response.data,
+    select: (apiResponse) => apiResponse.data,
   })
 }
 
@@ -44,6 +44,6 @@ export function useServiceDetail(id: number | string | undefined) {
       return data
     },
     enabled: !!id,
-    select: (response) => response.data,
+    select: (apiResponse) => apiResponse.data,
   })
 }

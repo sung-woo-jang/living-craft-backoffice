@@ -378,24 +378,46 @@ export const ColorPickerFormat = ({
 
   if (mode === 'hex') {
     const hex = color.hex()
+    const [localHex, setLocalHex] = useState(hex)
+    const [localAlpha, setLocalAlpha] = useState(Math.round(alpha).toString())
+
+    // 외부에서 색상이 변경되면 로컬 상태 업데이트
+    useEffect(() => {
+      setLocalHex(hex)
+    }, [hex])
+
+    useEffect(() => {
+      setLocalAlpha(Math.round(alpha).toString())
+    }, [alpha])
 
     const handleHexChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value
+      setLocalHex(value)
+    }
+
+    const handleHexBlur = () => {
       try {
-        const parsedColor = Color(value)
+        const parsedColor = Color(localHex)
         const [h, s, l] = parsedColor.hsl().array()
         setHue(h)
         setSaturation(s)
         setLightness(l)
       } catch {
-        // 유효하지 않은 색상 값은 무시
+        // 유효하지 않으면 원래 값으로 복원
+        setLocalHex(hex)
       }
     }
 
     const handleAlphaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = parseFloat(e.target.value)
+      setLocalAlpha(e.target.value)
+    }
+
+    const handleAlphaBlur = () => {
+      const value = parseFloat(localAlpha)
       if (!isNaN(value) && value >= 0 && value <= 100) {
         setAlpha(value)
+      } else {
+        setLocalAlpha(Math.round(alpha).toString())
       }
     }
 
@@ -410,18 +432,17 @@ export const ColorPickerFormat = ({
         <Input
           className='bg-secondary h-8 rounded-r-none px-2 text-xs shadow-none'
           type='text'
-          value={hex}
+          value={localHex}
           onChange={handleHexChange}
+          onBlur={handleHexBlur}
           placeholder='#000000'
         />
         <div className='relative'>
           <Input
-            type='number'
-            min={0}
-            max={100}
-            step={1}
-            value={Math.round(alpha)}
+            type='text'
+            value={localAlpha}
             onChange={handleAlphaChange}
+            onBlur={handleAlphaBlur}
             className={cn(
               'bg-secondary h-8 w-[3.25rem] rounded-l-none px-2 text-xs shadow-none'
             )}
@@ -440,13 +461,34 @@ export const ColorPickerFormat = ({
       .array()
       .map((value) => Math.round(value))
 
+    const [localRgb, setLocalRgb] = useState(rgb.map(String))
+    const [localAlpha, setLocalAlpha] = useState(Math.round(alpha).toString())
+
+    useEffect(() => {
+      setLocalRgb(rgb.map(String))
+    }, [rgb[0], rgb[1], rgb[2]])
+
+    useEffect(() => {
+      setLocalAlpha(Math.round(alpha).toString())
+    }, [alpha])
+
     const handleRgbChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = parseInt(e.target.value, 10)
-      if (isNaN(value) || value < 0 || value > 255) return
+      const newLocalRgb = [...localRgb]
+      newLocalRgb[index] = e.target.value
+      setLocalRgb(newLocalRgb)
+    }
 
-      const newRgb = [...rgb]
-      newRgb[index] = value
+    const handleRgbBlur = (index: number) => {
+      const value = parseInt(localRgb[index], 10)
+      if (isNaN(value) || value < 0 || value > 255) {
+        // 유효하지 않으면 원래 값으로 복원
+        const newLocalRgb = [...localRgb]
+        newLocalRgb[index] = rgb[index].toString()
+        setLocalRgb(newLocalRgb)
+        return
+      }
 
+      const newRgb = localRgb.map(Number)
       try {
         const parsedColor = Color.rgb(newRgb)
         const [h, s, l] = parsedColor.hsl().array()
@@ -454,14 +496,23 @@ export const ColorPickerFormat = ({
         setSaturation(s)
         setLightness(l)
       } catch {
-        // 유효하지 않은 색상 값은 무시
+        // 유효하지 않으면 원래 값으로 복원
+        const newLocalRgb = [...localRgb]
+        newLocalRgb[index] = rgb[index].toString()
+        setLocalRgb(newLocalRgb)
       }
     }
 
     const handleAlphaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = parseFloat(e.target.value)
+      setLocalAlpha(e.target.value)
+    }
+
+    const handleAlphaBlur = () => {
+      const value = parseFloat(localAlpha)
       if (!isNaN(value) && value >= 0 && value <= 100) {
         setAlpha(value)
+      } else {
+        setLocalAlpha(Math.round(alpha).toString())
       }
     }
 
@@ -473,7 +524,7 @@ export const ColorPickerFormat = ({
         )}
         {...(props as any)}
       >
-        {rgb.map((value, index) => (
+        {localRgb.map((value, index) => (
           <Input
             className={cn(
               'bg-secondary h-8 rounded-r-none px-2 text-xs shadow-none',
@@ -481,22 +532,18 @@ export const ColorPickerFormat = ({
               className
             )}
             key={index}
-            type='number'
-            min={0}
-            max={255}
-            step={1}
+            type='text'
             value={value}
             onChange={(e) => handleRgbChange(index, e)}
+            onBlur={() => handleRgbBlur(index)}
           />
         ))}
         <div className='relative'>
           <Input
-            type='number'
-            min={0}
-            max={100}
-            step={1}
-            value={Math.round(alpha)}
+            type='text'
+            value={localAlpha}
             onChange={handleAlphaChange}
+            onBlur={handleAlphaBlur}
             className={cn(
               'bg-secondary h-8 w-[3.25rem] rounded-l-none px-2 text-xs shadow-none'
             )}
@@ -536,16 +583,35 @@ export const ColorPickerFormat = ({
       .array()
       .map((value) => Math.round(value))
 
-    const handleHslChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = parseFloat(e.target.value)
-      if (isNaN(value)) return
+    const [localHsl, setLocalHsl] = useState(hsl.map(String))
+    const [localAlpha, setLocalAlpha] = useState(Math.round(alpha).toString())
 
-      const newHsl = [...hsl]
-      newHsl[index] = value
+    useEffect(() => {
+      setLocalHsl(hsl.map(String))
+    }, [hsl[0], hsl[1], hsl[2]])
+
+    useEffect(() => {
+      setLocalAlpha(Math.round(alpha).toString())
+    }, [alpha])
+
+    const handleHslChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+      const newLocalHsl = [...localHsl]
+      newLocalHsl[index] = e.target.value
+      setLocalHsl(newLocalHsl)
+    }
+
+    const handleHslBlur = (index: number) => {
+      const value = parseFloat(localHsl[index])
 
       // H: 0-360, S/L: 0-100
-      if (index === 0 && (value < 0 || value > 360)) return
-      if (index > 0 && (value < 0 || value > 100)) return
+      const maxValue = index === 0 ? 360 : 100
+      if (isNaN(value) || value < 0 || value > maxValue) {
+        // 유효하지 않으면 원래 값으로 복원
+        const newLocalHsl = [...localHsl]
+        newLocalHsl[index] = hsl[index].toString()
+        setLocalHsl(newLocalHsl)
+        return
+      }
 
       if (index === 0) setHue(value)
       if (index === 1) setSaturation(value)
@@ -553,9 +619,15 @@ export const ColorPickerFormat = ({
     }
 
     const handleAlphaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = parseFloat(e.target.value)
+      setLocalAlpha(e.target.value)
+    }
+
+    const handleAlphaBlur = () => {
+      const value = parseFloat(localAlpha)
       if (!isNaN(value) && value >= 0 && value <= 100) {
         setAlpha(value)
+      } else {
+        setLocalAlpha(Math.round(alpha).toString())
       }
     }
 
@@ -567,7 +639,7 @@ export const ColorPickerFormat = ({
         )}
         {...(props as any)}
       >
-        {hsl.map((value, index) => (
+        {localHsl.map((value, index) => (
           <Input
             className={cn(
               'bg-secondary h-8 rounded-r-none px-2 text-xs shadow-none',
@@ -575,22 +647,18 @@ export const ColorPickerFormat = ({
               className
             )}
             key={index}
-            type='number'
-            min={0}
-            max={index === 0 ? 360 : 100}
-            step={1}
+            type='text'
             value={value}
             onChange={(e) => handleHslChange(index, e)}
+            onBlur={() => handleHslBlur(index)}
           />
         ))}
         <div className='relative'>
           <Input
-            type='number'
-            min={0}
-            max={100}
-            step={1}
-            value={Math.round(alpha)}
+            type='text'
+            value={localAlpha}
             onChange={handleAlphaChange}
+            onBlur={handleAlphaBlur}
             className={cn(
               'bg-secondary h-8 w-[3.25rem] rounded-l-none px-2 text-xs shadow-none'
             )}
