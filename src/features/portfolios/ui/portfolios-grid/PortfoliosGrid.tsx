@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Portfolio } from '@/shared/types/api'
+import type { PortfolioAdmin } from '@/shared/types/api'
 import { Input } from '@/shared/ui/input'
 import {
   Select,
@@ -12,7 +12,7 @@ import { Search } from 'lucide-react'
 import { PortfolioCard } from '../portfolio-card'
 
 interface PortfoliosGridProps {
-  data: Portfolio[]
+  data: PortfolioAdmin[]
 }
 
 export function PortfoliosGrid({ data }: PortfoliosGridProps) {
@@ -25,10 +25,8 @@ export function PortfoliosGrid({ data }: PortfoliosGridProps) {
     // 검색어 필터
     const matchesSearch =
       portfolio.projectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      portfolio.clientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      portfolio.shortDescription
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase())
+      (portfolio.client?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+      portfolio.description.toLowerCase().includes(searchQuery.toLowerCase())
 
     // 카테고리 필터
     const matchesCategory =

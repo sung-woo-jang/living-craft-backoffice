@@ -2,7 +2,7 @@ import { AuthenticatedLayout, RootLayout } from '@/app/layout'
 import { CustomersPage } from '@/pages/customers'
 import { Dashboard } from '@/pages/dashboard'
 import { FilmCuttingFormPage, FilmCuttingPage } from '@/pages/film-cutting'
-import { PortfoliosPage } from '@/pages/portfolios'
+import { PortfolioFormPage, PortfoliosPage } from '@/pages/portfolios'
 import { ReservationsPage } from '@/pages/reservations'
 import { ReviewsPage } from '@/pages/reviews'
 import { ServiceFormPage, ServicesPage } from '@/pages/services'
@@ -57,6 +57,14 @@ export const router = createBrowserRouter([
           {
             path: 'portfolios',
             element: <PortfoliosPage />,
+          },
+          {
+            path: 'portfolios/new',
+            element: <PortfolioFormPage />,
+          },
+          {
+            path: 'portfolios/:id/edit',
+            element: <PortfolioFormPage />,
           },
           {
             path: 'reviews',

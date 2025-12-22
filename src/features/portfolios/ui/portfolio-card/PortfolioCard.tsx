@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import type { Portfolio } from '@/shared/types/api'
+import type { PortfolioAdmin } from '@/shared/types/api'
 import { Badge } from '@/shared/ui/badge'
 import { Button } from '@/shared/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/shared/ui/card'
@@ -10,26 +9,22 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/shared/ui/dropdown-menu'
-import {
-  MoreHorizontal,
-  Pencil,
-  Trash2,
-  Eye,
-  Calendar,
-  User,
-} from 'lucide-react'
-import { toast } from 'sonner'
+import { MoreHorizontal, Pencil, Trash2, Calendar, User } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { useDeletePortfolio } from '@/features/portfolios/api'
 
 interface PortfolioCardProps {
-  portfolio: Portfolio
+  portfolio: PortfolioAdmin
 }
 
 export function PortfolioCard({ portfolio }: PortfolioCardProps) {
-  const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
+  const deletePortfolio = useDeletePortfolio()
+
+  const isLoading = deletePortfolio.isPending
 
   const handleEdit = () => {
-    // TODO: Phase 5 - 포트폴리오 수정 Dialog 열기
-    toast.info('포트폴리오 수정 기능은 곧 구현됩니다.')
+    navigate(`/portfolios/${portfolio.id}/edit`)
   }
 
   const handleDelete = async () => {
@@ -39,33 +34,19 @@ export function PortfolioCard({ portfolio }: PortfolioCardProps) {
       return
     }
 
-    setIsLoading(true)
     try {
-      // TODO: API 연동
-      toast.success('포트폴리오가 삭제되었습니다.')
-    } catch (_error) {
-      toast.error('포트폴리오 삭제에 실패했습니다.')
-    } finally {
-      setIsLoading(false)
+      await deletePortfolio.mutateAsync(String(portfolio.id))
+    } catch {
+      // 에러는 mutation hook에서 toast로 처리
     }
   }
 
-  const handleToggleActive = async () => {
-    const action = portfolio.isActive ? '비활성화' : '활성화'
-
-    setIsLoading(true)
-    try {
-      // TODO: API 연동
-      toast.success(`포트폴리오가 ${action}되었습니다.`)
-    } catch (_error) {
-      toast.error(`포트폴리오 ${action}에 실패했습니다.`)
-    } finally {
-      setIsLoading(false)
-    }
+  const handleCardClick = () => {
+    navigate(`/portfolios/${portfolio.id}/edit`)
   }
 
   return (
-    <Card className='overflow-hidden'>
+    <Card className='cursor-pointer overflow-hidden transition-shadow hover:shadow-lg' onClick={handleCardClick}>
       {/* 이미지 썸네일 */}
       <div className='bg-muted relative aspect-video w-full overflow-hidden'>
         <img
@@ -98,19 +79,16 @@ export function PortfolioCard({ portfolio }: PortfolioCardProps) {
                 size='sm'
                 className='size-8 p-0'
                 disabled={isLoading}
+                onClick={(e) => e.stopPropagation()}
               >
                 <MoreHorizontal className='size-4' />
                 <span className='sr-only'>메뉴 열기</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align='end'>
+            <DropdownMenuContent align='end' onClick={(e) => e.stopPropagation()}>
               <DropdownMenuItem onClick={handleEdit}>
                 <Pencil className='mr-2 size-4' />
                 수정
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleToggleActive}>
-                <Eye className='mr-2 size-4' />
-                {portfolio.isActive ? '비활성화' : '활성화'}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
@@ -128,14 +106,16 @@ export function PortfolioCard({ portfolio }: PortfolioCardProps) {
       {/* 카드 내용 */}
       <CardContent className='space-y-3'>
         <p className='text-muted-foreground line-clamp-2 text-sm'>
-          {portfolio.shortDescription}
+          {portfolio.description}
         </p>
 
         <div className='text-muted-foreground flex items-center gap-4 text-sm'>
-          <div className='flex items-center gap-1'>
-            <User className='size-4' />
-            <span>{portfolio.clientName}</span>
-          </div>
+          {portfolio.client && (
+            <div className='flex items-center gap-1'>
+              <User className='size-4' />
+              <span>{portfolio.client}</span>
+            </div>
+          )}
           <div className='flex items-center gap-1'>
             <Calendar className='size-4' />
             <span>{portfolio.duration}</span>

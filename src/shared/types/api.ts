@@ -280,6 +280,57 @@ export interface Portfolio {
   updatedAt: string
 }
 
+/**
+ * 관리자용 포트폴리오 타입 (백엔드 엔티티와 일치)
+ * GET /api/admin/portfolios, GET /api/admin/portfolios/:id 응답
+ */
+export interface PortfolioAdmin {
+  id: number
+  category: string
+  projectName: string
+  client: string | null
+  duration: string
+  description: string
+  detailedDescription: string
+  images: string[]
+  tags: string[]
+  serviceId: number
+  isActive: boolean
+  sortOrder: number
+  createdAt: string
+  updatedAt: string
+}
+
+/**
+ * 포트폴리오 생성 요청
+ * POST /api/admin/portfolios (multipart/form-data)
+ */
+export interface CreatePortfolioRequest {
+  category: string
+  projectName: string
+  client?: string
+  duration: string
+  description: string
+  detailedDescription: string
+  tags?: string[]
+  relatedServiceId: number
+}
+
+/**
+ * 포트폴리오 수정 요청
+ * POST /api/admin/portfolios/:id (multipart/form-data)
+ */
+export interface UpdatePortfolioRequest {
+  category?: string
+  projectName?: string
+  client?: string
+  duration?: string
+  description?: string
+  detailedDescription?: string
+  tags?: string[]
+  relatedServiceId?: number
+}
+
 // ===== 리뷰 관련 타입 =====
 
 export interface Review {

@@ -1,5 +1,6 @@
 import { Button } from '@/shared/ui/button'
 import { Plus } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { usePortfoliosList } from '@/features/portfolios/api/use-portfolios-query'
 import { PortfoliosGrid } from '@/features/portfolios/ui/portfolios-grid'
 
@@ -7,10 +8,11 @@ import { PortfoliosGrid } from '@/features/portfolios/ui/portfolios-grid'
  * 포트폴리오 관리 페이지
  */
 export function PortfoliosPage() {
+  const navigate = useNavigate()
   const { data, isLoading, error } = usePortfoliosList()
 
   const handleCreatePortfolio = () => {
-    // TODO: Phase 5 - 포트폴리오 생성 Dialog 열기
+    navigate('/portfolios/new')
   }
 
   return (
