@@ -1,10 +1,10 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { useStandardMutation } from '@/shared/hooks/custom-query'
+import { generateQueryKeysFromUrl } from '@/shared/lib'
 import { toast } from 'sonner'
 import type { FilmDetail } from '../../fetch-films'
 import type { UpdateFilmVariables } from '../types'
-import { generateQueryKeysFromUrl } from '@/shared/lib'
 
 /**
  * 필름지 수정 API
@@ -31,7 +31,11 @@ export function useUpdateFilm() {
   return useStandardMutation<FilmDetail, Error, UpdateFilmVariables>({
     mutationFn: updateFilm,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [...generateQueryKeysFromUrl(ADMIN_API.FILM_OPTIMIZER.FILMS.LIST)] })
+      queryClient.invalidateQueries({
+        queryKey: [
+          ...generateQueryKeysFromUrl(ADMIN_API.FILM_OPTIMIZER.FILMS.LIST),
+        ],
+      })
       toast.success('필름지가 수정되었습니다.')
     },
   })

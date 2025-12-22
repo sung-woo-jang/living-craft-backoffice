@@ -1,6 +1,6 @@
 import { FilmCuttingFormHeader } from '../film-cutting-form-header'
-import { FilmCuttingFormSettings } from '../film-cutting-form-settings'
 import { FilmCuttingFormPieces } from '../film-cutting-form-pieces'
+import { FilmCuttingFormSettings } from '../film-cutting-form-settings'
 import { FilmCuttingFormVisualization } from '../film-cutting-form-visualization'
 import styles from './styles.module.scss'
 

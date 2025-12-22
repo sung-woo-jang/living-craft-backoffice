@@ -1,9 +1,9 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { useStandardMutation } from '@/shared/hooks/custom-query'
+import { generateQueryKeysFromUrl } from '@/shared/lib'
 import { toast } from 'sonner'
 import type { UpdateReservationStatusVariables } from './types'
-import { generateQueryKeysFromUrl } from '@/shared/lib'
 
 /**
  * 예약 상태 변경 API
@@ -30,7 +30,9 @@ export function useUpdateReservationStatus() {
   return useStandardMutation<void, Error, UpdateReservationStatusVariables>({
     mutationFn: updateReservationStatus,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [...generateQueryKeysFromUrl(ADMIN_API.RESERVATIONS.LIST)] })
+      queryClient.invalidateQueries({
+        queryKey: [...generateQueryKeysFromUrl(ADMIN_API.RESERVATIONS.LIST)],
+      })
       toast.success('예약 상태가 변경되었습니다.')
     },
   })

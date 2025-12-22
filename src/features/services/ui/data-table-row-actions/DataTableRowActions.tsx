@@ -9,10 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/shared/ui/dropdown-menu'
 import { MoreHorizontal, Pencil, Trash2, Eye } from 'lucide-react'
-import {
-  useDeleteService,
-  useToggleService,
-} from '../../api'
+import { useDeleteService, useToggleService } from '../../api'
 
 interface DataTableRowActionsProps {
   row: Row<ServiceAdminListItem>

@@ -1,6 +1,6 @@
-import { List } from 'lucide-react'
-import { Button } from '@/shared/ui/button'
 import type { CuttingPiece, CuttingPieceInput } from '@/shared/types/api'
+import { Button } from '@/shared/ui/button'
+import { List } from 'lucide-react'
 import { useFilmsList, useDeletePiece, useTogglePieceComplete } from '../../api'
 import { useFilmCuttingForm } from '../../model'
 import { PiecesInput } from '../pieces-input'
@@ -100,11 +100,11 @@ export function FilmCuttingFormPieces() {
         <div className={styles.sectionHeader}>
           <h3 className={styles.sectionTitle}>조각 추가</h3>
           <Button
-            variant="outline"
-            size="sm"
+            variant='outline'
+            size='sm'
             onClick={() => setOpen('bulkInput')}
           >
-            <List className="h-4 w-4" />
+            <List className='h-4 w-4' />
             일괄 입력
           </Button>
         </div>

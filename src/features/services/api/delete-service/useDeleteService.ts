@@ -1,8 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { useStandardMutation } from '@/shared/hooks/custom-query'
-import { toast } from 'sonner'
 import { generateQueryKeysFromUrl } from '@/shared/lib'
+import { toast } from 'sonner'
 
 /**
  * 서비스 삭제 API
@@ -23,7 +23,9 @@ export function useDeleteService() {
   return useStandardMutation<void, Error, string>({
     mutationFn: deleteService,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [...generateQueryKeysFromUrl(ADMIN_API.SERVICES.LIST)] })
+      queryClient.invalidateQueries({
+        queryKey: [...generateQueryKeysFromUrl(ADMIN_API.SERVICES.LIST)],
+      })
       toast.success('서비스가 삭제되었습니다.')
     },
   })

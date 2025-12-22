@@ -85,12 +85,12 @@ export function ImageUploader({
           <div key={`existing-${index}`} className={styles.imageItem}>
             <img src={url} alt={`이미지 ${index + 1}`} />
             <button
-              type="button"
+              type='button'
               className={styles.removeButton}
               onClick={() => handleRemoveExisting(index)}
-              aria-label="이미지 삭제"
+              aria-label='이미지 삭제'
             >
-              <X className="size-4" />
+              <X className='size-4' />
             </button>
           </div>
         ))}
@@ -98,14 +98,17 @@ export function ImageUploader({
         {/* 새 이미지 */}
         {newImages.map((file, index) => (
           <div key={`new-${index}`} className={styles.imageItem}>
-            <img src={URL.createObjectURL(file)} alt={`새 이미지 ${index + 1}`} />
+            <img
+              src={URL.createObjectURL(file)}
+              alt={`새 이미지 ${index + 1}`}
+            />
             <button
-              type="button"
+              type='button'
               className={styles.removeButton}
               onClick={() => handleRemoveNew(index)}
-              aria-label="이미지 삭제"
+              aria-label='이미지 삭제'
             >
-              <X className="size-4" />
+              <X className='size-4' />
             </button>
             <span className={styles.newBadge}>NEW</span>
           </div>
@@ -119,7 +122,7 @@ export function ImageUploader({
             onDrop={handleDrop}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
-            role="button"
+            role='button'
             tabIndex={0}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
@@ -127,7 +130,7 @@ export function ImageUploader({
               }
             }}
           >
-            <Plus className="size-6" />
+            <Plus className='size-6' />
             <span>이미지 추가</span>
           </div>
         )}
@@ -141,7 +144,7 @@ export function ImageUploader({
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
-          role="button"
+          role='button'
           tabIndex={0}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
@@ -149,7 +152,7 @@ export function ImageUploader({
             }
           }}
         >
-          <ImageIcon className="size-12 text-muted-foreground" />
+          <ImageIcon className='text-muted-foreground size-12' />
           <p className={styles.dropZoneText}>
             이미지를 드래그하여 놓거나 클릭하여 선택하세요
           </p>
@@ -161,8 +164,8 @@ export function ImageUploader({
 
       <input
         ref={inputRef}
-        type="file"
-        accept="image/*"
+        type='file'
+        accept='image/*'
         multiple
         className={styles.hiddenInput}
         onChange={handleFileSelect}

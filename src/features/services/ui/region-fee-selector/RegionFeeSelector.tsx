@@ -586,13 +586,13 @@ export function RegionFeeSelector() {
             onClick={() => {
               console.log('🔘 추가 버튼 클릭됨')
               console.log('  - disabled 조건들:')
-              console.log('    - selectedSido:', selectedSido, '→', !selectedSido)
               console.log(
-                '    - estimateFee:',
-                estimateFee,
+                '    - selectedSido:',
+                selectedSido,
                 '→',
-                !estimateFee
+                !selectedSido
               )
+              console.log('    - estimateFee:', estimateFee, '→', !estimateFee)
               console.log(
                 '    - setExceptionFee && !selectedSigungu:',
                 setExceptionFee && !selectedSigungu

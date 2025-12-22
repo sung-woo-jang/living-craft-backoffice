@@ -1,9 +1,9 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { useStandardMutation } from '@/shared/hooks/custom-query'
+import { generateQueryKeysFromUrl } from '@/shared/lib'
 import { toast } from 'sonner'
 import type { OperatingHours } from '../fetch-operating-hours'
-import { generateQueryKeysFromUrl } from '@/shared/lib'
 
 /**
  * 운영 시간 수정 API
@@ -29,7 +29,11 @@ export function useUpdateOperatingHours() {
   return useStandardMutation<void, Error, OperatingHours>({
     mutationFn: updateOperatingHours,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [...generateQueryKeysFromUrl(ADMIN_API.SETTINGS.OPERATING_HOURS.GET)] })
+      queryClient.invalidateQueries({
+        queryKey: [
+          ...generateQueryKeysFromUrl(ADMIN_API.SETTINGS.OPERATING_HOURS.GET),
+        ],
+      })
       toast.success('운영 시간이 저장되었습니다.')
     },
   })

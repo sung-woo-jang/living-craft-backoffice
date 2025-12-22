@@ -1,4 +1,3 @@
-import { Plus } from 'lucide-react'
 import { Button } from '@/shared/ui/button'
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
@@ -10,6 +9,7 @@ import {
   SelectValue,
 } from '@/shared/ui/select'
 import { Switch } from '@/shared/ui/switch'
+import { Plus } from 'lucide-react'
 import { useFilmsList } from '../../api'
 import { useFilmCuttingForm } from '../../model'
 import styles from './styles.module.scss'
@@ -46,21 +46,21 @@ export function FilmCuttingFormSettings() {
       <h3 className={styles.sectionTitle}>프로젝트 설정</h3>
 
       <div className={styles.formGroup}>
-        <Label htmlFor="projectName">프로젝트명 *</Label>
+        <Label htmlFor='projectName'>프로젝트명 *</Label>
         <Input
-          id="projectName"
+          id='projectName'
           value={projectName}
           onChange={(e) => setProjectName(e.target.value)}
-          placeholder="예: 거실 리모델링"
+          placeholder='예: 거실 리모델링'
         />
       </div>
 
       <div className={styles.formGroup}>
-        <Label htmlFor="film">필름 선택 *</Label>
+        <Label htmlFor='film'>필름 선택 *</Label>
         <div className={styles.filmSelectRow}>
           <Select value={selectedFilmId} onValueChange={setSelectedFilmId}>
             <SelectTrigger className={styles.filmSelect}>
-              <SelectValue placeholder="필름을 선택하세요" />
+              <SelectValue placeholder='필름을 선택하세요' />
             </SelectTrigger>
             <SelectContent>
               {filmsList?.map((film) => (
@@ -71,26 +71,25 @@ export function FilmCuttingFormSettings() {
             </SelectContent>
           </Select>
           <Button
-            variant="outline"
-            size="sm"
+            variant='outline'
+            size='sm'
             onClick={() => setOpen('createFilm')}
             className={styles.addFilmButton}
           >
-            <Plus className="h-4 w-4" />
-            새 필름
+            <Plus className='h-4 w-4' />새 필름
           </Button>
         </div>
       </div>
 
       <div className={styles.switchGroup}>
         <div className={styles.switchInfo}>
-          <Label htmlFor="allowRotation">회전 허용</Label>
+          <Label htmlFor='allowRotation'>회전 허용</Label>
           <p className={styles.switchDescription}>
             조각을 90도 회전하여 배치할 수 있습니다
           </p>
         </div>
         <Switch
-          id="allowRotation"
+          id='allowRotation'
           checked={allowRotation}
           onCheckedChange={setAllowRotation}
         />

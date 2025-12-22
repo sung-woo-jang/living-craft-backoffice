@@ -1,8 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { useStandardMutation } from '@/shared/hooks/custom-query'
-import { toast } from 'sonner'
 import { generateQueryKeysFromUrl } from '@/shared/lib'
+import { toast } from 'sonner'
 
 /**
  * 필름지 삭제 API
@@ -25,7 +25,11 @@ export function useDeleteFilm() {
   return useStandardMutation<void, Error, number | string>({
     mutationFn: deleteFilm,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [...generateQueryKeysFromUrl(ADMIN_API.FILM_OPTIMIZER.FILMS.LIST)] })
+      queryClient.invalidateQueries({
+        queryKey: [
+          ...generateQueryKeysFromUrl(ADMIN_API.FILM_OPTIMIZER.FILMS.LIST),
+        ],
+      })
       toast.success('필름지가 삭제되었습니다.')
     },
   })

@@ -1,7 +1,7 @@
 import { useState, useCallback, type KeyboardEvent } from 'react'
-import { X } from 'lucide-react'
-import { Input } from '@/shared/ui/input'
 import { Badge } from '@/shared/ui/badge'
+import { Input } from '@/shared/ui/input'
+import { X } from 'lucide-react'
 import styles from './styles.module.scss'
 
 interface TagInputProps {
@@ -47,15 +47,15 @@ export function TagInput({
       {value.length > 0 && (
         <div className={styles.tagList}>
           {value.map((tag) => (
-            <Badge key={tag} variant="secondary" className={styles.tag}>
+            <Badge key={tag} variant='secondary' className={styles.tag}>
               {tag}
               <button
-                type="button"
+                type='button'
                 className={styles.removeButton}
                 onClick={() => handleRemove(tag)}
                 aria-label={`${tag} 태그 삭제`}
               >
-                <X className="size-3" />
+                <X className='size-3' />
               </button>
             </Badge>
           ))}

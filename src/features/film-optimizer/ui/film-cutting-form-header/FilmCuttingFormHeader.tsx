@@ -1,6 +1,10 @@
-import { useNavigate } from 'react-router-dom'
 import { Button } from '@/shared/ui/button'
-import { useFilmsList, useCreateCuttingProject, useUpdateCuttingProject } from '../../api'
+import { useNavigate } from 'react-router-dom'
+import {
+  useFilmsList,
+  useCreateCuttingProject,
+  useUpdateCuttingProject,
+} from '../../api'
 import { useFilmCuttingForm, useBinPacker } from '../../model'
 import styles from './styles.module.scss'
 
@@ -108,7 +112,7 @@ export function FilmCuttingFormHeader() {
         </p>
       </div>
       <div className={styles.headerActions}>
-        <Button variant="outline" onClick={handleCancel} disabled={isPending}>
+        <Button variant='outline' onClick={handleCancel} disabled={isPending}>
           취소
         </Button>
         <Button

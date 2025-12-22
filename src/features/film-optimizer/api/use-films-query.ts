@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { generateQueryKeysFromUrl } from '@/shared/lib'
 import type { FilmDetail, FilmListItem } from '@/shared/types/api'

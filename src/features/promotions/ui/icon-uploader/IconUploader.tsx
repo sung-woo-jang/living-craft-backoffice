@@ -74,22 +74,22 @@ export function IconUploader({
     <div className={styles.container}>
       {hasImage ? (
         <div className={styles.preview}>
-          <img src={getImageSrc() ?? undefined} alt="아이콘 미리보기" />
+          <img src={getImageSrc() ?? undefined} alt='아이콘 미리보기' />
           <button
-            type="button"
+            type='button'
             className={styles.removeButton}
             onClick={handleRemove}
-            aria-label="아이콘 삭제"
+            aria-label='아이콘 삭제'
           >
-            <X className="size-4" />
+            <X className='size-4' />
           </button>
           {newIcon && <span className={styles.newBadge}>NEW</span>}
           <button
-            type="button"
+            type='button'
             className={styles.changeButton}
             onClick={() => inputRef.current?.click()}
           >
-            <Upload className="size-4" />
+            <Upload className='size-4' />
             변경
           </button>
         </div>
@@ -100,7 +100,7 @@ export function IconUploader({
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
-          role="button"
+          role='button'
           tabIndex={0}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
@@ -108,7 +108,7 @@ export function IconUploader({
             }
           }}
         >
-          <ImageIcon className="size-10 text-muted-foreground" />
+          <ImageIcon className='text-muted-foreground size-10' />
           <p className={styles.dropZoneText}>
             아이콘 이미지를 드래그하거나 클릭하여 선택
           </p>
@@ -118,8 +118,8 @@ export function IconUploader({
 
       <input
         ref={inputRef}
-        type="file"
-        accept="image/*"
+        type='file'
+        accept='image/*'
         className={styles.hiddenInput}
         onChange={handleFileSelect}
       />

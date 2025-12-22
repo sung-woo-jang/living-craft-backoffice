@@ -1,7 +1,7 @@
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { useStandardQuery } from '@/shared/hooks/custom-query'
-import type { FetchCustomersResponse } from './types'
 import { generateQueryKeysFromUrl } from '@/shared/lib'
+import type { FetchCustomersResponse } from './types'
 
 /**
  * 고객 목록 조회 API

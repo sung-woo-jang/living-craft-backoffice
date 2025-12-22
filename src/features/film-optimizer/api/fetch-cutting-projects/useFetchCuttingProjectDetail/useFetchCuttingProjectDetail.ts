@@ -22,7 +22,11 @@ const fetchCuttingProjectDetail = async (
  */
 export function useFetchCuttingProjectDetail(id: number | string | undefined) {
   return useStandardQuery<CuttingProjectDetail>({
-    queryKey: [...generateQueryKeysFromUrl(ADMIN_API.FILM_OPTIMIZER.PROJECTS.DETAIL(id ?? ''))],
+    queryKey: [
+      ...generateQueryKeysFromUrl(
+        ADMIN_API.FILM_OPTIMIZER.PROJECTS.DETAIL(id ?? '')
+      ),
+    ],
     queryFn: () => {
       if (!id) throw new Error('프로젝트 ID가 필요합니다.')
       return fetchCuttingProjectDetail(id)

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-
 import { axiosInstance, ADMIN_API } from '@/shared/api'
 import { useStandardQuery } from '@/shared/hooks/custom-query'
 import { generateQueryKeysFromUrl, createQueryString } from '@/shared/lib'

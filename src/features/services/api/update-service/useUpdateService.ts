@@ -1,9 +1,9 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { useStandardMutation } from '@/shared/hooks/custom-query'
+import { generateQueryKeysFromUrl } from '@/shared/lib'
 import { toast } from 'sonner'
 import type { UpdateServiceVariables } from './types'
-import { generateQueryKeysFromUrl } from '@/shared/lib'
 
 /**
  * 서비스 수정 API
@@ -30,7 +30,9 @@ export function useUpdateService() {
   return useStandardMutation<void, Error, UpdateServiceVariables>({
     mutationFn: updateService,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [...generateQueryKeysFromUrl(ADMIN_API.SERVICES.LIST)] })
+      queryClient.invalidateQueries({
+        queryKey: [...generateQueryKeysFromUrl(ADMIN_API.SERVICES.LIST)],
+      })
       toast.success('서비스가 수정되었습니다.')
     },
   })

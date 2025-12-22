@@ -186,9 +186,7 @@ export function packPieces(
   // 결과 변환
   const allRects: PackedRect[] = shelves.flatMap((shelf) => shelf.rects)
   const usedHeight =
-    shelves.length > 0
-      ? Math.max(...allRects.map((r) => r.y + r.height))
-      : 0
+    shelves.length > 0 ? Math.max(...allRects.map((r) => r.y + r.height)) : 0
 
   const usedArea = allRects.reduce(
     (sum, rect) => sum + rect.width * rect.height,

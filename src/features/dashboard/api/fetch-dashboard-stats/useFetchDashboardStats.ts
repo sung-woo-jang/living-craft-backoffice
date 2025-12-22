@@ -1,7 +1,7 @@
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { useStandardQuery } from '@/shared/hooks/custom-query'
-import type { DashboardStats } from './types'
 import { generateQueryKeysFromUrl } from '@/shared/lib'
+import type { DashboardStats } from './types'
 
 /**
  * 대시보드 통계 조회 API

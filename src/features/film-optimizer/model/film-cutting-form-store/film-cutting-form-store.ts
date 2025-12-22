@@ -1,8 +1,8 @@
-import { createWithEqualityFn } from 'zustand/traditional'
 import {
   useStoreWithShallow,
   type StoreWithShallow,
 } from '@/shared/model/utils'
+import { createWithEqualityFn } from 'zustand/traditional'
 import type { FilmCuttingFormState } from './types'
 
 const initialState = {
@@ -77,9 +77,9 @@ const useFilmCuttingFormStore = createWithEqualityFn<FilmCuttingFormState>(
  *   'setProjectName',
  * ])
  */
-export const useFilmCuttingFormStore_: StoreWithShallow<FilmCuttingFormState> = (
-  keys
-) => useStoreWithShallow(useFilmCuttingFormStore, keys)
+export const useFilmCuttingFormStore_: StoreWithShallow<
+  FilmCuttingFormState
+> = (keys) => useStoreWithShallow(useFilmCuttingFormStore, keys)
 
 // 별칭 export
 export { useFilmCuttingFormStore_ as useFilmCuttingForm }

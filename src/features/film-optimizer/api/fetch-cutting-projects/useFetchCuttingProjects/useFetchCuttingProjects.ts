@@ -24,7 +24,10 @@ const fetchCuttingProjects = async (
  */
 export function useFetchCuttingProjects(filmId?: number | string) {
   return useStandardQuery<FetchCuttingProjectsResponse>({
-    queryKey: [...generateQueryKeysFromUrl(ADMIN_API.FILM_OPTIMIZER.PROJECTS.LIST), filmId],
+    queryKey: [
+      ...generateQueryKeysFromUrl(ADMIN_API.FILM_OPTIMIZER.PROJECTS.LIST),
+      filmId,
+    ],
     queryFn: () => fetchCuttingProjects(filmId),
   })
 }

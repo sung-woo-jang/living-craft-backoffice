@@ -1,7 +1,7 @@
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { useStandardQuery } from '@/shared/hooks/custom-query'
-import type { Reservation } from '../fetch-reservations'
 import { generateQueryKeysFromUrl } from '@/shared/lib'
+import type { Reservation } from '../fetch-reservations'
 
 /**
  * 예약 상세 조회 API

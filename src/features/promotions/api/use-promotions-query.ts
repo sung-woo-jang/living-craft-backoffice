@@ -26,7 +26,11 @@ export function usePromotionsList() {
  */
 export function usePromotionDetail(id: number | string | undefined) {
   return useStandardQuery<PromotionAdmin, Error, PromotionAdmin>({
-    queryKey: [...generateQueryKeysFromUrl(ADMIN_API.PROMOTIONS.LIST), 'detail', id],
+    queryKey: [
+      ...generateQueryKeysFromUrl(ADMIN_API.PROMOTIONS.LIST),
+      'detail',
+      id,
+    ],
     queryFn: async () => {
       if (!id) throw new Error('프로모션 ID가 필요합니다.')
       const { data } = await axiosInstance.get<PromotionAdmin>(

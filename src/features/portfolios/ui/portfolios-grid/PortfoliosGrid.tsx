@@ -25,7 +25,9 @@ export function PortfoliosGrid({ data }: PortfoliosGridProps) {
     // 검색어 필터
     const matchesSearch =
       portfolio.projectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (portfolio.client?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+      (portfolio.client?.toLowerCase() || '').includes(
+        searchQuery.toLowerCase()
+      ) ||
       portfolio.description.toLowerCase().includes(searchQuery.toLowerCase())
 
     // 카테고리 필터

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
-import type { FetchFilmsResponse } from '../types'
 import { generateQueryKeysFromUrl } from '@/shared/lib'
+import type { FetchFilmsResponse } from '../types'
 
 /**
  * 필름지 목록 조회 API
@@ -20,7 +20,9 @@ const fetchFilms = async (): Promise<ApiResponse<FetchFilmsResponse>> => {
  */
 export function useFetchFilms() {
   return useQuery({
-    queryKey: [...generateQueryKeysFromUrl(ADMIN_API.FILM_OPTIMIZER.FILMS.LIST)],
+    queryKey: [
+      ...generateQueryKeysFromUrl(ADMIN_API.FILM_OPTIMIZER.FILMS.LIST),
+    ],
     queryFn: fetchFilms,
   })
 }

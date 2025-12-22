@@ -1,8 +1,5 @@
 import { Controller, FormProvider } from 'react-hook-form'
-import { useNavigate, useParams } from 'react-router-dom'
 import { Button } from '@/shared/ui/button'
-import { Input } from '@/shared/ui/input'
-import { Switch } from '@/shared/ui/switch'
 import {
   Field,
   FieldDescription,
@@ -10,6 +7,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from '@/shared/ui/field'
+import { Input } from '@/shared/ui/input'
 import {
   Select,
   SelectContent,
@@ -17,9 +15,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/ui/select'
-import { usePromotionDetail } from '@/features/promotions/api/use-promotions-query'
+import { Switch } from '@/shared/ui/switch'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useCreatePromotion } from '@/features/promotions/api/create-promotion'
 import { useUpdatePromotion } from '@/features/promotions/api/update-promotion'
+import { usePromotionDetail } from '@/features/promotions/api/use-promotions-query'
 import {
   usePromotionFormPage,
   LINK_TYPE_OPTIONS,
@@ -132,15 +132,15 @@ export function PromotionFormPage() {
           </div>
           <div className={styles.headerActions}>
             <Button
-              type="button"
-              variant="outline"
+              type='button'
+              variant='outline'
               onClick={handleCancel}
               disabled={isPending}
             >
               취소
             </Button>
             <Button
-              type="button"
+              type='button'
               onClick={handleFormSubmit}
               disabled={isPending}
             >
@@ -160,17 +160,17 @@ export function PromotionFormPage() {
 
                 <FieldGroup>
                   <Controller
-                    name="title"
+                    name='title'
                     control={control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel htmlFor="title">
+                        <FieldLabel htmlFor='title'>
                           제목 <span className={styles.labelRequired}>*</span>
                         </FieldLabel>
                         <Input
                           {...field}
-                          id="title"
-                          placeholder="예: 친구 초대하고 함께 쿠폰 받기"
+                          id='title'
+                          placeholder='예: 친구 초대하고 함께 쿠폰 받기'
                           aria-invalid={fieldState.invalid}
                         />
                         {fieldState.invalid && (
@@ -181,16 +181,16 @@ export function PromotionFormPage() {
                   />
 
                   <Controller
-                    name="subtitle"
+                    name='subtitle'
                     control={control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel htmlFor="subtitle">부제목</FieldLabel>
+                        <FieldLabel htmlFor='subtitle'>부제목</FieldLabel>
                         <Input
                           {...field}
-                          id="subtitle"
+                          id='subtitle'
                           value={field.value ?? ''}
-                          placeholder="예: 이용하는 친구 초대하고 할인 쿠폰 받기!"
+                          placeholder='예: 이용하는 친구 초대하고 할인 쿠폰 받기!'
                           aria-invalid={fieldState.invalid}
                         />
                         <FieldDescription>선택사항</FieldDescription>
@@ -203,22 +203,27 @@ export function PromotionFormPage() {
 
                   <div className={styles.fieldRow}>
                     <Controller
-                      name="sortOrder"
+                      name='sortOrder'
                       control={control}
                       render={({ field, fieldState }) => (
                         <Field data-invalid={fieldState.invalid}>
-                          <FieldLabel htmlFor="sortOrder">
-                            정렬 순서 <span className={styles.labelRequired}>*</span>
+                          <FieldLabel htmlFor='sortOrder'>
+                            정렬 순서{' '}
+                            <span className={styles.labelRequired}>*</span>
                           </FieldLabel>
                           <Input
                             {...field}
-                            type="number"
-                            id="sortOrder"
+                            type='number'
+                            id='sortOrder'
                             min={0}
-                            onChange={(e) => field.onChange(Number(e.target.value))}
+                            onChange={(e) =>
+                              field.onChange(Number(e.target.value))
+                            }
                             aria-invalid={fieldState.invalid}
                           />
-                          <FieldDescription>숫자가 작을수록 먼저 표시</FieldDescription>
+                          <FieldDescription>
+                            숫자가 작을수록 먼저 표시
+                          </FieldDescription>
                           {fieldState.invalid && (
                             <FieldError errors={[fieldState.error]} />
                           )}
@@ -227,14 +232,14 @@ export function PromotionFormPage() {
                     />
 
                     <Controller
-                      name="isActive"
+                      name='isActive'
                       control={control}
                       render={({ field }) => (
                         <Field>
-                          <FieldLabel htmlFor="isActive">활성 상태</FieldLabel>
+                          <FieldLabel htmlFor='isActive'>활성 상태</FieldLabel>
                           <div className={styles.switchContainer}>
                             <Switch
-                              id="isActive"
+                              id='isActive'
                               checked={field.value}
                               onCheckedChange={field.onChange}
                             />
@@ -255,21 +260,24 @@ export function PromotionFormPage() {
 
                 <FieldGroup>
                   <Controller
-                    name="linkType"
+                    name='linkType'
                     control={control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel htmlFor="linkType">링크 타입</FieldLabel>
+                        <FieldLabel htmlFor='linkType'>링크 타입</FieldLabel>
                         <Select
                           value={field.value}
                           onValueChange={field.onChange}
                         >
-                          <SelectTrigger id="linkType">
-                            <SelectValue placeholder="링크 타입 선택" />
+                          <SelectTrigger id='linkType'>
+                            <SelectValue placeholder='링크 타입 선택' />
                           </SelectTrigger>
                           <SelectContent>
                             {LINK_TYPE_OPTIONS.map((option) => (
-                              <SelectItem key={option.value} value={option.value}>
+                              <SelectItem
+                                key={option.value}
+                                value={option.value}
+                              >
                                 {option.label}
                               </SelectItem>
                             ))}
@@ -283,17 +291,19 @@ export function PromotionFormPage() {
                   />
 
                   <Controller
-                    name="linkUrl"
+                    name='linkUrl'
                     control={control}
                     render={({ field, fieldState }) => {
                       // 커스텀 URL인지 확인 (INTERNAL_LINK_OPTIONS에 없는 값)
                       const isCustomUrl = isCustomInternalUrl(field.value)
                       // Select에서 표시할 값 결정
-                      const selectValue = isCustomUrl ? '__custom__' : (field.value ?? '')
+                      const selectValue = isCustomUrl
+                        ? '__custom__'
+                        : (field.value ?? '')
 
                       return (
                         <Field data-invalid={fieldState.invalid}>
-                          <FieldLabel htmlFor="linkUrl">링크 URL</FieldLabel>
+                          <FieldLabel htmlFor='linkUrl'>링크 URL</FieldLabel>
                           {linkType === 'internal' ? (
                             <div className={styles.internalLinkContainer}>
                               <Select
@@ -307,12 +317,15 @@ export function PromotionFormPage() {
                                   }
                                 }}
                               >
-                                <SelectTrigger id="linkUrl">
-                                  <SelectValue placeholder="이동할 페이지 선택" />
+                                <SelectTrigger id='linkUrl'>
+                                  <SelectValue placeholder='이동할 페이지 선택' />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {INTERNAL_LINK_OPTIONS.map((option) => (
-                                    <SelectItem key={option.value} value={option.value}>
+                                    <SelectItem
+                                      key={option.value}
+                                      value={option.value}
+                                    >
                                       {option.label}
                                     </SelectItem>
                                   ))}
@@ -320,11 +333,14 @@ export function PromotionFormPage() {
                               </Select>
 
                               {/* 직접 입력 선택 시 또는 기존 커스텀 URL인 경우 Input 표시 */}
-                              {(isCustomUrl || selectValue === '__custom__') && (
+                              {(isCustomUrl ||
+                                selectValue === '__custom__') && (
                                 <Input
                                   value={field.value ?? ''}
-                                  onChange={(e) => field.onChange(e.target.value)}
-                                  placeholder="/reservation/service?serviceId=1"
+                                  onChange={(e) =>
+                                    field.onChange(e.target.value)
+                                  }
+                                  placeholder='/reservation/service?serviceId=1'
                                   className={styles.customLinkInput}
                                 />
                               )}
@@ -332,9 +348,9 @@ export function PromotionFormPage() {
                           ) : (
                             <Input
                               {...field}
-                              id="linkUrl"
+                              id='linkUrl'
                               value={field.value ?? ''}
-                              placeholder="https://example.com"
+                              placeholder='https://example.com'
                               aria-invalid={fieldState.invalid}
                             />
                           )}
@@ -361,15 +377,15 @@ export function PromotionFormPage() {
 
                 <div className={styles.fieldRow}>
                   <Controller
-                    name="startDate"
+                    name='startDate'
                     control={control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel htmlFor="startDate">시작일</FieldLabel>
+                        <FieldLabel htmlFor='startDate'>시작일</FieldLabel>
                         <Input
                           {...field}
-                          type="date"
-                          id="startDate"
+                          type='date'
+                          id='startDate'
                           value={field.value ?? ''}
                           aria-invalid={fieldState.invalid}
                         />
@@ -382,19 +398,21 @@ export function PromotionFormPage() {
                   />
 
                   <Controller
-                    name="endDate"
+                    name='endDate'
                     control={control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel htmlFor="endDate">종료일</FieldLabel>
+                        <FieldLabel htmlFor='endDate'>종료일</FieldLabel>
                         <Input
                           {...field}
-                          type="date"
-                          id="endDate"
+                          type='date'
+                          id='endDate'
                           value={field.value ?? ''}
                           aria-invalid={fieldState.invalid}
                         />
-                        <FieldDescription>비워두면 무기한 게시</FieldDescription>
+                        <FieldDescription>
+                          비워두면 무기한 게시
+                        </FieldDescription>
                         {fieldState.invalid && (
                           <FieldError errors={[fieldState.error]} />
                         )}
@@ -416,10 +434,13 @@ export function PromotionFormPage() {
                   onRemoveExisting={() => setValue('existingIconUrl', null)}
                 />
                 <FieldDescription>
-                  권장 크기: 112x112px (2x 해상도). 정사각형 이미지가 가장 잘 보입니다.
+                  권장 크기: 112x112px (2x 해상도). 정사각형 이미지가 가장 잘
+                  보입니다.
                 </FieldDescription>
                 {errors.newIcon && (
-                  <p className={styles.errorText}>{String(errors.newIcon.message)}</p>
+                  <p className={styles.errorText}>
+                    {String(errors.newIcon.message)}
+                  </p>
                 )}
               </div>
             </div>
@@ -429,14 +450,14 @@ export function PromotionFormPage() {
         {/* 하단 푸터 */}
         <div className={styles.footer}>
           <Button
-            type="button"
-            variant="outline"
+            type='button'
+            variant='outline'
             onClick={handleCancel}
             disabled={isPending}
           >
             취소
           </Button>
-          <Button type="button" onClick={handleFormSubmit} disabled={isPending}>
+          <Button type='button' onClick={handleFormSubmit} disabled={isPending}>
             {isPending ? '저장 중...' : isEditMode ? '수정하기' : '추가하기'}
           </Button>
         </div>

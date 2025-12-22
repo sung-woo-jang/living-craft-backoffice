@@ -46,7 +46,10 @@ export function PortfolioCard({ portfolio }: PortfolioCardProps) {
   }
 
   return (
-    <Card className='cursor-pointer overflow-hidden transition-shadow hover:shadow-lg' onClick={handleCardClick}>
+    <Card
+      className='cursor-pointer overflow-hidden transition-shadow hover:shadow-lg'
+      onClick={handleCardClick}
+    >
       {/* 이미지 썸네일 */}
       <div className='bg-muted relative aspect-video w-full overflow-hidden'>
         <img
@@ -85,7 +88,10 @@ export function PortfolioCard({ portfolio }: PortfolioCardProps) {
                 <span className='sr-only'>메뉴 열기</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align='end' onClick={(e) => e.stopPropagation()}>
+            <DropdownMenuContent
+              align='end'
+              onClick={(e) => e.stopPropagation()}
+            >
               <DropdownMenuItem onClick={handleEdit}>
                 <Pencil className='mr-2 size-4' />
                 수정

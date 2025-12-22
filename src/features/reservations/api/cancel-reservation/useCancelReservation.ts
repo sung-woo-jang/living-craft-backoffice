@@ -1,9 +1,9 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { useStandardMutation } from '@/shared/hooks/custom-query'
+import { generateQueryKeysFromUrl } from '@/shared/lib'
 import { toast } from 'sonner'
 import type { CancelReservationVariables } from './types'
-import { generateQueryKeysFromUrl } from '@/shared/lib'
 
 /**
  * 예약 취소 API
@@ -30,7 +30,9 @@ export function useCancelReservation() {
   return useStandardMutation<void, Error, CancelReservationVariables>({
     mutationFn: cancelReservation,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [...generateQueryKeysFromUrl(ADMIN_API.RESERVATIONS.LIST)] })
+      queryClient.invalidateQueries({
+        queryKey: [...generateQueryKeysFromUrl(ADMIN_API.RESERVATIONS.LIST)],
+      })
       toast.success('예약이 취소되었습니다.')
     },
   })

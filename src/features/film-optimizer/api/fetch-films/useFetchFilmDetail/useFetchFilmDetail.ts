@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
-import type { FilmDetail } from '../types'
 import { generateQueryKeysFromUrl } from '@/shared/lib'
+import type { FilmDetail } from '../types'
 
 /**
  * 필름지 상세 조회 API
@@ -22,7 +22,11 @@ const fetchFilmDetail = async (
  */
 export function useFetchFilmDetail(id: number | string | undefined) {
   return useQuery({
-    queryKey: [...generateQueryKeysFromUrl(ADMIN_API.FILM_OPTIMIZER.FILMS.DETAIL(id ?? ''))],
+    queryKey: [
+      ...generateQueryKeysFromUrl(
+        ADMIN_API.FILM_OPTIMIZER.FILMS.DETAIL(id ?? '')
+      ),
+    ],
     queryFn: () => {
       if (!id) throw new Error('필름지 ID가 필요합니다.')
       return fetchFilmDetail(id)

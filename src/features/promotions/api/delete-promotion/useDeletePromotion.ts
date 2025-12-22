@@ -1,13 +1,15 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { useStandardMutation } from '@/shared/hooks/custom-query'
 import { generateQueryKeysFromUrl } from '@/shared/lib'
+import { toast } from 'sonner'
 
 /**
  * 프로모션 삭제 API
  */
-const deletePromotion = async (id: number | string): Promise<ApiResponse<void>> => {
+const deletePromotion = async (
+  id: number | string
+): Promise<ApiResponse<void>> => {
   const { data } = await axiosInstance.post<void>(
     ADMIN_API.PROMOTIONS.DELETE(id)
   )

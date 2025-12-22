@@ -1,9 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
-
 import { axiosInstance, ADMIN_API } from '@/shared/api'
 import { useStandardMutation } from '@/shared/hooks/custom-query'
 import { generateQueryKeysFromUrl } from '@/shared/lib'
+import { toast } from 'sonner'
 
 interface ServiceOrderItem {
   id: number

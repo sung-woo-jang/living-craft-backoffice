@@ -1,5 +1,13 @@
-import { Button } from '@/shared/ui/button'
+import { format } from 'date-fns'
+import type { PromotionAdmin } from '@/shared/types/api'
 import { Badge } from '@/shared/ui/badge'
+import { Button } from '@/shared/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/shared/ui/dropdown-menu'
 import { Switch } from '@/shared/ui/switch'
 import {
   Table,
@@ -9,20 +17,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/shared/ui/table'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/shared/ui/dropdown-menu'
-import { Plus, MoreHorizontal, Pencil, Trash2, ExternalLink, Link } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
-import { usePromotionsList } from '@/features/promotions/api/use-promotions-query'
-import { useTogglePromotion } from '@/features/promotions/api/toggle-promotion'
-import { useDeletePromotion } from '@/features/promotions/api/delete-promotion'
-import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
-import type { PromotionAdmin } from '@/shared/types/api'
+import {
+  Plus,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  ExternalLink,
+  Link,
+} from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { useDeletePromotion } from '@/features/promotions/api/delete-promotion'
+import { useTogglePromotion } from '@/features/promotions/api/toggle-promotion'
+import { usePromotionsList } from '@/features/promotions/api/use-promotions-query'
 import styles from './PromotionsPage.module.scss'
 
 /**
@@ -52,27 +59,33 @@ export function PromotionsPage() {
     }
   }
 
-  const formatDateRange = (startDate: string | null, endDate: string | null) => {
+  const formatDateRange = (
+    startDate: string | null,
+    endDate: string | null
+  ) => {
     if (!startDate && !endDate) return '기간 없음'
-    const start = startDate ? format(new Date(startDate), 'yyyy.MM.dd', { locale: ko }) : '시작일 없음'
-    const end = endDate ? format(new Date(endDate), 'yyyy.MM.dd', { locale: ko }) : '종료일 없음'
+    const start = startDate
+      ? format(new Date(startDate), 'yyyy.MM.dd', { locale: ko })
+      : '시작일 없음'
+    const end = endDate
+      ? format(new Date(endDate), 'yyyy.MM.dd', { locale: ko })
+      : '종료일 없음'
     return `${start} ~ ${end}`
   }
 
   const getLinkTypeBadge = (linkType: string, linkUrl: string | null) => {
-    if (!linkUrl) return <Badge variant="outline">링크 없음</Badge>
+    if (!linkUrl) return <Badge variant='outline'>링크 없음</Badge>
     if (linkType === 'external') {
       return (
-        <Badge variant="secondary">
-          <ExternalLink className="mr-1 size-3" />
+        <Badge variant='secondary'>
+          <ExternalLink className='mr-1 size-3' />
           외부 링크
         </Badge>
       )
     }
     return (
-      <Badge variant="default">
-        <Link className="mr-1 size-3" />
-        앱 내 이동
+      <Badge variant='default'>
+        <Link className='mr-1 size-3' />앱 내 이동
       </Badge>
     )
   }
@@ -87,7 +100,7 @@ export function PromotionsPage() {
           </p>
         </div>
         <Button onClick={handleCreatePromotion}>
-          <Plus className="mr-2 size-4" />
+          <Plus className='mr-2 size-4' />
           배너 추가
         </Button>
       </div>
@@ -110,29 +123,31 @@ export function PromotionsPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[60px]">순서</TableHead>
-                <TableHead className="w-[80px]">아이콘</TableHead>
+                <TableHead className='w-[60px]'>순서</TableHead>
+                <TableHead className='w-[80px]'>아이콘</TableHead>
                 <TableHead>제목</TableHead>
                 <TableHead>링크</TableHead>
                 <TableHead>게시 기간</TableHead>
-                <TableHead className="text-center">클릭 수</TableHead>
-                <TableHead className="text-center w-[80px]">활성</TableHead>
-                <TableHead className="w-[80px]"></TableHead>
+                <TableHead className='text-center'>클릭 수</TableHead>
+                <TableHead className='w-[80px] text-center'>활성</TableHead>
+                <TableHead className='w-[80px]'></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {data.map((promotion: PromotionAdmin) => (
                 <TableRow
                   key={promotion.id}
-                  className="cursor-pointer hover:bg-muted/50"
+                  className='hover:bg-muted/50 cursor-pointer'
                   onClick={() => handleEdit(promotion.id)}
                 >
-                  <TableCell className="font-medium">{promotion.sortOrder}</TableCell>
+                  <TableCell className='font-medium'>
+                    {promotion.sortOrder}
+                  </TableCell>
                   <TableCell>
                     {promotion.iconUrl ? (
                       <img
                         src={promotion.iconUrl}
-                        alt=""
+                        alt=''
                         className={styles.iconPreview}
                       />
                     ) : (
@@ -141,9 +156,13 @@ export function PromotionsPage() {
                   </TableCell>
                   <TableCell>
                     <div className={styles.titleCell}>
-                      <span className={styles.promotionTitle}>{promotion.title}</span>
+                      <span className={styles.promotionTitle}>
+                        {promotion.title}
+                      </span>
                       {promotion.subtitle && (
-                        <span className={styles.promotionSubtitle}>{promotion.subtitle}</span>
+                        <span className={styles.promotionSubtitle}>
+                          {promotion.subtitle}
+                        </span>
                       )}
                     </div>
                   </TableCell>
@@ -155,10 +174,12 @@ export function PromotionsPage() {
                       {formatDateRange(promotion.startDate, promotion.endDate)}
                     </span>
                   </TableCell>
-                  <TableCell className="text-center">
-                    <Badge variant="outline">{promotion.clickCount.toLocaleString()}</Badge>
+                  <TableCell className='text-center'>
+                    <Badge variant='outline'>
+                      {promotion.clickCount.toLocaleString()}
+                    </Badge>
                   </TableCell>
-                  <TableCell className="text-center">
+                  <TableCell className='text-center'>
                     <Switch
                       checked={promotion.isActive}
                       onCheckedChange={() => handleToggle(promotion.id)}
@@ -168,20 +189,22 @@ export function PromotionsPage() {
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="size-4" />
+                        <Button variant='ghost' size='icon'>
+                          <MoreHorizontal className='size-4' />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleEdit(promotion.id)}>
-                          <Pencil className="mr-2 size-4" />
+                      <DropdownMenuContent align='end'>
+                        <DropdownMenuItem
+                          onClick={() => handleEdit(promotion.id)}
+                        >
+                          <Pencil className='mr-2 size-4' />
                           수정
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => handleDelete(promotion.id)}
-                          className="text-destructive"
+                          className='text-destructive'
                         >
-                          <Trash2 className="mr-2 size-4" />
+                          <Trash2 className='mr-2 size-4' />
                           삭제
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -197,9 +220,8 @@ export function PromotionsPage() {
       {!isLoading && !error && (!data || data.length === 0) && (
         <div className={styles.emptyContainer}>
           <p>등록된 프로모션 배너가 없습니다.</p>
-          <Button onClick={handleCreatePromotion} variant="outline">
-            <Plus className="mr-2 size-4" />
-            첫 배너 추가하기
+          <Button onClick={handleCreatePromotion} variant='outline'>
+            <Plus className='mr-2 size-4' />첫 배너 추가하기
           </Button>
         </div>
       )}

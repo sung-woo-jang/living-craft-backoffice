@@ -373,7 +373,17 @@ export const ColorPickerFormat = ({
   className,
   ...props
 }: ColorPickerFormatProps) => {
-  const { hue, saturation, lightness, alpha, mode, setHue, setSaturation, setLightness, setAlpha } = useColorPicker()
+  const {
+    hue,
+    saturation,
+    lightness,
+    alpha,
+    mode,
+    setHue,
+    setSaturation,
+    setLightness,
+    setAlpha,
+  } = useColorPicker()
   const color = Color.hsl(hue, saturation, lightness, alpha / 100)
 
   if (mode === 'hex') {
@@ -447,7 +457,7 @@ export const ColorPickerFormat = ({
               'bg-secondary h-8 w-[3.25rem] rounded-l-none px-2 text-xs shadow-none'
             )}
           />
-          <span className='text-muted-foreground absolute top-1/2 right-2 -translate-y-1/2 text-xs pointer-events-none'>
+          <span className='text-muted-foreground pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 text-xs'>
             %
           </span>
         </div>
@@ -472,7 +482,10 @@ export const ColorPickerFormat = ({
       setLocalAlpha(Math.round(alpha).toString())
     }, [alpha])
 
-    const handleRgbChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleRgbChange = (
+      index: number,
+      e: React.ChangeEvent<HTMLInputElement>
+    ) => {
       const newLocalRgb = [...localRgb]
       newLocalRgb[index] = e.target.value
       setLocalRgb(newLocalRgb)
@@ -548,7 +561,7 @@ export const ColorPickerFormat = ({
               'bg-secondary h-8 w-[3.25rem] rounded-l-none px-2 text-xs shadow-none'
             )}
           />
-          <span className='text-muted-foreground absolute top-1/2 right-2 -translate-y-1/2 text-xs pointer-events-none'>
+          <span className='text-muted-foreground pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 text-xs'>
             %
           </span>
         </div>
@@ -594,7 +607,10 @@ export const ColorPickerFormat = ({
       setLocalAlpha(Math.round(alpha).toString())
     }, [alpha])
 
-    const handleHslChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleHslChange = (
+      index: number,
+      e: React.ChangeEvent<HTMLInputElement>
+    ) => {
       const newLocalHsl = [...localHsl]
       newLocalHsl[index] = e.target.value
       setLocalHsl(newLocalHsl)
@@ -663,7 +679,7 @@ export const ColorPickerFormat = ({
               'bg-secondary h-8 w-[3.25rem] rounded-l-none px-2 text-xs shadow-none'
             )}
           />
-          <span className='text-muted-foreground absolute top-1/2 right-2 -translate-y-1/2 text-xs pointer-events-none'>
+          <span className='text-muted-foreground pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 text-xs'>
             %
           </span>
         </div>

@@ -1,7 +1,7 @@
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { useStandardQuery } from '@/shared/hooks/custom-query'
-import type { FetchReviewsResponse } from './types'
 import { generateQueryKeysFromUrl } from '@/shared/lib'
+import type { FetchReviewsResponse } from './types'
 
 /**
  * 리뷰 목록 조회 API

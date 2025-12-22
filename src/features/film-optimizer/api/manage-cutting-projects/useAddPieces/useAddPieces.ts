@@ -1,9 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
-
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { useStandardMutation } from '@/shared/hooks/custom-query'
 import { generateQueryKeysFromUrl } from '@/shared/lib'
+import { toast } from 'sonner'
 import type { CuttingPiece } from '../../fetch-cutting-projects'
 import type { AddPiecesVariables } from '../types'
 
@@ -25,7 +24,11 @@ export function useAddPieces() {
     mutationFn: addPieces,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: [...generateQueryKeysFromUrl(ADMIN_API.FILM_OPTIMIZER.PROJECTS.DETAIL(variables.projectId))],
+        queryKey: [
+          ...generateQueryKeysFromUrl(
+            ADMIN_API.FILM_OPTIMIZER.PROJECTS.DETAIL(variables.projectId)
+          ),
+        ],
       })
       toast.success('재단 조각이 추가되었습니다.')
     },

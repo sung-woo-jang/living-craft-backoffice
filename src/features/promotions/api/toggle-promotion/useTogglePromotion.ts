@@ -1,9 +1,9 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { useStandardMutation } from '@/shared/hooks/custom-query'
 import { generateQueryKeysFromUrl } from '@/shared/lib'
 import type { PromotionAdmin } from '@/shared/types/api'
+import { toast } from 'sonner'
 
 /**
  * 프로모션 활성/비활성 토글 API

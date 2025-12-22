@@ -79,13 +79,11 @@ export const filmCuttingColumns: ColumnDef<CuttingProjectListItem>[] = [
     sortingFn: (rowA, rowB) => {
       const percentageA =
         rowA.original.pieceCount > 0
-          ? (rowA.original.completedPieceCount / rowA.original.pieceCount) *
-            100
+          ? (rowA.original.completedPieceCount / rowA.original.pieceCount) * 100
           : 0
       const percentageB =
         rowB.original.pieceCount > 0
-          ? (rowB.original.completedPieceCount / rowB.original.pieceCount) *
-            100
+          ? (rowB.original.completedPieceCount / rowB.original.pieceCount) * 100
           : 0
       return percentageA - percentageB
     },

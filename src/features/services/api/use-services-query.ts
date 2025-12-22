@@ -33,9 +33,7 @@ export function useServicesList() {
  */
 export function useServiceDetail(id: number | string | undefined) {
   return useStandardQuery<ServiceAdminDetail, Error, ServiceAdminDetail>({
-    queryKey: generateQueryKeysFromUrl(
-      ADMIN_API.SERVICES.DETAIL(id || '')
-    ),
+    queryKey: generateQueryKeysFromUrl(ADMIN_API.SERVICES.DETAIL(id || '')),
     queryFn: async () => {
       if (!id) throw new Error('서비스 ID가 필요합니다.')
       const { data } = await axiosInstance.get<ServiceAdminDetail>(

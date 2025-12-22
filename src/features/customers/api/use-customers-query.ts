@@ -1,6 +1,6 @@
-import { generateQueryKeysFromUrl } from '@/shared/lib'
 import { axiosInstance, ADMIN_API } from '@/shared/api'
 import { useStandardQuery } from '@/shared/hooks/custom-query'
+import { generateQueryKeysFromUrl } from '@/shared/lib'
 import type { Customer, CustomerDetail } from '@/shared/types/api'
 
 export function useCustomersList() {

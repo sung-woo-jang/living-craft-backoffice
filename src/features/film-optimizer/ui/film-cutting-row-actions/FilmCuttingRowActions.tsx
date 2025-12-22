@@ -1,4 +1,3 @@
-import { Pencil, Trash2 } from 'lucide-react'
 import type { Row, Table } from '@tanstack/react-table'
 import {
   AlertDialog,
@@ -12,6 +11,7 @@ import {
   AlertDialogTrigger,
 } from '@/shared/ui/alert-dialog'
 import { Button } from '@/shared/ui/button'
+import { Pencil, Trash2 } from 'lucide-react'
 import type { CuttingProjectListItem } from '@/features/film-optimizer/api'
 import styles from './styles.module.scss'
 

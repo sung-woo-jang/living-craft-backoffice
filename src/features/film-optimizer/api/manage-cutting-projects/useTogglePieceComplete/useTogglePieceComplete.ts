@@ -1,5 +1,4 @@
 import { useQueryClient } from '@tanstack/react-query'
-
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
 import { useStandardMutation } from '@/shared/hooks/custom-query'
 import { generateQueryKeysFromUrl } from '@/shared/lib'
@@ -23,7 +22,11 @@ export function useTogglePieceComplete() {
     mutationFn: togglePieceComplete,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: [...generateQueryKeysFromUrl(ADMIN_API.FILM_OPTIMIZER.PROJECTS.DETAIL(variables.projectId))],
+        queryKey: [
+          ...generateQueryKeysFromUrl(
+            ADMIN_API.FILM_OPTIMIZER.PROJECTS.DETAIL(variables.projectId)
+          ),
+        ],
       })
     },
   })
