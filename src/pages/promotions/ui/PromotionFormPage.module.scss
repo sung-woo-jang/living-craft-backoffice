@@ -151,6 +151,17 @@
   color: var(--muted-foreground);
 }
 
+// 내부 링크 컨테이너 (Select + Input)
+.internalLinkContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.customLinkInput {
+  margin-top: 0.25rem;
+}
+
 // 푸터
 .footer {
   display: flex;

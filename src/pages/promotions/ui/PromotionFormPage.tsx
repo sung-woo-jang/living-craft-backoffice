@@ -24,6 +24,7 @@ import {
   usePromotionFormPage,
   LINK_TYPE_OPTIONS,
   INTERNAL_LINK_OPTIONS,
+  isCustomInternalUrl,
   type PromotionFormValues,
 } from '@/features/promotions/model'
 import { IconUploader } from '@/features/promotions/ui/icon-uploader'
@@ -284,44 +285,70 @@ export function PromotionFormPage() {
                   <Controller
                     name="linkUrl"
                     control={control}
-                    render={({ field, fieldState }) => (
-                      <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel htmlFor="linkUrl">링크 URL</FieldLabel>
-                        {linkType === 'internal' ? (
-                          <Select
-                            value={field.value ?? ''}
-                            onValueChange={field.onChange}
-                          >
-                            <SelectTrigger id="linkUrl">
-                              <SelectValue placeholder="이동할 페이지 선택" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {INTERNAL_LINK_OPTIONS.map((option) => (
-                                <SelectItem key={option.value} value={option.value}>
-                                  {option.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        ) : (
-                          <Input
-                            {...field}
-                            id="linkUrl"
-                            value={field.value ?? ''}
-                            placeholder="https://example.com"
-                            aria-invalid={fieldState.invalid}
-                          />
-                        )}
-                        <FieldDescription>
-                          {linkType === 'internal'
-                            ? '앱 내 이동할 페이지를 선택하세요'
-                            : '외부 링크 URL을 입력하세요'}
-                        </FieldDescription>
-                        {fieldState.invalid && (
-                          <FieldError errors={[fieldState.error]} />
-                        )}
-                      </Field>
-                    )}
+                    render={({ field, fieldState }) => {
+                      // 커스텀 URL인지 확인 (INTERNAL_LINK_OPTIONS에 없는 값)
+                      const isCustomUrl = isCustomInternalUrl(field.value)
+                      // Select에서 표시할 값 결정
+                      const selectValue = isCustomUrl ? '__custom__' : (field.value ?? '')
+
+                      return (
+                        <Field data-invalid={fieldState.invalid}>
+                          <FieldLabel htmlFor="linkUrl">링크 URL</FieldLabel>
+                          {linkType === 'internal' ? (
+                            <div className={styles.internalLinkContainer}>
+                              <Select
+                                value={selectValue}
+                                onValueChange={(val) => {
+                                  if (val === '__custom__') {
+                                    // 직접 입력 선택 시 빈 값으로 초기화
+                                    field.onChange('')
+                                  } else {
+                                    field.onChange(val)
+                                  }
+                                }}
+                              >
+                                <SelectTrigger id="linkUrl">
+                                  <SelectValue placeholder="이동할 페이지 선택" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {INTERNAL_LINK_OPTIONS.map((option) => (
+                                    <SelectItem key={option.value} value={option.value}>
+                                      {option.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+
+                              {/* 직접 입력 선택 시 또는 기존 커스텀 URL인 경우 Input 표시 */}
+                              {(isCustomUrl || selectValue === '__custom__') && (
+                                <Input
+                                  value={field.value ?? ''}
+                                  onChange={(e) => field.onChange(e.target.value)}
+                                  placeholder="/reservation/service?serviceId=1"
+                                  className={styles.customLinkInput}
+                                />
+                              )}
+                            </div>
+                          ) : (
+                            <Input
+                              {...field}
+                              id="linkUrl"
+                              value={field.value ?? ''}
+                              placeholder="https://example.com"
+                              aria-invalid={fieldState.invalid}
+                            />
+                          )}
+                          <FieldDescription>
+                            {linkType === 'internal'
+                              ? '앱 내 이동할 페이지를 선택하거나 직접 입력하세요 (예: /reservation/service?serviceId=1)'
+                              : '외부 링크 URL을 입력하세요'}
+                          </FieldDescription>
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )
+                    }}
                   />
                 </FieldGroup>
               </div>

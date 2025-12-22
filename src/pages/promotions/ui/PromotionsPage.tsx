@@ -122,7 +122,11 @@ export function PromotionsPage() {
             </TableHeader>
             <TableBody>
               {data.map((promotion: PromotionAdmin) => (
-                <TableRow key={promotion.id}>
+                <TableRow
+                  key={promotion.id}
+                  className="cursor-pointer hover:bg-muted/50"
+                  onClick={() => handleEdit(promotion.id)}
+                >
                   <TableCell className="font-medium">{promotion.sortOrder}</TableCell>
                   <TableCell>
                     {promotion.iconUrl ? (

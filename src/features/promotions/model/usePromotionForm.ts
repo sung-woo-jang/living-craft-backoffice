@@ -32,10 +32,24 @@ export const LINK_TYPE_OPTIONS = [
 ] as const
 
 export const INTERNAL_LINK_OPTIONS = [
-  { value: '/reservation', label: '예약 페이지' },
+  { value: '/', label: '홈 (메인 페이지)' },
   { value: '/portfolio', label: '포트폴리오 목록' },
-  { value: '/review', label: '리뷰 목록' },
+  { value: '/reservation/service', label: '예약 페이지 (서비스 선택)' },
+  { value: '/reservation/datetime', label: '예약 페이지 (날짜/시간 선택)' },
+  { value: '/reservation/customer', label: '예약 페이지 (정보 입력)' },
+  { value: '/reservation/confirmation', label: '예약 페이지 (확인)' },
+  { value: '/reviews', label: '리뷰 목록' },
+  { value: '/my', label: '마이페이지' },
+  { value: '/my/reservations', label: '내 예약 목록' },
+  { value: '/my/reviews', label: '내 리뷰 목록' },
+  { value: '__custom__', label: '직접 입력' },
 ] as const
+
+/** 커스텀 URL인지 확인 (INTERNAL_LINK_OPTIONS에 없는 값) */
+export function isCustomInternalUrl(url: string | null | undefined): boolean {
+  if (!url) return false
+  return !INTERNAL_LINK_OPTIONS.some((opt) => opt.value === url)
+}
 
 // ===== 헬퍼 함수 =====
 
