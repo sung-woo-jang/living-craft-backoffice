@@ -3,6 +3,7 @@ import { CustomersPage } from '@/pages/customers'
 import { Dashboard } from '@/pages/dashboard'
 import { FilmCuttingFormPage, FilmCuttingPage } from '@/pages/film-cutting'
 import { PortfolioFormPage, PortfoliosPage } from '@/pages/portfolios'
+import { PromotionFormPage, PromotionsPage } from '@/pages/promotions'
 import { ReservationsPage } from '@/pages/reservations'
 import { ReviewsPage } from '@/pages/reviews'
 import { ServiceFormPage, ServicesPage } from '@/pages/services'
@@ -65,6 +66,18 @@ export const router = createBrowserRouter([
           {
             path: 'portfolios/:id/edit',
             element: <PortfolioFormPage />,
+          },
+          {
+            path: 'promotions',
+            element: <PromotionsPage />,
+          },
+          {
+            path: 'promotions/new',
+            element: <PromotionFormPage />,
+          },
+          {
+            path: 'promotions/:id/edit',
+            element: <PromotionFormPage />,
           },
           {
             path: 'reviews',

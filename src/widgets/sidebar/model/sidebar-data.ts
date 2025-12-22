@@ -15,6 +15,7 @@ import {
   UserCircle,
   Clock,
   Scissors,
+  Megaphone,
 } from 'lucide-react'
 
 export const sidebarData: SidebarData = {
@@ -53,6 +54,11 @@ export const sidebarData: SidebarData = {
           title: '포트폴리오 관리',
           url: '/portfolios',
           icon: Image,
+        },
+        {
+          title: '프로모션 배너',
+          url: '/promotions',
+          icon: Megaphone,
         },
         {
           title: '리뷰 관리',

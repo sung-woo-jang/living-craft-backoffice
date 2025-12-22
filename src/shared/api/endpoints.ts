@@ -86,6 +86,17 @@ export const ADMIN_API = {
     IMAGE: '/upload',
   },
 
+  // 프로모션 배너 관리
+  PROMOTIONS: {
+    LIST: '/admin/promotions',
+    CREATE: '/admin/promotions',
+    DETAIL: (id: number | string) => `/admin/promotions/${id}`,
+    UPDATE: (id: number | string) => `/admin/promotions/${id}/update`,
+    DELETE: (id: number | string) => `/admin/promotions/${id}/delete`,
+    TOGGLE: (id: number | string) => `/admin/promotions/${id}/toggle`,
+    REORDER: '/admin/promotions/reorder',
+  },
+
   // 필름 재단 최적화
   FILM_OPTIMIZER: {
     // 필름지 관리

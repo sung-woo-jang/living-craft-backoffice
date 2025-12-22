@@ -520,6 +520,71 @@ export interface ServiceHolidayInput {
   reason: string
 }
 
+// ===== 프로모션 배너 관련 타입 =====
+
+export type PromotionLinkType = 'external' | 'internal'
+
+/**
+ * 프로모션 배너 타입
+ * GET /api/admin/promotions, GET /api/admin/promotions/:id 응답
+ */
+export interface PromotionAdmin {
+  id: number
+  title: string
+  subtitle: string | null
+  iconUrl: string | null
+  linkUrl: string | null
+  linkType: PromotionLinkType
+  startDate: string | null
+  endDate: string | null
+  clickCount: number
+  isActive: boolean
+  sortOrder: number
+  createdAt: string
+  updatedAt: string
+}
+
+/**
+ * 프로모션 생성 요청
+ * POST /api/admin/promotions (multipart/form-data)
+ */
+export interface CreatePromotionRequest {
+  title: string
+  subtitle?: string
+  linkUrl?: string
+  linkType?: PromotionLinkType
+  startDate?: string
+  endDate?: string
+  isActive?: boolean
+  sortOrder?: number
+}
+
+/**
+ * 프로모션 수정 요청
+ * POST /api/admin/promotions/:id/update (multipart/form-data)
+ */
+export interface UpdatePromotionRequest {
+  title?: string
+  subtitle?: string
+  linkUrl?: string
+  linkType?: PromotionLinkType
+  startDate?: string
+  endDate?: string
+  isActive?: boolean
+  sortOrder?: number
+}
+
+/**
+ * 프로모션 정렬 순서 변경 요청
+ * POST /api/admin/promotions/reorder
+ */
+export interface ReorderPromotionsRequest {
+  items: {
+    id: number
+    sortOrder: number
+  }[]
+}
+
 // ===== 필름 재단 최적화 관련 타입 =====
 
 /**
