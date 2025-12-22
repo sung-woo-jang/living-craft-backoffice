@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Controller, FormProvider } from 'react-hook-form'
+import { Controller, FormProvider, useWatch } from 'react-hook-form'
 import type { CreateServiceRequest } from '@/shared/types/api'
 import { Button } from '@/shared/ui/button'
 import {
@@ -75,14 +75,32 @@ export function ServiceFormPage() {
   const { data: iconsResponse, isLoading: iconsLoading } =
     useDebouncedIconsSearch(iconSearchQuery)
 
+  // 현재 선택된 아이콘 이름 추적
+  const currentIconName = useWatch({ control, name: 'iconName' })
+
   // Combobox용 데이터 변환
   const iconData = useMemo(() => {
     const icons = iconsResponse?.data ?? []
-    return icons.slice(0, 100).map((icon) => ({
+
+    // 검색 결과를 기본 배열로 사용
+    const mappedIcons = icons.slice(0, 100).map((icon) => ({
       label: icon.name,
       value: icon.name,
     }))
-  }, [iconsResponse?.data])
+
+    // 현재 선택된 아이콘이 있고, 검색 결과에 없으면 배열 앞에 추가
+    if (
+      currentIconName &&
+      !mappedIcons.some((icon) => icon.value === currentIconName)
+    ) {
+      return [
+        { label: currentIconName, value: currentIconName },
+        ...mappedIcons,
+      ]
+    }
+
+    return mappedIcons
+  }, [iconsResponse?.data, currentIconName])
 
   const onSubmit = async (data: ServiceFormValues) => {
     try {
