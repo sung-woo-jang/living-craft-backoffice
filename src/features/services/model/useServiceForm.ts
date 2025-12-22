@@ -18,15 +18,22 @@ const dayCodeSchema = z.enum(['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'])
 /**
  * 스케줄 스키마 정의
  *
- * 견적 가능 일정만 설정합니다.
- * 시공 일정은 견적 방문 후 예약관리에서 직접 지정합니다.
+ * 견적 및 시공 일정 설정
  */
 const scheduleSchema = z.object({
+  // 견적 스케줄
   estimateScheduleMode: z.nativeEnum(ScheduleMode),
   estimateAvailableDays: z.array(dayCodeSchema).optional(),
   estimateStartTime: z.string().optional(),
   estimateEndTime: z.string().optional(),
   estimateSlotDuration: z.number().optional(),
+  // 시공 스케줄
+  constructionScheduleMode: z.nativeEnum(ScheduleMode),
+  constructionAvailableDays: z.array(dayCodeSchema).optional(),
+  constructionStartTime: z.string().optional(),
+  constructionEndTime: z.string().optional(),
+  constructionSlotDuration: z.number().optional(),
+  // 예약 가능 기간
   bookingPeriodMonths: z.number().min(1).max(12),
 })
 
@@ -59,13 +66,21 @@ export type ServiceFormValues = z.infer<typeof serviceFormSchema>
 
 // ===== 헬퍼 함수 및 상수 =====
 
-/** 스케줄 기본값 (견적 일정만 설정) */
+/** 스케줄 기본값 */
 const DEFAULT_SCHEDULE: NonNullable<ServiceFormValues['schedule']> = {
+  // 견적 스케줄
   estimateScheduleMode: ScheduleMode.GLOBAL,
   estimateAvailableDays: [],
   estimateStartTime: '18:00',
   estimateEndTime: '22:00',
   estimateSlotDuration: 60,
+  // 시공 스케줄
+  constructionScheduleMode: ScheduleMode.GLOBAL,
+  constructionAvailableDays: [],
+  constructionStartTime: '09:00',
+  constructionEndTime: '18:00',
+  constructionSlotDuration: 60,
+  // 예약 가능 기간
   bookingPeriodMonths: 3,
 }
 
@@ -84,7 +99,7 @@ function getDefaultFormValues(sortOrder: number): ServiceFormValues {
   }
 }
 
-/** API 응답의 스케줄을 폼 값으로 변환 (견적 일정만) */
+/** API 응답의 스케줄을 폼 값으로 변환 */
 function transformScheduleFromApi(
   schedule: ServiceSchedule | ServiceScheduleAdmin | null | undefined
 ): NonNullable<ServiceFormValues['schedule']> {
@@ -96,12 +111,22 @@ function transformScheduleFromApi(
   const sched = schedule as ServiceSchedule & ServiceScheduleAdmin
 
   return {
+    // 견적 스케줄
     estimateScheduleMode:
       (sched.estimateScheduleMode as ScheduleMode) ?? ScheduleMode.GLOBAL,
     estimateAvailableDays: (sched.estimateAvailableDays as DayCode[]) ?? [],
     estimateStartTime: sched.estimateStartTime ?? '18:00',
     estimateEndTime: sched.estimateEndTime ?? '22:00',
     estimateSlotDuration: sched.estimateSlotDuration ?? 60,
+    // 시공 스케줄
+    constructionScheduleMode:
+      (sched.constructionScheduleMode as ScheduleMode) ?? ScheduleMode.GLOBAL,
+    constructionAvailableDays:
+      (sched.constructionAvailableDays as DayCode[]) ?? [],
+    constructionStartTime: sched.constructionStartTime ?? '09:00',
+    constructionEndTime: sched.constructionEndTime ?? '18:00',
+    constructionSlotDuration: sched.constructionSlotDuration ?? 60,
+    // 예약 가능 기간
     bookingPeriodMonths: sched.bookingPeriodMonths ?? 3,
   }
 }

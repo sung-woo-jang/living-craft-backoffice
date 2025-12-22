@@ -104,15 +104,31 @@ export function RegionFeeSelector() {
 
   // 지역 추가 핸들러
   const handleAddRegion = () => {
-    if (!selectedSido) return
+    console.log('🔍 handleAddRegion 호출')
+    console.log('  - selectedSido:', selectedSido)
+    console.log('  - selectedSigungu:', selectedSigungu)
+    console.log('  - estimateFee:', estimateFee)
+    console.log('  - setSidoFee:', setSidoFee)
+    console.log('  - setExceptionFee:', setExceptionFee)
+
+    if (!selectedSido) {
+      console.log('❌ selectedSido가 없어서 return')
+      return
+    }
 
     const fee = parseFloat(estimateFee)
-    if (isNaN(fee) || fee < 0) return
+    console.log('  - parsed fee:', fee)
+
+    if (isNaN(fee) || fee < 0) {
+      console.log('❌ fee가 유효하지 않아서 return')
+      return
+    }
 
     const sidoIdNum = parseInt(selectedSido)
 
     // Case 1: 시/도 전체에 기본 출장비 설정
     if (setSidoFee && !setExceptionFee) {
+      console.log('✅ Case 1: 시/도 전체 기본 출장비 설정')
       // 기존 해당 시/도 관련 데이터 모두 제거
       const filteredValue = value.filter((r) => {
         const district = allDistricts.find((d) => d.id === r.districtId)
@@ -132,13 +148,22 @@ export function RegionFeeSelector() {
         })),
       ]
 
-      setValue('regions', [...filteredValue, ...newRegions])
+      console.log('  - newRegions:', newRegions)
+      const updatedRegions = [...filteredValue, ...newRegions]
+      console.log('  - setValue 호출 전 updatedRegions:', updatedRegions)
+      setValue('regions', updatedRegions, {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      })
+      console.log('  - setValue 호출 완료')
 
       // 새로 추가된 시/도 아코디언 열기
       setOpenItems((prev) => new Set(prev).add(sidoIdNum))
     }
     // Case 2: 특정 구/군에 예외 출장비 설정
     else if (setExceptionFee && selectedSigungu) {
+      console.log('✅ Case 2: 구/군 예외 출장비 설정')
       const sigunguIdNum = parseInt(selectedSigungu)
 
       // 해당 구/군이 이미 있으면 업데이트, 없으면 추가
@@ -151,13 +176,26 @@ export function RegionFeeSelector() {
           ...updatedValue[existingIndex],
           estimateFee: fee,
         }
-        setValue('regions', updatedValue)
+        console.log('  - 기존 레코드 업데이트:', updatedValue)
+        setValue('regions', updatedValue, {
+          shouldValidate: true,
+          shouldDirty: true,
+          shouldTouch: true,
+        })
       } else {
-        setValue('regions', [
-          ...value,
-          { districtId: sigunguIdNum, estimateFee: fee },
-        ])
+        console.log('  - 새 레코드 추가')
+        setValue(
+          'regions',
+          [...value, { districtId: sigunguIdNum, estimateFee: fee }],
+          {
+            shouldValidate: true,
+            shouldDirty: true,
+            shouldTouch: true,
+          }
+        )
       }
+    } else {
+      console.log('❌ Case 1도 Case 2도 아님 (조건 불충족)')
     }
 
     // 폼 초기화
@@ -166,6 +204,7 @@ export function RegionFeeSelector() {
     setEstimateFee('0')
     setSetSidoFee(true)
     setSetExceptionFee(false)
+    console.log('✅ 폼 초기화 완료')
   }
 
   // 시/도 전체 삭제
@@ -182,7 +221,12 @@ export function RegionFeeSelector() {
 
     setValue(
       'regions',
-      value.filter((r) => !districtIdsToRemove.has(r.districtId))
+      value.filter((r) => !districtIdsToRemove.has(r.districtId)),
+      {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      }
     )
   }
 
@@ -190,7 +234,12 @@ export function RegionFeeSelector() {
   const handleRemoveSigungu = (districtId: number) => {
     setValue(
       'regions',
-      value.filter((r) => r.districtId !== districtId)
+      value.filter((r) => r.districtId !== districtId),
+      {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      }
     )
   }
 
@@ -207,7 +256,11 @@ export function RegionFeeSelector() {
       const updatedValue = value.map((r) =>
         r.districtId === districtId ? { ...r, estimateFee: newFee } : r
       )
-      setValue('regions', updatedValue)
+      setValue('regions', updatedValue, {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      })
     }
     setEditingDistrictId(null)
     setEditingFee('')
@@ -253,38 +306,38 @@ export function RegionFeeSelector() {
               onOpenChange={() => toggleAccordion(group.sidoId)}
             >
               <div className={styles.accordionItem}>
-                <CollapsibleTrigger asChild>
-                  <button type='button' className={styles.accordionHeader}>
-                    <div className={styles.accordionHeaderLeft}>
-                      <ChevronDown
-                        size={16}
-                        className={styles.accordionChevron}
-                        data-open={openItems.has(group.sidoId)}
-                      />
-                      <span className={styles.accordionSidoName}>
-                        {group.sidoName}
-                      </span>
-                      <span className={styles.accordionSidoCount}>
-                        {group.sigungus.length}개 구/군
-                      </span>
-                    </div>
-                    <div className={styles.accordionHeaderRight}>
-                      <span className={styles.accordionSidoFee}>
-                        {getSidoFeeText(group)}
-                      </span>
-                      <button
-                        type='button'
-                        onClick={(e) =>
-                          handleRemoveSido(e, group.sidoId, group)
-                        }
-                        className={styles.accordionDeleteBtn}
-                        title='시/도 전체 삭제'
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
+                <div className={styles.accordionHeaderWrapper}>
+                  <CollapsibleTrigger asChild>
+                    <button type='button' className={styles.accordionHeader}>
+                      <div className={styles.accordionHeaderLeft}>
+                        <ChevronDown
+                          size={16}
+                          className={styles.accordionChevron}
+                          data-open={openItems.has(group.sidoId)}
+                        />
+                        <span className={styles.accordionSidoName}>
+                          {group.sidoName}
+                        </span>
+                        <span className={styles.accordionSidoCount}>
+                          {group.sigungus.length}개 구/군
+                        </span>
+                      </div>
+                      <div className={styles.accordionHeaderRight}>
+                        <span className={styles.accordionSidoFee}>
+                          {getSidoFeeText(group)}
+                        </span>
+                      </div>
+                    </button>
+                  </CollapsibleTrigger>
+                  <button
+                    type='button'
+                    onClick={(e) => handleRemoveSido(e, group.sidoId, group)}
+                    className={styles.accordionDeleteBtn}
+                    title='시/도 전체 삭제'
+                  >
+                    <Trash2 size={14} />
                   </button>
-                </CollapsibleTrigger>
+                </div>
 
                 <CollapsibleContent className={styles.accordionContent}>
                   <div className={styles.sigunguList}>
@@ -530,7 +583,22 @@ export function RegionFeeSelector() {
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Button
             type='button'
-            onClick={handleAddRegion}
+            onClick={() => {
+              console.log('🔘 추가 버튼 클릭됨')
+              console.log('  - disabled 조건들:')
+              console.log('    - selectedSido:', selectedSido, '→', !selectedSido)
+              console.log(
+                '    - estimateFee:',
+                estimateFee,
+                '→',
+                !estimateFee
+              )
+              console.log(
+                '    - setExceptionFee && !selectedSigungu:',
+                setExceptionFee && !selectedSigungu
+              )
+              handleAddRegion()
+            }}
             disabled={
               !selectedSido ||
               !estimateFee ||

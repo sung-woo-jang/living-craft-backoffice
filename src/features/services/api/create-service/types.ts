@@ -26,15 +26,22 @@ export interface ServiceRegionInput {
 /**
  * 서비스 스케줄 입력 타입
  *
- * 견적 가능 일정만 설정합니다.
- * 시공 일정은 견적 방문 후 예약관리에서 직접 지정합니다.
+ * 견적 및 시공 일정을 설정합니다.
  */
 export interface ServiceScheduleInput {
+  // 견적 스케줄
   estimateScheduleMode: ScheduleMode
   estimateAvailableDays?: DayCode[]
   estimateStartTime?: string
   estimateEndTime?: string
   estimateSlotDuration?: number
+  // 시공 스케줄
+  constructionScheduleMode: ScheduleMode
+  constructionAvailableDays?: DayCode[]
+  constructionStartTime?: string
+  constructionEndTime?: string
+  constructionSlotDuration?: number
+  // 예약 가능 기간
   bookingPeriodMonths?: number
 }
 

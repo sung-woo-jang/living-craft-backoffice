@@ -61,7 +61,9 @@ export function ServiceFormPage() {
   })
 
   const {
-    handleSubmit,
+    getValues,
+    setValue,
+    trigger,
     formState: { errors },
     control,
   } = form
@@ -104,13 +106,24 @@ export function ServiceFormPage() {
 
   const onSubmit = async (data: ServiceFormValues) => {
     try {
+      // sortOrder 처리: undefined면 자동 계산
+      let finalData = { ...data }
+
+      if (!finalData.sortOrder || finalData.sortOrder === undefined) {
+        console.log('⚠️ sortOrder가 없어서 자동 계산')
+        // 신규 추가: 기본값 1 (백엔드에서 자동 조정됨)
+        finalData.sortOrder = 1
+      }
+
+      console.log('📤 최종 전송 데이터:', finalData)
+
       if (isEditMode && id) {
         await updateService.mutateAsync({
           id,
-          data,
+          data: finalData,
         })
       } else {
-        await createService.mutateAsync(data as CreateServiceRequest)
+        await createService.mutateAsync(finalData as CreateServiceRequest)
       }
       navigate('/services')
     } catch {
@@ -118,8 +131,40 @@ export function ServiceFormPage() {
     }
   }
 
-  const handleFormSubmit = () => {
-    handleSubmit(onSubmit)()
+  const handleFormSubmit = async () => {
+    console.log('🔘 handleFormSubmit 호출')
+
+    // 폼 데이터 먼저 확인
+    let formData = getValues()
+    console.log('📋 현재 폼 데이터:', formData)
+
+    // sortOrder가 없으면 기본값 설정 (검증 전에 폼에 반영)
+    if (!formData.sortOrder || formData.sortOrder === undefined) {
+      console.log('⚠️ sortOrder가 없어서 기본값 설정: 1')
+      setValue('sortOrder', 1)
+      formData = { ...formData, sortOrder: 1 }
+    }
+
+    // 폼 검증
+    const isValid = await trigger()
+    console.log('  - 폼 검증 결과:', isValid)
+
+    if (!isValid) {
+      console.log('❌ 폼 검증 실패')
+      console.log('  - formState.errors:', form.formState.errors)
+
+      // 각 필드별 에러 출력
+      Object.entries(form.formState.errors).forEach(([field, error]) => {
+        console.log(`    - ${field}:`, error)
+      })
+      return
+    }
+
+    console.log('✅ 폼 검증 성공, 데이터 전송')
+
+    // onSubmit 직접 호출 (최신 데이터 다시 가져오기)
+    const finalData = getValues()
+    await onSubmit(finalData)
   }
 
   const handleCancel = () => {
@@ -255,7 +300,6 @@ export function ServiceFormPage() {
                           >
                             <ComboboxInput
                               placeholder='아이콘 검색...'
-                              value={iconSearchQuery}
                               onValueChange={setIconSearchQuery}
                             />
                             <ComboboxEmpty>
