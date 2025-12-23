@@ -39,6 +39,8 @@ export const ADMIN_API = {
   // 아이콘 관리
   ICONS: {
     LIST: '/icons',
+    CREATE: '/admin/icons',
+    UPDATE: (id: number | string) => `/admin/icons/${id}/update`,
   },
 
   // 포트폴리오 관리

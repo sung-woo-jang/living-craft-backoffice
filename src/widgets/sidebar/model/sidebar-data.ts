@@ -16,6 +16,7 @@ import {
   Clock,
   Scissors,
   Megaphone,
+  ImageIcon,
 } from 'lucide-react'
 
 export const sidebarData: SidebarData = {
@@ -59,6 +60,11 @@ export const sidebarData: SidebarData = {
           title: '프로모션 배너',
           url: '/promotions',
           icon: Megaphone,
+        },
+        {
+          title: '아이콘 관리',
+          url: '/icons',
+          icon: ImageIcon,
         },
         {
           title: '리뷰 관리',

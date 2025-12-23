@@ -2,6 +2,7 @@ import { AuthenticatedLayout, RootLayout } from '@/app/layout'
 import { CustomersPage } from '@/pages/customers'
 import { Dashboard } from '@/pages/dashboard'
 import { FilmCuttingFormPage, FilmCuttingPage } from '@/pages/film-cutting'
+import { IconsPage } from '@/pages/icons'
 import { PortfolioFormPage, PortfoliosPage } from '@/pages/portfolios'
 import { PromotionFormPage, PromotionsPage } from '@/pages/promotions'
 import { ReservationsPage } from '@/pages/reservations'
@@ -86,6 +87,10 @@ export const router = createBrowserRouter([
           {
             path: 'customers',
             element: <CustomersPage />,
+          },
+          {
+            path: 'icons',
+            element: <IconsPage />,
           },
           {
             path: 'film-cutting',

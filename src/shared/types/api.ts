@@ -69,6 +69,35 @@ export interface Icon {
   type: IconType
 }
 
+/**
+ * 관리자용 아이콘 목록 아이템
+ * GET /api/icons 응답
+ */
+export interface IconAdminListItem {
+  id: number
+  name: string
+  type: IconType
+  createdAt: string
+}
+
+/**
+ * 아이콘 생성 요청
+ * POST /api/admin/icons
+ */
+export interface CreateIconRequest {
+  name: string
+  type: IconType
+}
+
+/**
+ * 아이콘 수정 요청
+ * POST /api/admin/icons/:id/update
+ */
+export interface UpdateIconRequest {
+  name?: string
+  type?: IconType
+}
+
 // ===== 서비스 관련 타입 =====
 
 /**
