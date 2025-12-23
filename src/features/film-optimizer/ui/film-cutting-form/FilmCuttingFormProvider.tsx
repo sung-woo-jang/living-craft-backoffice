@@ -1,7 +1,7 @@
 import { useEffect, type ReactNode } from 'react'
 import { startTransition } from 'react'
 import { useParams } from 'react-router-dom'
-import { useCuttingProjectDetail } from '../../api'
+import { useFetchCuttingProjectDetail } from '../../api'
 import { useFilmCuttingForm } from '../../model'
 
 interface FilmCuttingFormProviderProps {
@@ -26,7 +26,8 @@ export function FilmCuttingFormProvider({
     ])
 
   // 프로젝트 상세 데이터 로드
-  const { data: projectDetail } = useCuttingProjectDetail(id)
+  const { data: projectDetailResponse } = useFetchCuttingProjectDetail(id)
+  const projectDetail = projectDetailResponse?.data
 
   // 편집 모드 설정 및 cleanup
   useEffect(() => {
@@ -36,9 +37,9 @@ export function FilmCuttingFormProvider({
 
   // 프로젝트 데이터 초기화
   useEffect(() => {
-    if (projectDetail?.data) {
+    if (projectDetail) {
       startTransition(() => {
-        initFromProjectDetail(projectDetail.data)
+        initFromProjectDetail(projectDetail)
       })
     }
   }, [projectDetail, initFromProjectDetail])

@@ -3,7 +3,7 @@ import { ProfileDropdown } from '@/shared/ui-kit/profile-dropdown'
 import { Search } from '@/shared/ui-kit/search'
 import { ThemeSwitch } from '@/shared/ui-kit/theme-switch'
 import { Header, Main } from '@/widgets/header'
-import { useDashboardStats } from '@/features/dashboard/api/use-dashboard-query'
+import { useFetchDashboardStats } from '@/features/dashboard/api'
 import { MonthlyChart } from '@/features/dashboard/ui/charts/MonthlyChart'
 import { ServiceDistribution } from '@/features/dashboard/ui/charts/ServiceDistribution'
 import { TimeDistribution } from '@/features/dashboard/ui/charts/TimeDistribution'
@@ -17,7 +17,7 @@ import { StatsCards } from '@/features/dashboard/ui/stats-cards'
  * Living Craft 대시보드 페이지
  */
 export function Dashboard() {
-  const { data: statsResponse, isLoading, error } = useDashboardStats()
+  const { data: statsResponse, isLoading, error } = useFetchDashboardStats()
   const stats = statsResponse?.data
 
   return (

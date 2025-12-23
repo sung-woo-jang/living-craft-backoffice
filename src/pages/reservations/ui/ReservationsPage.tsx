@@ -1,11 +1,12 @@
 /**
  * 예약 관리 페이지
  */
-import { useReservationsList } from '@/features/reservations/api/use-reservations-query'
+import { useFetchReservations } from '@/features/reservations/api'
 import { ReservationsTable } from '@/features/reservations/ui/reservations-table/ReservationsTable'
 
 export function ReservationsPage() {
-  const { data, isLoading, error } = useReservationsList()
+  const { data: reservationsResponse, isLoading, error } = useFetchReservations()
+  const data = reservationsResponse?.data
 
   return (
     <div className='flex h-full flex-col gap-4 p-4 md:gap-8 md:p-8'>

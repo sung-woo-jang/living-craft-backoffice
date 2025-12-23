@@ -1,7 +1,7 @@
 import type { CuttingPiece, CuttingPieceInput } from '@/shared/types/api'
 import { Button } from '@/shared/ui/button'
 import { List } from 'lucide-react'
-import { useFilmsList, useDeletePiece, useTogglePieceComplete } from '../../api'
+import { useFetchFilms, useDeletePiece, useTogglePieceComplete } from '../../api'
 import { useFilmCuttingForm } from '../../model'
 import { PiecesInput } from '../pieces-input'
 import { PiecesTable } from '../pieces-table'
@@ -34,7 +34,8 @@ export function FilmCuttingFormPieces() {
   const isEditMode = Boolean(editingProjectId)
 
   // 필름 정보
-  const { data: filmsList } = useFilmsList()
+  const { data: filmsResponse } = useFetchFilms()
+  const filmsList = filmsResponse?.data
   const selectedFilm = filmsList?.find(
     (f) => f.id.toString() === selectedFilmId
   )

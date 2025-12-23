@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/ui/select'
-import { useUpdateOperatingHours } from '@/features/operating-hours/api/use-operating-hours-mutation'
+import { useUpdateOperatingHours } from '@/features/operating-hours/api'
 
 interface TimeSlotFormProps {
   title: string

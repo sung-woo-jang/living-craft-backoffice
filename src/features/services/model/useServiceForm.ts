@@ -10,7 +10,7 @@ import {
   type ServiceSchedule,
   type ServiceScheduleAdmin,
 } from '@/shared/types/api'
-import { useServicesList } from '../api/use-services-query'
+import { useFetchServicesList } from '../api'
 
 // DayCode Zod 타입
 const dayCodeSchema = z.enum(['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'])
@@ -184,7 +184,8 @@ export function useServiceForm({ service, isOpen }: UseServiceFormOptions) {
   const isEditMode = Boolean(service)
 
   // 서비스 목록 조회 (sortOrder 계산용)
-  const { data: servicesResponse } = useServicesList()
+  const { data: servicesApiResponse } = useFetchServicesList()
+  const servicesData = servicesApiResponse?.data
 
   // 다음 sortOrder 계산
   const nextSortOrder = useMemo(() => {
@@ -192,10 +193,10 @@ export function useServiceForm({ service, isOpen }: UseServiceFormOptions) {
       return service.sortOrder || 1
     }
     // 신규 추가: 최대값 + 1 (최소 1)
-    const services = servicesResponse ?? []
+    const services = servicesData ?? []
     const maxOrder = Math.max(...services.map((s) => s.sortOrder || 0), 0)
     return maxOrder + 1
-  }, [servicesResponse, isEditMode, service])
+  }, [servicesData, isEditMode, service])
 
   const form = useForm<ServiceFormValues>({
     resolver: zodResolver(serviceFormSchema),
@@ -257,7 +258,8 @@ export function useServiceFormPage({
   const isEditMode = Boolean(serviceDetail)
 
   // 서비스 목록 조회 (sortOrder 계산용)
-  const { data: servicesResponse } = useServicesList()
+  const { data: servicesApiResponse2 } = useFetchServicesList()
+  const servicesData2 = servicesApiResponse2?.data
 
   // 다음 sortOrder 계산
   const nextSortOrder = useMemo(() => {
@@ -265,10 +267,10 @@ export function useServiceFormPage({
       return serviceDetail.sortOrder || 1
     }
     // 신규 추가: 최대값 + 1 (최소 1)
-    const services = servicesResponse ?? []
+    const services = servicesData2 ?? []
     const maxOrder = Math.max(...services.map((s) => s.sortOrder || 0), 0)
     return maxOrder + 1
-  }, [servicesResponse, isEditMode, serviceDetail])
+  }, [servicesData2, isEditMode, serviceDetail])
 
   const form = useForm<ServiceFormValues>({
     resolver: zodResolver(serviceFormSchema),

@@ -1,11 +1,12 @@
-import { useCustomersList } from '@/features/customers/api/use-customers-query'
+import { useFetchCustomers } from '@/features/customers/api'
 import { CustomersTable } from '@/features/customers/ui/customers-table'
 
 /**
  * 고객 관리 페이지
  */
 export function CustomersPage() {
-  const { data, isLoading, error } = useCustomersList()
+  const { data: customersResponse, isLoading, error } = useFetchCustomers()
+  const data = customersResponse?.data
 
   return (
     <div className='flex h-full flex-col gap-4 p-4 md:gap-8 md:p-8'>

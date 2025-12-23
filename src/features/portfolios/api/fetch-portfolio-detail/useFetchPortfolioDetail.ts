@@ -1,4 +1,4 @@
-import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
+import { ADMIN_API, axiosInstance } from '@/shared/api'
 import { useStandardQuery } from '@/shared/hooks/custom-query'
 import { generateQueryKeysFromUrl } from '@/shared/lib'
 import type { PortfolioAdmin } from '@/shared/types/api'
@@ -6,9 +6,7 @@ import type { PortfolioAdmin } from '@/shared/types/api'
 /**
  * 포트폴리오 상세 조회 API
  */
-const fetchPortfolioDetail = async (
-  id: string
-): Promise<ApiResponse<PortfolioAdmin>> => {
+const fetchPortfolioDetail = async (id: string) => {
   const { data } = await axiosInstance.get<PortfolioAdmin>(
     ADMIN_API.PORTFOLIOS.DETAIL(id)
   )

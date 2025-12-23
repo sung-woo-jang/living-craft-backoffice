@@ -18,9 +18,11 @@ import {
 } from '@/shared/ui/select'
 import { Switch } from '@/shared/ui/switch'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useCreatePromotion } from '@/features/promotions/api/create-promotion'
-import { useUpdatePromotion } from '@/features/promotions/api/update-promotion'
-import { usePromotionDetail } from '@/features/promotions/api/use-promotions-query'
+import {
+  useFetchPromotionDetail,
+  useCreatePromotion,
+  useUpdatePromotion,
+} from '@/features/promotions/api'
 import {
   usePromotionFormPage,
   LINK_TYPE_OPTIONS,
@@ -37,7 +39,9 @@ export function PromotionFormPage() {
   const isEditMode = Boolean(id)
 
   // 수정 모드일 때 프로모션 상세 데이터 조회
-  const { data: promotionDetail, isLoading } = usePromotionDetail(id)
+  const { data: promotionDetailResponse, isLoading } =
+    useFetchPromotionDetail(id)
+  const promotionDetail = promotionDetailResponse?.data
 
   // 폼 훅
   const form = usePromotionFormPage({

@@ -1,7 +1,7 @@
 import {
-  useOperatingHours,
-  useHolidays,
-} from '@/features/operating-hours/api/use-operating-hours-query'
+  useFetchOperatingHours,
+  useFetchHolidays,
+} from '@/features/operating-hours/api'
 import { HolidaysCalendar } from '@/features/operating-hours/ui/holidays-calendar'
 import { TimeSlotForm } from '@/features/operating-hours/ui/time-slot-form'
 
@@ -13,12 +13,12 @@ export function OperatingHoursPage() {
     data: operatingHoursResponse,
     isLoading: isLoadingHours,
     error: hoursError,
-  } = useOperatingHours()
+  } = useFetchOperatingHours()
   const {
     data: holidaysResponse,
     isLoading: isLoadingHolidays,
     error: holidaysError,
-  } = useHolidays()
+  } = useFetchHolidays()
 
   const operatingHours = operatingHoursResponse?.data
   const holidays = holidaysResponse?.data

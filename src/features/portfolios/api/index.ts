@@ -10,10 +10,6 @@ export { useDeletePortfolio } from './delete-portfolio'
 // ===== Query Keys =====
 
 // ===== Types =====
-export type {
-  Portfolio,
-  PortfolioCategory,
-  FetchPortfoliosResponse,
-} from './fetch-portfolios'
+export type { FetchPortfoliosResponse } from './fetch-portfolios'
 export type { CreatePortfolioVariables } from './create-portfolio'
 export type { UpdatePortfolioVariables } from './update-portfolio'

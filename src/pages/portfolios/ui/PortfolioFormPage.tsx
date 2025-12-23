@@ -30,7 +30,7 @@ import {
 } from '@/features/portfolios/model'
 import { ImageUploader } from '@/features/portfolios/ui/image-uploader'
 import { TagInput } from '@/features/portfolios/ui/tag-input'
-import { useServicesList } from '@/features/services/api/use-services-query'
+import { useFetchServicesList } from '@/features/services/api'
 import styles from './PortfolioFormPage.module.scss'
 
 export function PortfolioFormPage() {
@@ -43,7 +43,8 @@ export function PortfolioFormPage() {
   const portfolioDetail = portfolioResponse?.data
 
   // 서비스 목록 조회 (드롭다운용)
-  const { data: services } = useServicesList()
+  const { data: servicesResponse } = useFetchServicesList()
+  const services = servicesResponse?.data
 
   // 폼 훅
   const form = usePortfolioFormPage({

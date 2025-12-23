@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from '@/shared/ui/card'
 import { Plus, Trash2 } from 'lucide-react'
-import { useDeleteHoliday } from '@/features/operating-hours/api/use-operating-hours-mutation'
+import { useDeleteHoliday } from '@/features/operating-hours/api'
 
 interface HolidaysCalendarProps {
   holidays: Holiday[]

@@ -1,7 +1,7 @@
 import { Button } from '@/shared/ui/button'
 import { Plus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { usePortfoliosList } from '@/features/portfolios/api/use-portfolios-query'
+import { useFetchPortfolios } from '@/features/portfolios/api'
 import { PortfoliosGrid } from '@/features/portfolios/ui/portfolios-grid'
 
 /**
@@ -9,7 +9,8 @@ import { PortfoliosGrid } from '@/features/portfolios/ui/portfolios-grid'
  */
 export function PortfoliosPage() {
   const navigate = useNavigate()
-  const { data, isLoading, error } = usePortfoliosList()
+  const { data: portfoliosResponse, isLoading, error } = useFetchPortfolios()
+  const data = portfoliosResponse?.data
 
   const handleCreatePortfolio = () => {
     navigate('/portfolios/new')

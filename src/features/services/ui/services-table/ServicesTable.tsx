@@ -36,7 +36,7 @@ import {
   type DragEndEvent,
 } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { useUpdateServiceOrder } from '../../api/use-update-service-order'
+import { useUpdateServiceOrder } from '../../api'
 import { DraggableTableRow } from '../draggable-table-row'
 import { servicesColumns } from '../services-columns'
 

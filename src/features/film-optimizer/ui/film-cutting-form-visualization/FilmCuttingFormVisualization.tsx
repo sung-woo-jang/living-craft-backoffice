@@ -1,5 +1,5 @@
 import { useRef, useMemo } from 'react'
-import { useFilmsList } from '../../api'
+import { useFetchFilms } from '../../api'
 import { useFilmCuttingForm, useBinPacker } from '../../model'
 import { CuttingCanvas, type CuttingCanvasRef } from '../cutting-canvas'
 import { ExportButtons } from '../export-buttons'
@@ -23,7 +23,8 @@ export function FilmCuttingFormVisualization() {
     ])
 
   // 필름 정보
-  const { data: filmsList } = useFilmsList()
+  const { data: filmsResponse } = useFetchFilms()
+  const filmsList = filmsResponse?.data
   const selectedFilm = filmsList?.find(
     (f) => f.id.toString() === selectedFilmId
   )

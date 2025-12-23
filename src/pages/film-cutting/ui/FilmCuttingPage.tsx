@@ -2,7 +2,7 @@ import { Button } from '@/shared/ui/button'
 import { Plus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import {
-  useCuttingProjectsList,
+  useFetchCuttingProjects,
   useDeleteCuttingProject,
   type CuttingProjectListItem,
 } from '@/features/film-optimizer/api'
@@ -14,7 +14,8 @@ import styles from './FilmCuttingPage.module.scss'
  */
 export function FilmCuttingPage() {
   const navigate = useNavigate()
-  const { data, isLoading, error } = useCuttingProjectsList()
+  const { data: projectsResponse, isLoading, error } = useFetchCuttingProjects()
+  const data = projectsResponse?.data
   const deleteProject = useDeleteCuttingProject()
 
   const handleCreateProject = () => {
@@ -62,19 +63,16 @@ export function FilmCuttingPage() {
 
       {!isLoading &&
         !error &&
-        data?.data &&
-        (data.data as unknown as Array<unknown>).length > 0 && (
+        data &&
+        data.length > 0 && (
           <FilmCuttingTable
-            data={data.data as CuttingProjectListItem[]}
+            data={data as CuttingProjectListItem[]}
             onEdit={handleEditProject}
             onDelete={handleDeleteProject}
           />
         )}
 
-      {!isLoading &&
-        !error &&
-        (!data?.data ||
-          (data.data as unknown as Array<unknown>).length === 0) && (
+      {!isLoading && !error && (!data || data.length === 0) && (
           <div className={styles.empty}>
             <p>등록된 프로젝트가 없습니다.</p>
             <Button variant='outline' onClick={handleCreateProject}>

@@ -27,9 +27,11 @@ import {
   Link,
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { useDeletePromotion } from '@/features/promotions/api/delete-promotion'
-import { useTogglePromotion } from '@/features/promotions/api/toggle-promotion'
-import { usePromotionsList } from '@/features/promotions/api/use-promotions-query'
+import {
+  useFetchPromotions,
+  useDeletePromotion,
+  useTogglePromotion,
+} from '@/features/promotions/api'
 import styles from './PromotionsPage.module.scss'
 
 /**
@@ -37,7 +39,8 @@ import styles from './PromotionsPage.module.scss'
  */
 export function PromotionsPage() {
   const navigate = useNavigate()
-  const { data, isLoading, error } = usePromotionsList()
+  const { data: promotionsResponse, isLoading, error } = useFetchPromotions()
+  const data = promotionsResponse?.data
   const togglePromotion = useTogglePromotion()
   const deletePromotion = useDeletePromotion()
 

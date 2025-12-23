@@ -36,8 +36,8 @@ import {
   useDebouncedIconsSearch,
   useCreateService,
   useUpdateService,
+  useFetchServiceDetail,
 } from '@/features/services/api'
-import { useServiceDetail } from '@/features/services/api/use-services-query'
 import {
   useServiceFormPage,
   type ServiceFormValues,
@@ -52,7 +52,8 @@ export function ServiceFormPage() {
   const isEditMode = Boolean(id)
 
   // 수정 모드일 때 서비스 상세 데이터 조회
-  const { data: serviceDetail, isLoading } = useServiceDetail(id)
+  const { data: serviceDetailResponse, isLoading } = useFetchServiceDetail(id)
+  const serviceDetail = serviceDetailResponse?.data
 
   // 폼 훅
   const form = useServiceFormPage({

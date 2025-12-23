@@ -1,7 +1,7 @@
 import { Button } from '@/shared/ui/button'
 import { useNavigate } from 'react-router-dom'
 import {
-  useFilmsList,
+  useFetchFilms,
   useCreateCuttingProject,
   useUpdateCuttingProject,
 } from '../../api'
@@ -33,7 +33,8 @@ export function FilmCuttingFormHeader() {
   const isEditMode = Boolean(editingProjectId)
 
   // 필름 정보
-  const { data: filmsList } = useFilmsList()
+  const { data: filmsResponse } = useFetchFilms()
+  const filmsList = filmsResponse?.data
   const selectedFilm = filmsList?.find(
     (f) => f.id.toString() === selectedFilmId
   )

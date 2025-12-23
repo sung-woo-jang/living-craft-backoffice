@@ -1,7 +1,7 @@
 import { Button } from '@/shared/ui/button'
 import { Plus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { useServicesList } from '@/features/services/api/use-services-query'
+import { useFetchServicesList } from '@/features/services/api'
 import { ServicesTable } from '@/features/services/ui/services-table'
 
 /**
@@ -9,7 +9,8 @@ import { ServicesTable } from '@/features/services/ui/services-table'
  */
 export function ServicesPage() {
   const navigate = useNavigate()
-  const { data, isLoading, error } = useServicesList()
+  const { data: servicesData, isLoading, error } = useFetchServicesList()
+  const data = servicesData?.data
 
   const handleCreateService = () => {
     navigate('/services/new')

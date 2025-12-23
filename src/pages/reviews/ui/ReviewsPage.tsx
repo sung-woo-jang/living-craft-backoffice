@@ -1,11 +1,12 @@
-import { useReviewsList } from '@/features/reviews/api/use-reviews-query'
+import { useFetchReviews } from '@/features/reviews/api'
 import { ReviewsTable } from '@/features/reviews/ui/reviews-table'
 
 /**
  * 리뷰 관리 페이지
  */
 export function ReviewsPage() {
-  const { data, isLoading, error } = useReviewsList()
+  const { data: reviewsResponse, isLoading, error } = useFetchReviews()
+  const data = reviewsResponse?.data
 
   return (
     <div className='flex h-full flex-col gap-4 p-4 md:gap-8 md:p-8'>

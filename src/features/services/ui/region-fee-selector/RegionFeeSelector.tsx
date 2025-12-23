@@ -20,7 +20,7 @@ import {
 } from '@/shared/ui/combobox'
 import { Input } from '@/shared/ui/input'
 import { ChevronDown, MapPin, Trash2, X } from 'lucide-react'
-import { useDistricts } from '../../api/use-districts'
+import { useFetchDistricts } from '../../api'
 import { groupRegionsBySido } from '../../lib/region-utils'
 import type { ServiceFormValues } from '../../model'
 import styles from './styles.module.scss'
@@ -46,23 +46,23 @@ export function RegionFeeSelector() {
   const [editingFee, setEditingFee] = useState<string>('')
 
   // 시/도 목록 조회
-  const { data: sidoResponse } = useDistricts({ level: 'SIDO' })
+  const { data: sidoApiResponse } = useFetchDistricts({ level: 'SIDO' })
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const sidoList = sidoResponse?.data ?? []
+  const sidoList = sidoApiResponse?.data ?? []
 
   // 선택된 시/도의 시/군/구 목록 조회
   const sidoId = selectedSido ? parseInt(selectedSido) : null
-  const { data: sigunguResponse } = useDistricts({
+  const { data: sigunguApiResponse } = useFetchDistricts({
     level: 'SIGUNGU',
     parentId: sidoId || undefined,
   })
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const sigunguList = sigunguResponse?.data ?? []
+  const sigunguList = sigunguApiResponse?.data ?? []
 
   // 전체 지역 조회 (그룹핑용)
-  const { data: allDistrictsResponse } = useDistricts()
+  const { data: allDistrictsApiResponse } = useFetchDistricts()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const allDistricts = allDistrictsResponse?.data ?? []
+  const allDistricts = allDistrictsApiResponse?.data ?? []
 
   // Combobox용 데이터 변환
   const sidoData = useMemo(
