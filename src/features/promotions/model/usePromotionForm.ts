@@ -12,14 +12,19 @@ export const promotionFormSchema = z.object({
     .min(1, '제목을 입력하세요')
     .max(100, '제목은 100자 이내로 입력하세요'),
   subtitle: z.string().max(200, '부제목은 200자 이내로 입력하세요'),
+  iconName: z.string().min(1, '아이콘을 선택하세요'),
+  iconBgColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, '올바른 색상 코드를 입력하세요'),
+  iconColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, '올바른 색상 코드를 입력하세요'),
   linkUrl: z.string(),
   linkType: z.enum(['external', 'internal']),
   startDate: z.string(),
   endDate: z.string(),
   isActive: z.boolean(),
   sortOrder: z.number().min(0, '정렬 순서는 0 이상이어야 합니다'),
-  existingIconUrl: z.string().nullable(),
-  newIcon: z.instanceof(File).nullable().optional(),
 })
 
 export type PromotionFormValues = z.infer<typeof promotionFormSchema>
@@ -58,14 +63,15 @@ function getDefaultFormValues(): PromotionFormValues {
   return {
     title: '',
     subtitle: '',
+    iconName: '',
+    iconBgColor: '#E3F2FD',
+    iconColor: '#1976D2',
     linkUrl: '',
     linkType: 'external',
     startDate: '',
     endDate: '',
     isActive: true,
     sortOrder: 0,
-    existingIconUrl: null,
-    newIcon: null,
   }
 }
 
@@ -103,6 +109,9 @@ export function usePromotionFormPage({
       form.reset({
         title: promotionDetail.title,
         subtitle: promotionDetail.subtitle ?? '',
+        iconName: promotionDetail.icon?.name ?? '',
+        iconBgColor: promotionDetail.iconBgColor,
+        iconColor: promotionDetail.iconColor,
         linkUrl: promotionDetail.linkUrl ?? '',
         linkType: promotionDetail.linkType,
         startDate: promotionDetail.startDate
@@ -113,8 +122,6 @@ export function usePromotionFormPage({
           : '',
         isActive: promotionDetail.isActive,
         sortOrder: promotionDetail.sortOrder,
-        existingIconUrl: promotionDetail.iconUrl ?? null,
-        newIcon: null,
       })
     } else {
       form.reset({

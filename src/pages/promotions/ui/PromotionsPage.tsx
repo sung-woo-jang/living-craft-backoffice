@@ -147,12 +147,24 @@ export function PromotionsPage() {
                     {promotion.sortOrder}
                   </TableCell>
                   <TableCell>
-                    {promotion.iconUrl ? (
-                      <img
-                        src={promotion.iconUrl}
-                        alt=''
-                        className={styles.iconPreview}
-                      />
+                    {promotion.icon ? (
+                      <div className={styles.iconCell}>
+                        <div
+                          className={styles.iconColor}
+                          style={{ backgroundColor: promotion.iconBgColor }}
+                          title={`배경: ${promotion.iconBgColor}`}
+                        >
+                          <span
+                            style={{ color: promotion.iconColor }}
+                            title={`아이콘: ${promotion.iconColor}`}
+                          >
+                            ●
+                          </span>
+                        </div>
+                        <span className={styles.iconName}>
+                          {promotion.icon.name}
+                        </span>
+                      </div>
                     ) : (
                       <div className={styles.noIcon}>-</div>
                     )}

@@ -539,7 +539,14 @@ export interface PromotionAdmin {
   id: number
   title: string
   subtitle: string | null
-  iconUrl: string | null
+  iconId: number
+  icon: {
+    id: number
+    name: string
+    type: string
+  }
+  iconBgColor: string
+  iconColor: string
   linkUrl: string | null
   linkType: PromotionLinkType
   startDate: string | null
@@ -553,11 +560,14 @@ export interface PromotionAdmin {
 
 /**
  * 프로모션 생성 요청
- * POST /api/admin/promotions (multipart/form-data)
+ * POST /api/admin/promotions (JSON)
  */
 export interface CreatePromotionRequest {
   title: string
   subtitle?: string
+  iconId: number
+  iconBgColor: string
+  iconColor: string
   linkUrl?: string
   linkType?: PromotionLinkType
   startDate?: string
@@ -568,11 +578,14 @@ export interface CreatePromotionRequest {
 
 /**
  * 프로모션 수정 요청
- * POST /api/admin/promotions/:id/update (multipart/form-data)
+ * POST /api/admin/promotions/:id/update (JSON)
  */
 export interface UpdatePromotionRequest {
   title?: string
   subtitle?: string
+  iconId?: number
+  iconBgColor?: string
+  iconColor?: string
   linkUrl?: string
   linkType?: PromotionLinkType
   startDate?: string

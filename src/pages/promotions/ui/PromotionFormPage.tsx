@@ -1,6 +1,24 @@
-import { useEffect, useState } from 'react'
-import { Controller, FormProvider } from 'react-hook-form'
+import { useEffect, useMemo, useState } from 'react'
+import { Controller, FormProvider, useWatch } from 'react-hook-form'
 import { Button } from '@/shared/ui/button'
+import {
+  ColorPicker,
+  ColorPickerAlpha,
+  ColorPickerFormat,
+  ColorPickerHue,
+  ColorPickerOutput,
+  ColorPickerSelection,
+} from '@/shared/ui/color-picker'
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxGroup,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxTrigger,
+} from '@/shared/ui/combobox'
 import {
   Field,
   FieldDescription,
@@ -27,10 +45,9 @@ import {
   usePromotionFormPage,
   LINK_TYPE_OPTIONS,
   INTERNAL_LINK_OPTIONS,
-  isCustomInternalUrl,
   type PromotionFormValues,
 } from '@/features/promotions/model'
-import { IconUploader } from '@/features/promotions/ui/icon-uploader'
+import { useDebouncedIconsSearch } from '@/features/services/api'
 import styles from './PromotionFormPage.module.scss'
 
 export function PromotionFormPage() {
@@ -64,6 +81,47 @@ export function PromotionFormPage() {
   const linkType = watch('linkType')
   const linkUrl = watch('linkUrl')
 
+  // 아이콘 검색 상태
+  const [iconSearchQuery, setIconSearchQuery] = useState('')
+  const { data: iconsResponse, isLoading: iconsLoading } =
+    useDebouncedIconsSearch(iconSearchQuery)
+
+  // 현재 선택된 아이콘 이름 추적
+  const currentIconName = useWatch({ control, name: 'iconName' })
+
+  // Combobox용 데이터 변환 (id 포함)
+  const iconData = useMemo(() => {
+    const icons = iconsResponse?.data ?? []
+
+    // 검색 결과를 기본 배열로 사용
+    const mappedIcons = icons.slice(0, 100).map((icon) => ({
+      label: icon.name,
+      value: icon.name,
+      id: icon.id,
+    }))
+
+    // 현재 선택된 아이콘이 있고, 검색 결과에 없으면 배열 앞에 추가
+    if (
+      currentIconName &&
+      !mappedIcons.some((icon) => icon.value === currentIconName)
+    ) {
+      // 수정 모드에서 기존 아이콘 ID 사용
+      const existingIconId = promotionDetail?.icon?.id
+      return [
+        { label: currentIconName, value: currentIconName, id: existingIconId },
+        ...mappedIcons,
+      ]
+    }
+
+    return mappedIcons
+  }, [iconsResponse?.data, currentIconName, promotionDetail?.icon?.id])
+
+  // 선택된 아이콘의 ID 찾기
+  const selectedIconId = useMemo(() => {
+    const found = iconData.find((icon) => icon.value === currentIconName)
+    return found?.id
+  }, [iconData, currentIconName])
+
   // 직접 입력 모드 상태 관리
   const [isDirectInput, setIsDirectInput] = useState(false)
 
@@ -82,33 +140,33 @@ export function PromotionFormPage() {
 
   const onSubmit = async (data: PromotionFormValues) => {
     try {
+      // 선택된 아이콘의 ID 확인
+      if (!selectedIconId) {
+        console.error('아이콘 ID를 찾을 수 없습니다.')
+        return
+      }
+
+      const requestData = {
+        title: data.title,
+        subtitle: data.subtitle || undefined,
+        iconId: selectedIconId,
+        iconBgColor: data.iconBgColor,
+        iconColor: data.iconColor,
+        linkUrl: data.linkUrl || undefined,
+        linkType: data.linkType,
+        startDate: data.startDate || undefined,
+        endDate: data.endDate || undefined,
+        isActive: data.isActive,
+        sortOrder: data.sortOrder,
+      }
+
       if (isEditMode && id) {
         await updatePromotion.mutateAsync({
           id,
-          data: {
-            title: data.title,
-            subtitle: data.subtitle || undefined,
-            linkUrl: data.linkUrl || undefined,
-            linkType: data.linkType,
-            startDate: data.startDate || undefined,
-            endDate: data.endDate || undefined,
-            isActive: data.isActive,
-            sortOrder: data.sortOrder,
-          },
-          icon: data.newIcon || undefined,
+          data: requestData,
         })
       } else {
-        await createPromotion.mutateAsync({
-          title: data.title,
-          subtitle: data.subtitle || undefined,
-          linkUrl: data.linkUrl || undefined,
-          linkType: data.linkType,
-          startDate: data.startDate || undefined,
-          endDate: data.endDate || undefined,
-          isActive: data.isActive,
-          sortOrder: data.sortOrder,
-          icon: data.newIcon || undefined,
-        })
+        await createPromotion.mutateAsync(requestData)
       }
       navigate('/promotions')
     } catch {
@@ -457,25 +515,126 @@ export function PromotionFormPage() {
               </div>
             </div>
 
-            {/* 아이콘 이미지 */}
+            {/* 아이콘 설정 */}
             <div className={styles.formFullWidth}>
               <div className={styles.section}>
-                <h3 className={styles.sectionTitle}>아이콘 이미지</h3>
-                <IconUploader
-                  existingIconUrl={watch('existingIconUrl')}
-                  newIcon={watch('newIcon') ?? null}
-                  onIconChange={(file) => setValue('newIcon', file)}
-                  onRemoveExisting={() => setValue('existingIconUrl', null)}
-                />
-                <FieldDescription>
-                  권장 크기: 112x112px (2x 해상도). 정사각형 이미지가 가장 잘
-                  보입니다.
-                </FieldDescription>
-                {errors.newIcon && (
-                  <p className={styles.errorText}>
-                    {String(errors.newIcon.message)}
-                  </p>
-                )}
+                <h3 className={styles.sectionTitle}>아이콘 설정</h3>
+
+                <FieldGroup>
+                  <Controller
+                    name='iconName'
+                    control={control}
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={fieldState.invalid}>
+                        <FieldLabel htmlFor='iconName'>
+                          아이콘 이름{' '}
+                          <span className={styles.labelRequired}>*</span>
+                        </FieldLabel>
+                        <Combobox
+                          data={iconData}
+                          type='아이콘'
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <ComboboxTrigger className='w-full' />
+                          <ComboboxContent
+                            popoverOptions={{ className: 'w-[400px]' }}
+                          >
+                            <ComboboxInput
+                              placeholder='아이콘 검색...'
+                              onValueChange={setIconSearchQuery}
+                            />
+                            <ComboboxEmpty>
+                              {iconsLoading
+                                ? '검색 중...'
+                                : iconSearchQuery.length < 2
+                                  ? '최소 2글자 이상 입력하세요'
+                                  : '아이콘을 찾을 수 없습니다.'}
+                            </ComboboxEmpty>
+                            <ComboboxList className='max-h-[400px]'>
+                              <ComboboxGroup>
+                                {iconData.map((icon) => (
+                                  <ComboboxItem
+                                    key={icon.value}
+                                    value={icon.value}
+                                  >
+                                    {icon.label}
+                                  </ComboboxItem>
+                                ))}
+                              </ComboboxGroup>
+                            </ComboboxList>
+                          </ComboboxContent>
+                        </Combobox>
+                        <FieldDescription>
+                          Toss Asset Icon 이름을 검색하세요
+                        </FieldDescription>
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
+                      </Field>
+                    )}
+                  />
+
+                  <div className={styles.fieldRow}>
+                    <Controller
+                      name='iconBgColor'
+                      control={control}
+                      render={({ field, fieldState }) => (
+                        <Field data-invalid={fieldState.invalid}>
+                          <FieldLabel htmlFor='iconBgColor'>
+                            배경색{' '}
+                            <span className={styles.labelRequired}>*</span>
+                          </FieldLabel>
+                          <ColorPicker
+                            value={field.value}
+                            onChange={field.onChange}
+                            className='bg-background w-full rounded-lg border p-4 shadow-sm'
+                          >
+                            <ColorPickerSelection className='mb-4 h-[200px] rounded-lg' />
+                            <ColorPickerHue className='mb-3' />
+                            <ColorPickerAlpha className='mb-4' />
+                            <div className='flex items-center gap-2'>
+                              <ColorPickerOutput />
+                              <ColorPickerFormat />
+                            </div>
+                          </ColorPicker>
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
+
+                    <Controller
+                      name='iconColor'
+                      control={control}
+                      render={({ field, fieldState }) => (
+                        <Field data-invalid={fieldState.invalid}>
+                          <FieldLabel htmlFor='iconColor'>
+                            아이콘 색상{' '}
+                            <span className={styles.labelRequired}>*</span>
+                          </FieldLabel>
+                          <ColorPicker
+                            value={field.value}
+                            onChange={field.onChange}
+                            className='bg-background w-full rounded-lg border p-4 shadow-sm'
+                          >
+                            <ColorPickerSelection className='mb-4 h-[200px] rounded-lg' />
+                            <ColorPickerHue className='mb-3' />
+                            <ColorPickerAlpha className='mb-4' />
+                            <div className='flex items-center gap-2'>
+                              <ColorPickerOutput />
+                              <ColorPickerFormat />
+                            </div>
+                          </ColorPicker>
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
+                  </div>
+                </FieldGroup>
               </div>
             </div>
           </div>
