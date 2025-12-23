@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
 import { Button } from '@/shared/ui/button'
 import {
@@ -57,6 +58,23 @@ export function PromotionFormPage() {
   const updatePromotion = useUpdatePromotion()
 
   const linkType = watch('linkType')
+  const linkUrl = watch('linkUrl')
+
+  // 직접 입력 모드 상태 관리
+  const [isDirectInput, setIsDirectInput] = useState(false)
+
+  // linkUrl 변경 시 직접 입력 모드 동기화 (양방향)
+  useEffect(() => {
+    if (linkType === 'internal') {
+      // linkUrl이 미리 정의된 옵션 중 하나인지 확인
+      const isPredefined = INTERNAL_LINK_OPTIONS.some(
+        (opt) => opt.value === linkUrl && opt.value !== '__custom__'
+      )
+      setIsDirectInput(!isPredefined && linkUrl !== '')
+    } else {
+      setIsDirectInput(false)
+    }
+  }, [linkUrl, linkType])
 
   const onSubmit = async (data: PromotionFormValues) => {
     try {
@@ -294,10 +312,8 @@ export function PromotionFormPage() {
                     name='linkUrl'
                     control={control}
                     render={({ field, fieldState }) => {
-                      // 커스텀 URL인지 확인 (INTERNAL_LINK_OPTIONS에 없는 값)
-                      const isCustomUrl = isCustomInternalUrl(field.value)
                       // Select에서 표시할 값 결정
-                      const selectValue = isCustomUrl
+                      const selectValue = isDirectInput
                         ? '__custom__'
                         : (field.value ?? '')
 
@@ -310,9 +326,11 @@ export function PromotionFormPage() {
                                 value={selectValue}
                                 onValueChange={(val) => {
                                   if (val === '__custom__') {
-                                    // 직접 입력 선택 시 빈 값으로 초기화
-                                    field.onChange('')
+                                    // 직접 입력 선택 시 Input 값은 유지하고 직접 입력 모드만 활성화
+                                    setIsDirectInput(true)
                                   } else {
+                                    // 미리 정의된 경로 선택 시 직접 입력 모드 비활성화하고 Input에 동기화
+                                    setIsDirectInput(false)
                                     field.onChange(val)
                                   }
                                 }}
@@ -332,18 +350,30 @@ export function PromotionFormPage() {
                                 </SelectContent>
                               </Select>
 
-                              {/* 직접 입력 선택 시 또는 기존 커스텀 URL인 경우 Input 표시 */}
-                              {(isCustomUrl ||
-                                selectValue === '__custom__') && (
-                                <Input
-                                  value={field.value ?? ''}
-                                  onChange={(e) =>
-                                    field.onChange(e.target.value)
+                              {/* 항상 Input 표시 (URL 확인 및 직접 입력용) */}
+                              <Input
+                                value={field.value ?? ''}
+                                onChange={(e) => {
+                                  const newValue = e.target.value
+                                  field.onChange(newValue)
+
+                                  // Input 값이 INTERNAL_LINK_OPTIONS에 없으면 직접 입력 모드로 전환
+                                  const isPredefinedValue =
+                                    INTERNAL_LINK_OPTIONS.some(
+                                      (opt) =>
+                                        opt.value === newValue &&
+                                        opt.value !== '__custom__'
+                                    )
+
+                                  if (!isPredefinedValue && newValue !== '') {
+                                    setIsDirectInput(true)
+                                  } else if (isPredefinedValue) {
+                                    setIsDirectInput(false)
                                   }
-                                  placeholder='/reservation/service?serviceId=1'
-                                  className={styles.customLinkInput}
-                                />
-                              )}
+                                }}
+                                placeholder='/reservation/service?serviceId=1'
+                                className={styles.customLinkInput}
+                              />
                             </div>
                           ) : (
                             <Input

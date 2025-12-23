@@ -15,22 +15,17 @@ export const portfolioFormSchema = z.object({
     .string()
     .min(1, '프로젝트명을 입력하세요')
     .max(200, '프로젝트명은 200자 이내로 입력하세요'),
-  client: z
-    .string()
-    .max(100, '고객사는 100자 이내로 입력하세요')
-    .optional()
-    .nullable()
-    .transform((val) => val || ''),
+  client: z.string().max(100, '고객사는 100자 이내로 입력하세요'),
   duration: z
     .string()
     .min(1, '작업 기간을 입력하세요')
     .max(50, '작업 기간은 50자 이내로 입력하세요'),
   description: z.string().min(1, '간단 설명을 입력하세요'),
   detailedDescription: z.string().min(1, '상세 설명을 입력하세요'),
-  tags: z.array(z.string()).optional().default([]),
+  tags: z.array(z.string()),
   relatedServiceId: z.number().min(1, '관련 서비스를 선택하세요'),
-  existingImages: z.array(z.string()).optional().default([]),
-  newImages: z.array(z.instanceof(File)).optional().default([]),
+  existingImages: z.array(z.string()),
+  newImages: z.array(z.instanceof(File)),
 })
 
 export type PortfolioFormValues = z.infer<typeof portfolioFormSchema>
@@ -90,11 +85,10 @@ export function usePortfolioFormPage({
   portfolioDetail,
   isLoading,
 }: UsePortfolioFormPageOptions) {
-  const isEditMode = Boolean(portfolioDetail)
-
   const form = useForm<PortfolioFormValues>({
     resolver: zodResolver(portfolioFormSchema),
     defaultValues: getDefaultFormValues(),
+    mode: 'onChange',
   })
 
   // portfolioDetail 변경 시 폼 상태 동기화
