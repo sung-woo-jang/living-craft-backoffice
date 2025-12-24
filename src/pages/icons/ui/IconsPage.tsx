@@ -1,17 +1,39 @@
 import { useState } from 'react'
+import type { IconAdminListItem } from '@/shared/types/api'
 import { Button } from '@/shared/ui/button'
-import { Plus } from 'lucide-react'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/shared/ui/select'
+import { Plus, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useFetchIconsList } from '@/features/icons/api'
 import { IconsTable, IconDialog } from '@/features/icons/ui'
-import type { IconAdminListItem } from '@/shared/types/api'
 import styles from './IconsPage.module.scss'
+
+const PAGE_SIZE_OPTIONS = [10, 20, 50, 100, 200] as const
 
 /**
  * 아이콘 관리 페이지
  */
 export function IconsPage() {
-  const { data: iconsData, isLoading, error } = useFetchIconsList()
-  const data = iconsData?.data
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
+  const offset = (currentPage - 1) * pageSize
+
+  const {
+    data: iconsResponse,
+    isLoading,
+    error,
+  } = useFetchIconsList({
+    limit: pageSize,
+    offset,
+  })
+  const data = iconsResponse?.data?.items
+  const total = iconsResponse?.data?.total || 0
+  const totalPages = Math.ceil(total / pageSize)
 
   const [dialogOpen, setDialogOpen] = useState(false)
   const [dialogMode, setDialogMode] = useState<'create' | 'edit'>('create')
@@ -27,6 +49,11 @@ export function IconsPage() {
     setDialogMode('edit')
     setSelectedIcon(icon)
     setDialogOpen(true)
+  }
+
+  const handlePageSizeChange = (newSize: string) => {
+    setPageSize(Number(newSize))
+    setCurrentPage(1) // 페이지 크기 변경 시 1페이지로 리셋
   }
 
   return (
@@ -60,7 +87,90 @@ export function IconsPage() {
       )}
 
       {!isLoading && !error && data && data.length > 0 && (
-        <IconsTable data={data} onRowClick={handleRowClick} />
+        <>
+          {/* 상단 컨트롤 */}
+          <div className={styles.tableControls}>
+            <div className={styles.pageSizeSelector}>
+              <Select
+                value={String(pageSize)}
+                onValueChange={handlePageSizeChange}
+              >
+                <SelectTrigger className='w-[120px]'>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {PAGE_SIZE_OPTIONS.map((size) => (
+                    <SelectItem key={size} value={String(size)}>
+                      {size}개씩 보기
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className={styles.totalInfo}>
+              총 {total.toLocaleString()}개 아이콘
+            </div>
+          </div>
+
+          <IconsTable data={data} onRowClick={handleRowClick} />
+
+          {/* 하단 페이지네이션 */}
+          {totalPages > 1 && (
+            <div className={styles.pagination}>
+              <div className={styles.paginationInfo}>
+                페이지 {currentPage} / {totalPages}
+              </div>
+              <div className={styles.paginationControls}>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft className='size-4' />
+                  이전
+                </Button>
+                <div className={styles.pageNumbers}>
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum: number
+                    if (totalPages <= 5) {
+                      pageNum = i + 1
+                    } else if (currentPage <= 3) {
+                      pageNum = i + 1
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNum = totalPages - 4 + i
+                    } else {
+                      pageNum = currentPage - 2 + i
+                    }
+                    return (
+                      <Button
+                        key={pageNum}
+                        variant={
+                          currentPage === pageNum ? 'default' : 'outline'
+                        }
+                        size='sm'
+                        onClick={() => setCurrentPage(pageNum)}
+                      >
+                        {pageNum}
+                      </Button>
+                    )
+                  })}
+                </div>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                >
+                  다음
+                  <ChevronRight className='size-4' />
+                </Button>
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       <IconDialog

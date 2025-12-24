@@ -61,3 +61,58 @@
     transform: rotate(360deg);
   }
 }
+
+.tableControls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: flex-start;
+
+  @media screen and (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.pageSizeSelector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.totalInfo {
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.pagination {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  padding: 1.5rem 0;
+  border-top: 1px solid hsl(var(--border));
+  margin-top: 1rem;
+
+  @media screen and (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.paginationInfo {
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.paginationControls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pageNumbers {
+  display: flex;
+  gap: 0.25rem;
+}

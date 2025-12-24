@@ -8,15 +8,11 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
 import type { IconAdminListItem } from '@/shared/types/api'
-import {
-  DataTablePagination,
-  DataTableToolbar,
-} from '@/shared/ui-kit/data-table'
+import { DataTableToolbar } from '@/shared/ui-kit/data-table'
 import {
   Table,
   TableBody,
@@ -58,7 +54,6 @@ export function IconsTable({ data, onRowClick }: IconsTableProps) {
     },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
@@ -133,7 +128,6 @@ export function IconsTable({ data, onRowClick }: IconsTableProps) {
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} />
     </div>
   )
 }

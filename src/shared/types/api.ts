@@ -71,13 +71,25 @@ export interface Icon {
 
 /**
  * 관리자용 아이콘 목록 아이템
- * GET /api/icons 응답
+ * GET /api/icons 응답 (배열 내 개별 아이템)
  */
 export interface IconAdminListItem {
   id: number
   name: string
   type: IconType
   createdAt: string
+}
+
+/**
+ * 아이콘 목록 페이지네이션 응답
+ * GET /api/icons 응답 (전체 구조)
+ */
+export interface IconListPaginatedResponse {
+  items: IconAdminListItem[]
+  total: number
+  count: number
+  limit: number
+  offset: number
 }
 
 /**
