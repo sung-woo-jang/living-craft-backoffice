@@ -48,6 +48,7 @@ import {
   type PromotionFormValues,
 } from '@/features/promotions/model'
 import { useDebouncedIconsSearch } from '@/features/services/api'
+import { AddIconModal } from '@/features/services/ui/add-icon-modal'
 import styles from './PromotionFormPage.module.scss'
 
 export function PromotionFormPage() {
@@ -91,10 +92,10 @@ export function PromotionFormPage() {
 
   // Combobox용 데이터 변환 (id 포함)
   const iconData = useMemo(() => {
-    const icons = iconsResponse?.data ?? []
+    const icons = iconsResponse?.data?.items ?? []
 
     // 검색 결과를 기본 배열로 사용
-    const mappedIcons = icons.slice(0, 100).map((icon) => ({
+    const mappedIcons = icons.map((icon) => ({
       label: icon.name,
       value: icon.name,
       id: icon.id,
@@ -124,6 +125,17 @@ export function PromotionFormPage() {
 
   // 직접 입력 모드 상태 관리
   const [isDirectInput, setIsDirectInput] = useState(false)
+
+  // 아이콘 추가 모달 상태
+  const [isAddIconModalOpen, setIsAddIconModalOpen] = useState(false)
+
+  // 아이콘 추가 성공 시 처리
+  const handleIconCreated = (iconId: number, iconName: string) => {
+    // 폼에 새로 생성된 아이콘 이름 설정
+    setValue('iconName', iconName)
+    // 검색어 초기화하여 목록 다시 불러오기
+    setIconSearchQuery('')
+  }
 
   // linkUrl 변경 시 직접 입력 모드 동기화 (양방향)
   useEffect(() => {
@@ -568,6 +580,15 @@ export function PromotionFormPage() {
                         <FieldDescription>
                           Toss Asset Icon 이름을 검색하세요
                         </FieldDescription>
+                        <Button
+                          type='button'
+                          variant='outline'
+                          size='sm'
+                          onClick={() => setIsAddIconModalOpen(true)}
+                          className={styles.addIconButton}
+                        >
+                          새 아이콘 추가
+                        </Button>
                         {fieldState.invalid && (
                           <FieldError errors={[fieldState.error]} />
                         )}
@@ -654,6 +675,14 @@ export function PromotionFormPage() {
             {isPending ? '저장 중...' : isEditMode ? '수정하기' : '추가하기'}
           </Button>
         </div>
+
+        {/* 아이콘 추가 모달 */}
+        <AddIconModal
+          open={isAddIconModalOpen}
+          onOpenChange={setIsAddIconModalOpen}
+          initialIconName={iconSearchQuery}
+          onSuccess={handleIconCreated}
+        />
       </FormProvider>
     </div>
   )

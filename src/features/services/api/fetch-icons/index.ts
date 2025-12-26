@@ -5,4 +5,6 @@ export type {
   IconType,
   FetchIconsParams,
   FetchIconsResponse,
+  CreateIconRequest,
+  CreateIconResponse,
 } from './types'

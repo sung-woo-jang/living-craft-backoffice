@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { axiosInstance, ADMIN_API, type ApiResponse } from '@/shared/api'
-import { useStandardQuery } from '@/shared/hooks/custom-query'
 import type { FetchIconsResponse } from '../types'
 
 /**
@@ -22,25 +22,31 @@ export function useDebouncedIconsSearch(search: string, delay = 300) {
     }
   }, [search, delay])
 
-  return useStandardQuery<FetchIconsResponse>({
+  return useQuery<ApiResponse<FetchIconsResponse>>({
     queryKey: ['admin', 'icons', 'search', debouncedSearch],
-    queryFn: async () => {
+    queryFn: async (): Promise<ApiResponse<FetchIconsResponse>> => {
       if (!debouncedSearch || debouncedSearch.length < 2) {
         // 빈 ApiResponse 반환
         return {
           success: true,
           message: '',
-          data: [],
+          data: {
+            items: [],
+            total: 0,
+            count: 0,
+            limit: 100,
+            offset: 0,
+          },
           timestamp: new Date().toISOString(),
-        } as ApiResponse<FetchIconsResponse>
+        }
       }
 
       const searchParams = new URLSearchParams()
       searchParams.append('search', debouncedSearch)
 
       const url = `${ADMIN_API.ICONS.LIST}?${searchParams.toString()}`
-      const { data } = await axiosInstance.get<FetchIconsResponse>(url)
-      return data
+      const response = await axiosInstance.get(url)
+      return response.data as ApiResponse<FetchIconsResponse>
     },
     staleTime: 30 * 1000, // 30초 캐싱
     enabled: debouncedSearch.length >= 2, // 2글자 이상일 때만 활성화

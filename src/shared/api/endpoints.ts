@@ -20,15 +20,15 @@ export const ADMIN_API = {
     CANCEL: (id: string) => `/admin/reservations/${id}/cancel`,
   },
 
-  // 서비스 관리 (백엔드: /api/services/admin/*)
+  // 서비스 관리 (백엔드: /api/admin/services/*)
   SERVICES: {
-    LIST: '/services/admin',
-    CREATE: '/services/admin',
-    DETAIL: (id: number | string) => `/services/admin/${id}`,
-    UPDATE: (id: number | string) => `/services/admin/${id}/update`,
-    DELETE: (id: number | string) => `/services/admin/${id}/delete`,
-    TOGGLE: (id: number | string) => `/services/admin/${id}/toggle`,
-    ORDER: '/services/admin/order',
+    LIST: '/admin/services',
+    CREATE: '/admin/services',
+    DETAIL: (id: number | string) => `/admin/services/${id}`,
+    UPDATE: (id: number | string) => `/admin/services/${id}`,
+    DELETE: (id: number | string) => `/admin/services/${id}/delete`,
+    TOGGLE: (id: number | string) => `/admin/services/${id}/toggle`,
+    ORDER: '/admin/services/update-order',
   },
 
   // 행정구역 관리
@@ -39,8 +39,8 @@ export const ADMIN_API = {
   // 아이콘 관리
   ICONS: {
     LIST: '/icons',
-    CREATE: '/admin/icons',
-    UPDATE: (id: number | string) => `/admin/icons/${id}/update`,
+    CREATE: '/icons/admin',
+    UPDATE: (id: number | string) => `/icons/admin/${id}/update`,
   },
 
   // 포트폴리오 관리

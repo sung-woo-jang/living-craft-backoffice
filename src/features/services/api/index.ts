@@ -10,6 +10,7 @@ export { useUpdateService } from './update-service'
 export { useDeleteService } from './delete-service'
 export { useToggleService } from './toggle-service'
 export { useUpdateServiceOrder } from './update-service-order'
+export { useCreateIcon } from './fetch-icons/useCreateIcon'
 
 // ===== Query Keys =====
 
@@ -64,4 +65,6 @@ export type {
   IconItem,
   FetchIconsParams,
   FetchIconsResponse,
+  CreateIconRequest,
+  CreateIconResponse,
 } from './fetch-icons'

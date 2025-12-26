@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Controller, FormProvider, useWatch } from 'react-hook-form'
 import type { CreateServiceRequest } from '@/shared/types/api'
 import { Button } from '@/shared/ui/button'
+import { AddIconModal } from '@/features/services/ui/add-icon-modal'
 import {
   ColorPicker,
   ColorPickerAlpha,
@@ -78,15 +79,18 @@ export function ServiceFormPage() {
   const { data: iconsResponse, isLoading: iconsLoading } =
     useDebouncedIconsSearch(iconSearchQuery)
 
+  // 아이콘 추가 모달 상태
+  const [isAddIconModalOpen, setIsAddIconModalOpen] = useState(false)
+
   // 현재 선택된 아이콘 이름 추적
   const currentIconName = useWatch({ control, name: 'iconName' })
 
   // Combobox용 데이터 변환
   const iconData = useMemo(() => {
-    const icons = iconsResponse?.data ?? []
+    const icons = iconsResponse?.data?.items ?? []
 
     // 검색 결과를 기본 배열로 사용
-    const mappedIcons = icons.slice(0, 100).map((icon) => ({
+    const mappedIcons = icons.map((icon) => ({
       label: icon.name,
       value: icon.name,
     }))
@@ -170,6 +174,12 @@ export function ServiceFormPage() {
 
   const handleCancel = () => {
     navigate('/services')
+  }
+
+  // 아이콘 생성 성공 핸들러
+  const handleIconCreated = (iconId: number, iconName: string) => {
+    setValue('iconName', iconName)
+    setIconSearchQuery('')
   }
 
   const isPending = createService.isPending || updateService.isPending
@@ -324,6 +334,18 @@ export function ServiceFormPage() {
                             </ComboboxList>
                           </ComboboxContent>
                         </Combobox>
+                        <FieldDescription>
+                          Toss Asset Icon 이름을 검색하세요
+                        </FieldDescription>
+                        <Button
+                          type='button'
+                          variant='outline'
+                          size='sm'
+                          onClick={() => setIsAddIconModalOpen(true)}
+                          className={styles.addIconButton}
+                        >
+                          새 아이콘 추가
+                        </Button>
                         {fieldState.invalid && (
                           <FieldError errors={[fieldState.error]} />
                         )}
@@ -462,6 +484,14 @@ export function ServiceFormPage() {
           </Button>
         </div>
       </FormProvider>
+
+      {/* 아이콘 추가 모달 */}
+      <AddIconModal
+        open={isAddIconModalOpen}
+        onOpenChange={setIsAddIconModalOpen}
+        initialIconName={iconSearchQuery}
+        onSuccess={handleIconCreated}
+      />
     </div>
   )
 }
