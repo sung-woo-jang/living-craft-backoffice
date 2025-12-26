@@ -47,10 +47,14 @@ export const serviceFormSchema = z.object({
   iconName: z.string().min(1, '아이콘 이름을 입력하세요'),
   iconBgColor: z
     .string()
-    .regex(/^#[0-9A-Fa-f]{6}$/, '올바른 색상 코드를 입력하세요 (예: #3B82F6)'),
+    .regex(/^#[0-9A-Fa-f]{6}$/, '올바른 색상 코드를 입력하세요 (예: #3B82F6)')
+    .optional()
+    .or(z.literal('')),
   iconColor: z
     .string()
-    .regex(/^#[0-9A-Fa-f]{6}$/, '올바른 색상 코드를 입력하세요 (예: #424242)'),
+    .regex(/^#[0-9A-Fa-f]{6}$/, '올바른 색상 코드를 입력하세요 (예: #424242)')
+    .optional()
+    .or(z.literal('')),
   duration: z.string().min(1, '소요 시간을 입력하세요'),
   requiresTimeSelection: z.boolean(),
   sortOrder: z.number().min(1, '정렬 순서는 1 이상이어야 합니다'),
@@ -93,8 +97,8 @@ function getDefaultFormValues(sortOrder: number): ServiceFormValues {
     title: '',
     description: '',
     iconName: '',
-    iconBgColor: '#3B82F6',
-    iconColor: '#424242',
+    iconBgColor: '',
+    iconColor: '',
     duration: '',
     requiresTimeSelection: false,
     sortOrder,
@@ -233,8 +237,8 @@ export function useServiceForm({ service, isOpen }: UseServiceFormOptions) {
         title: service.title,
         description: service.description,
         iconName,
-        iconBgColor: service.iconBgColor,
-        iconColor: service.iconColor || '#424242',
+        iconBgColor: service.iconBgColor ?? '',
+        iconColor: service.iconColor ?? '',
         duration: service.duration,
         requiresTimeSelection: service.requiresTimeSelection,
         sortOrder: service.sortOrder,
@@ -303,8 +307,8 @@ export function useServiceFormPage({
         title: serviceDetail.title,
         description: serviceDetail.description,
         iconName,
-        iconBgColor: serviceDetail.iconBgColor,
-        iconColor: serviceDetail.iconColor || '#424242',
+        iconBgColor: serviceDetail.iconBgColor ?? '',
+        iconColor: serviceDetail.iconColor ?? '',
         duration: serviceDetail.duration,
         requiresTimeSelection: serviceDetail.requiresTimeSelection,
         sortOrder: serviceDetail.sortOrder,

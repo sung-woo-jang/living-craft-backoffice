@@ -121,8 +121,8 @@ export interface ServiceAdminListItem {
   title: string
   description: string
   iconName: string
-  iconBgColor: string
-  iconColor: string
+  iconBgColor?: string | null
+  iconColor?: string | null
   duration: string
   requiresTimeSelection: boolean
   isActive: boolean
@@ -168,8 +168,8 @@ export interface ServiceAdminDetail {
   title: string
   description: string
   icon: Icon
-  iconBgColor: string
-  iconColor: string
+  iconBgColor?: string | null
+  iconColor?: string | null
   duration: string
   requiresTimeSelection: boolean
   isActive: boolean
@@ -225,8 +225,8 @@ export interface Service {
   icon?: ServiceIconDto | null
   // 폼 데이터용 (문자열) - 백엔드에서 직접 반환하지 않음
   iconName: string
-  iconBgColor: string
-  iconColor: string
+  iconBgColor?: string | null
+  iconColor?: string | null
   duration: string // "하루 종일", "2-3시간" 등
   requiresTimeSelection: boolean
   isActive: boolean
@@ -266,8 +266,8 @@ export interface CreateServiceRequest {
   title: string
   description: string
   iconId: number
-  iconBgColor: string
-  iconColor: string
+  iconBgColor?: string
+  iconColor?: string
   duration: string
   requiresTimeSelection: boolean
   sortOrder?: number

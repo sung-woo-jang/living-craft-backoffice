@@ -84,6 +84,14 @@ export function ServiceFormPage() {
   // 현재 선택된 아이콘 이름 추적
   const currentIconName = useWatch({ control, name: 'iconName' })
 
+  // 색상 값 추적 (스위치 상태 결정용)
+  const currentIconBgColor = useWatch({ control, name: 'iconBgColor' })
+  const currentIconColor = useWatch({ control, name: 'iconColor' })
+
+  // 색상 사용 여부 (값이 있으면 true)
+  const useIconBgColor = Boolean(currentIconBgColor)
+  const useIconColor = Boolean(currentIconColor)
+
   // Combobox용 데이터 변환
   const iconData = useMemo(() => {
     const icons = iconsResponse?.data?.items ?? []
@@ -366,22 +374,34 @@ export function ServiceFormPage() {
                     control={control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel htmlFor='iconBgColor'>
-                          배경색 <span className={styles.labelRequired}>*</span>
-                        </FieldLabel>
-                        <ColorPicker
-                          value={field.value}
-                          onChange={field.onChange}
-                          className='bg-background w-full rounded-lg border p-4 shadow-sm'
-                        >
-                          <ColorPickerSelection className='mb-4 h-[200px] rounded-lg' />
-                          <ColorPickerHue className='mb-3' />
-                          <ColorPickerAlpha className='mb-4' />
-                          <div className='flex items-center gap-2'>
-                            <ColorPickerOutput />
-                            <ColorPickerFormat />
-                          </div>
-                        </ColorPicker>
+                        <div className={styles.colorFieldHeader}>
+                          <FieldLabel htmlFor='iconBgColor'>배경색</FieldLabel>
+                          <Switch
+                            checked={useIconBgColor}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                field.onChange('#E3F2FD')
+                              } else {
+                                field.onChange('')
+                              }
+                            }}
+                          />
+                        </div>
+                        {useIconBgColor && (
+                          <ColorPicker
+                            value={field.value}
+                            onChange={field.onChange}
+                            className='bg-background w-full rounded-lg border p-4 shadow-sm'
+                          >
+                            <ColorPickerSelection className='mb-4 h-[200px] rounded-lg' />
+                            <ColorPickerHue className='mb-3' />
+                            <ColorPickerAlpha className='mb-4' />
+                            <div className='flex items-center gap-2'>
+                              <ColorPickerOutput />
+                              <ColorPickerFormat />
+                            </div>
+                          </ColorPicker>
+                        )}
                         {fieldState.invalid && (
                           <FieldError errors={[fieldState.error]} />
                         )}
@@ -394,22 +414,34 @@ export function ServiceFormPage() {
                     control={control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel htmlFor='iconColor'>
-                          아이콘 색상 <span className={styles.labelRequired}>*</span>
-                        </FieldLabel>
-                        <ColorPicker
-                          value={field.value}
-                          onChange={field.onChange}
-                          className='bg-background w-full rounded-lg border p-4 shadow-sm'
-                        >
-                          <ColorPickerSelection className='mb-4 h-[200px] rounded-lg' />
-                          <ColorPickerHue className='mb-3' />
-                          <ColorPickerAlpha className='mb-4' />
-                          <div className='flex items-center gap-2'>
-                            <ColorPickerOutput />
-                            <ColorPickerFormat />
-                          </div>
-                        </ColorPicker>
+                        <div className={styles.colorFieldHeader}>
+                          <FieldLabel htmlFor='iconColor'>아이콘 색상</FieldLabel>
+                          <Switch
+                            checked={useIconColor}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                field.onChange('#424242')
+                              } else {
+                                field.onChange('')
+                              }
+                            }}
+                          />
+                        </div>
+                        {useIconColor && (
+                          <ColorPicker
+                            value={field.value}
+                            onChange={field.onChange}
+                            className='bg-background w-full rounded-lg border p-4 shadow-sm'
+                          >
+                            <ColorPickerSelection className='mb-4 h-[200px] rounded-lg' />
+                            <ColorPickerHue className='mb-3' />
+                            <ColorPickerAlpha className='mb-4' />
+                            <div className='flex items-center gap-2'>
+                              <ColorPickerOutput />
+                              <ColorPickerFormat />
+                            </div>
+                          </ColorPicker>
+                        )}
                         {fieldState.invalid && (
                           <FieldError errors={[fieldState.error]} />
                         )}

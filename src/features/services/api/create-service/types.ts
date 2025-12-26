@@ -53,8 +53,8 @@ export interface CreateServiceRequest {
   title: string
   description: string
   iconId: number
-  iconBgColor: string
-  iconColor: string
+  iconBgColor?: string
+  iconColor?: string
   duration: string
   requiresTimeSelection: boolean
   sortOrder?: number
