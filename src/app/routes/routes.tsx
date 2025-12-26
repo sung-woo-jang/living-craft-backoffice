@@ -13,7 +13,6 @@ import { ProtectedRoute } from '@/shared/components/protected-route'
 import { createBrowserRouter } from 'react-router-dom'
 import { authRoutes } from './auth-routes'
 import { errorRoutes } from './error-routes'
-import { templateRoutes } from './template-routes'
 
 export const router = createBrowserRouter([
   {
@@ -21,8 +20,6 @@ export const router = createBrowserRouter([
     children: [
       // Auth Routes (인증 관련)
       ...authRoutes,
-      // Template Routes (참고용)
-      ...templateRoutes,
       // Error Routes
       ...errorRoutes,
 

@@ -1,12 +1,8 @@
 import { type SidebarData } from '@/shared/types/sidebar'
 import {
   LayoutDashboard,
-  ListTodo,
-  Package,
   Palette,
   Settings,
-  Users,
-  MessagesSquare,
   Command,
   Calendar,
   Briefcase,
@@ -101,32 +97,6 @@ export const sidebarData: SidebarData = {
               icon: Palette,
             },
           ],
-        },
-      ],
-    },
-    {
-      title: '템플릿 (참고용)',
-      items: [
-        {
-          title: 'Tasks',
-          url: '/tasks',
-          icon: ListTodo,
-        },
-        {
-          title: 'Apps',
-          url: '/apps',
-          icon: Package,
-        },
-        {
-          title: 'Chats',
-          url: '/chats',
-          badge: '3',
-          icon: MessagesSquare,
-        },
-        {
-          title: 'Users',
-          url: '/users',
-          icon: Users,
         },
       ],
     },
