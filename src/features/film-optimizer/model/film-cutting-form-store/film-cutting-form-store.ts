@@ -45,11 +45,18 @@ const useFilmCuttingFormStore = createWithEqualityFn<FilmCuttingFormState>(
         localPieces: state.localPieces.filter((p) => p.id !== pieceId),
       })),
 
-    togglePieceComplete: (pieceId) =>
+    togglePieceComplete: (pieceId, fixedPosition) =>
       set((state) => ({
-        localPieces: state.localPieces.map((p) =>
-          p.id === pieceId ? { ...p, isCompleted: !p.isCompleted } : p
-        ),
+        localPieces: state.localPieces.map((p) => {
+          if (p.id !== pieceId) return p
+          const newIsCompleted = !p.isCompleted
+          return {
+            ...p,
+            isCompleted: newIsCompleted,
+            // 완료 시 fixedPosition 설정, 해제 시 null
+            fixedPosition: newIsCompleted ? (fixedPosition ?? null) : null,
+          }
+        }),
       })),
 
     // 편집 모드

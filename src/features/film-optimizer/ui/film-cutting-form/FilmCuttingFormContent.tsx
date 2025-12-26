@@ -1,7 +1,9 @@
-import { FilmCuttingFormHeader } from '../film-cutting-form-header'
-import { FilmCuttingFormPieces } from '../film-cutting-form-pieces'
-import { FilmCuttingFormSettings } from '../film-cutting-form-settings'
-import { FilmCuttingFormVisualization } from '../film-cutting-form-visualization'
+import {
+  FilmCuttingFormPieces,
+  FilmCuttingFormSettings,
+  FilmCuttingFormVisualization,
+  FilmCuttingFormHeader,
+} from '@/features/film-optimizer'
 import styles from './styles.module.scss'
 
 /**

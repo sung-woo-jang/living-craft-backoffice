@@ -8,6 +8,14 @@ export interface CuttingPieceInput {
   height: number
   quantity?: number // 기본값: 1
   label?: string
+  isCompleted?: boolean // 기본값: false
+  fixedPosition?: {
+    x: number
+    y: number
+    width: number
+    height: number
+    rotated: boolean
+  } | null
 }
 
 /**
@@ -80,11 +88,33 @@ export interface UpdatePieceVariables {
 }
 
 /**
- * 재단 조각 삭제/토글 Mutation 변수
+ * 재단 조각 삭제 Mutation 변수
  */
 export interface PieceActionVariables {
   projectId: number | string
   pieceId: number | string
+}
+
+/**
+ * 재단 완료 토글 요청
+ */
+export interface TogglePieceCompleteRequest {
+  fixedPosition?: {
+    x: number
+    y: number
+    width: number
+    height: number
+    rotated: boolean
+  }
+}
+
+/**
+ * 재단 완료 토글 Mutation 변수
+ */
+export interface TogglePieceCompleteVariables {
+  projectId: number | string
+  pieceId: number | string
+  data?: TogglePieceCompleteRequest
 }
 
 export type AddPiecesResponse = CuttingPiece[]

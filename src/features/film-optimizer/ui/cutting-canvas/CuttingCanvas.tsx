@@ -112,9 +112,9 @@ export const CuttingCanvas = forwardRef<CuttingCanvasRef, CuttingCanvasProps>(
 
       packingResult.bins.forEach((bin, binIndex) => {
         bin.rects.forEach((rect, rectIndex) => {
-          const globalIndex = pieces.length
           const isCompleted = completedPieceIds.includes(rect.pieceId)
-          const color = getPieceColor(rect.pieceId, globalIndex)
+          // listIndex 기반으로 색상 결정 (같은 조각은 항상 같은 색)
+          const color = getPieceColor(rect.pieceId, rect.listIndex)
 
           pieces.push(
             <PieceRect
@@ -122,7 +122,7 @@ export const CuttingCanvas = forwardRef<CuttingCanvasRef, CuttingCanvasProps>(
               rect={rect}
               yOffset={yOffset}
               usedLength={usedLength}
-              index={globalIndex + 1}
+              index={rect.listIndex} // listIndex 사용 (조각 목록 번호와 일치)
               color={color}
               isCompleted={isCompleted}
               onClick={() => onPieceClick?.(rect.pieceId)}

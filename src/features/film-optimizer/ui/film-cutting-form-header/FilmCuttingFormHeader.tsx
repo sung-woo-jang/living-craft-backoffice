@@ -4,9 +4,14 @@ import {
   useFetchFilms,
   useCreateCuttingProject,
   useUpdateCuttingProject,
+  useAddPieces,
 } from '../../api'
 import { useFilmCuttingForm, useBinPacker } from '../../model'
 import styles from './styles.module.scss'
+
+// 로컬에서 생성된 ID인지 확인 (Date.now()로 생성된 ID는 매우 큰 숫자)
+// PostgreSQL integer 최대값: 2,147,483,647
+const isLocalPieceId = (id: number) => id > 2_000_000_000
 
 /**
  * 필름 재단 폼 헤더
@@ -49,8 +54,12 @@ export function FilmCuttingFormHeader() {
   // 뮤테이션
   const createProject = useCreateCuttingProject()
   const updateProject = useUpdateCuttingProject()
+  const addPiecesMutation = useAddPieces()
 
-  const isPending = createProject.isPending || updateProject.isPending
+  const isPending =
+    createProject.isPending ||
+    updateProject.isPending ||
+    addPiecesMutation.isPending
 
   const handleSave = async () => {
     if (!projectName.trim() || !selectedFilmId) {
@@ -60,6 +69,26 @@ export function FilmCuttingFormHeader() {
     try {
       if (isEditMode && editingProjectId) {
         // 수정 모드
+
+        // 1. 새로 추가된 조각들 (로컬 ID) 먼저 서버에 저장
+        const newLocalPieces = localPieces.filter((p) => isLocalPieceId(p.id))
+        if (newLocalPieces.length > 0) {
+          await addPiecesMutation.mutateAsync({
+            projectId: editingProjectId,
+            data: {
+              pieces: newLocalPieces.map((p) => ({
+                width: p.width,
+                height: p.height,
+                quantity: p.quantity,
+                label: p.label ?? undefined,
+                isCompleted: p.isCompleted,
+                fixedPosition: p.fixedPosition ?? undefined,
+              })),
+            },
+          })
+        }
+
+        // 2. 프로젝트 메타데이터 수정
         await updateProject.mutateAsync({
           id: editingProjectId,
           data: {
@@ -82,6 +111,8 @@ export function FilmCuttingFormHeader() {
             height: p.height,
             quantity: p.quantity,
             label: p.label ?? undefined,
+            isCompleted: p.isCompleted,
+            fixedPosition: p.fixedPosition ?? undefined,
           })),
         })
 

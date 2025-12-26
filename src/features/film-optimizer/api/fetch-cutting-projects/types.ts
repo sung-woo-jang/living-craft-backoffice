@@ -11,6 +11,8 @@ export interface PackedRect {
   rotated: boolean
   pieceId: number
   label: string | null
+  /** 조각 목록에서의 인덱스 (1부터 시작) */
+  listIndex: number
 }
 
 /**
@@ -46,6 +48,14 @@ export interface CuttingPiece {
   label: string | null
   sortOrder: number
   isCompleted: boolean
+  /** 완료 시 고정된 배치 위치 */
+  fixedPosition?: {
+    x: number
+    y: number
+    width: number
+    height: number
+    rotated: boolean
+  } | null
   createdAt: string
   updatedAt: string
 }

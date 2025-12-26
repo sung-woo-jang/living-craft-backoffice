@@ -1,9 +1,13 @@
-import { useRef, useMemo } from 'react'
-import { useFetchFilms } from '../../api'
+import { useRef, useMemo, useState } from 'react'
+import { useFetchFilms, useTogglePieceComplete } from '../../api'
 import { useFilmCuttingForm, useBinPacker } from '../../model'
 import { CuttingCanvas, type CuttingCanvasRef } from '../cutting-canvas'
 import { ExportButtons } from '../export-buttons'
 import styles from './styles.module.scss'
+
+// 로컬에서 생성된 ID인지 확인 (Date.now()로 생성된 ID는 매우 큰 숫자)
+// PostgreSQL integer 최대값: 2,147,483,647
+const isLocalPieceId = (id: number) => id > 2_000_000_000
 
 /**
  * 필름 재단 폼 시각화 섹션
@@ -13,14 +17,23 @@ import styles from './styles.module.scss'
  */
 export function FilmCuttingFormVisualization() {
   const canvasRef = useRef<CuttingCanvasRef | null>(null)
+  const [togglingPieceId, setTogglingPieceId] = useState<number | null>(null)
 
-  const { projectName, selectedFilmId, allowRotation, localPieces } =
-    useFilmCuttingForm([
-      'projectName',
-      'selectedFilmId',
-      'allowRotation',
-      'localPieces',
-    ])
+  const {
+    editingProjectId,
+    projectName,
+    selectedFilmId,
+    allowRotation,
+    localPieces,
+  } = useFilmCuttingForm([
+    'editingProjectId',
+    'projectName',
+    'selectedFilmId',
+    'allowRotation',
+    'localPieces',
+  ])
+
+  const isEditMode = Boolean(editingProjectId)
 
   // 필름 정보
   const { data: filmsResponse } = useFetchFilms()
@@ -45,10 +58,71 @@ export function FilmCuttingFormVisualization() {
     [localPieces]
   )
 
+  // 뮤테이션
+  const toggleCompleteMutation = useTogglePieceComplete()
+
   // 조각 클릭 시 완료 토글
   const { togglePieceComplete } = useFilmCuttingForm(['togglePieceComplete'])
-  const handlePieceClick = (pieceId: number) => {
-    togglePieceComplete(pieceId)
+
+  const handlePieceClick = async (pieceId: number) => {
+    // 이미 처리 중이면 무시
+    if (togglingPieceId !== null) return
+
+    setTogglingPieceId(pieceId)
+
+    try {
+      // 현재 배치 결과에서 해당 조각의 위치 찾기
+      const piece = localPieces.find((p) => p.id === pieceId)
+      if (!piece) return
+
+      // 완료로 전환 시 fixedPosition 계산
+      let fixedPosition: {
+        x: number
+        y: number
+        width: number
+        height: number
+        rotated: boolean
+      } | null = null
+
+      if (!piece.isCompleted && packingResult) {
+        // 미완료 -> 완료: 현재 배치 위치를 fixedPosition으로 저장
+        for (const bin of packingResult.bins) {
+          const rect = bin.rects.find((r) => r.pieceId === pieceId)
+          if (rect) {
+            fixedPosition = {
+              x: rect.x,
+              y: rect.y,
+              width: rect.width,
+              height: rect.height,
+              rotated: rect.rotated,
+            }
+            break
+          }
+        }
+      }
+
+      // 편집 모드이고 서버에 저장된 조각인 경우에만 API 호출
+      if (isEditMode && editingProjectId && !isLocalPieceId(pieceId)) {
+        await toggleCompleteMutation.mutateAsync({
+          projectId: editingProjectId,
+          pieceId,
+          data: fixedPosition ? { fixedPosition } : undefined,
+        })
+      }
+
+      // 로컬 상태 업데이트
+      if (piece.isCompleted) {
+        // 완료 -> 미완료: fixedPosition 해제
+        togglePieceComplete(pieceId, null)
+      } else {
+        // 미완료 -> 완료: fixedPosition 설정
+        togglePieceComplete(pieceId, fixedPosition)
+      }
+    } catch {
+      // 에러는 mutation hook에서 처리
+    } finally {
+      setTogglingPieceId(null)
+    }
   }
 
   return (
