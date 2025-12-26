@@ -48,6 +48,9 @@ export const serviceFormSchema = z.object({
   iconBgColor: z
     .string()
     .regex(/^#[0-9A-Fa-f]{6}$/, '올바른 색상 코드를 입력하세요 (예: #3B82F6)'),
+  iconColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, '올바른 색상 코드를 입력하세요 (예: #424242)'),
   duration: z.string().min(1, '소요 시간을 입력하세요'),
   requiresTimeSelection: z.boolean(),
   sortOrder: z.number().min(1, '정렬 순서는 1 이상이어야 합니다'),
@@ -91,6 +94,7 @@ function getDefaultFormValues(sortOrder: number): ServiceFormValues {
     description: '',
     iconName: '',
     iconBgColor: '#3B82F6',
+    iconColor: '#424242',
     duration: '',
     requiresTimeSelection: false,
     sortOrder,
@@ -163,13 +167,21 @@ function transformRegionsFromApi(
 function transformRegionsFromAdminDetail(
   service: ServiceAdminDetail
 ): ServiceFormValues['regions'] {
-  if (!service.regions || service.regions.length === 0) {
+  // serviceRegions 필드 확인 (백엔드 실제 응답)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const regions = (service as any).serviceRegions || service.regions
+
+  if (!regions || regions.length === 0) {
     return []
   }
 
-  return service.regions.map((region) => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return regions.map((region: any) => ({
     districtId: region.districtId,
-    estimateFee: region.estimateFee,
+    estimateFee:
+      typeof region.estimateFee === 'string'
+        ? parseInt(region.estimateFee) || 0
+        : region.estimateFee || 0,
   }))
 }
 
@@ -222,6 +234,7 @@ export function useServiceForm({ service, isOpen }: UseServiceFormOptions) {
         description: service.description,
         iconName,
         iconBgColor: service.iconBgColor,
+        iconColor: service.iconColor || '#424242',
         duration: service.duration,
         requiresTimeSelection: service.requiresTimeSelection,
         sortOrder: service.sortOrder,
@@ -291,6 +304,7 @@ export function useServiceFormPage({
         description: serviceDetail.description,
         iconName,
         iconBgColor: serviceDetail.iconBgColor,
+        iconColor: serviceDetail.iconColor || '#424242',
         duration: serviceDetail.duration,
         requiresTimeSelection: serviceDetail.requiresTimeSelection,
         sortOrder: serviceDetail.sortOrder,

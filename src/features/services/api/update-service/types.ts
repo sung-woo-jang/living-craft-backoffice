@@ -10,8 +10,9 @@ import type {
 export interface UpdateServiceRequest {
   title?: string
   description?: string
-  iconName?: string
+  iconId?: number
   iconBgColor?: string
+  iconColor?: string
   duration?: string
   requiresTimeSelection?: boolean
   sortOrder?: number

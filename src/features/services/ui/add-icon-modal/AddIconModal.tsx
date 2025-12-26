@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -68,12 +67,7 @@ export function AddIconModal({
     },
   })
 
-  const {
-    handleSubmit,
-    control,
-    reset,
-    formState: { errors },
-  } = form
+  const { handleSubmit, control, reset } = form
 
   const onSubmit = async (data: AddIconFormValues) => {
     try {

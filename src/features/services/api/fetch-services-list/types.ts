@@ -8,6 +8,7 @@ export interface ServiceListItem {
   description: string
   iconName: string
   iconBgColor: string
+  iconColor: string
   duration: string
   requiresTimeSelection: boolean
   isActive: boolean

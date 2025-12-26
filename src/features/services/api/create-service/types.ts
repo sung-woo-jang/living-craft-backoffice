@@ -52,8 +52,9 @@ export interface ServiceScheduleInput {
 export interface CreateServiceRequest {
   title: string
   description: string
-  iconName: string
+  iconId: number
   iconBgColor: string
+  iconColor: string
   duration: string
   requiresTimeSelection: boolean
   sortOrder?: number

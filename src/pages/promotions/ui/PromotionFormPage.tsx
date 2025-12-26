@@ -67,13 +67,7 @@ export function PromotionFormPage() {
     isLoading,
   })
 
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-    watch,
-    setValue,
-  } = form
+  const { handleSubmit, control, watch, setValue } = form
 
   // 뮤테이션 훅
   const createPromotion = useCreatePromotion()
@@ -130,7 +124,7 @@ export function PromotionFormPage() {
   const [isAddIconModalOpen, setIsAddIconModalOpen] = useState(false)
 
   // 아이콘 추가 성공 시 처리
-  const handleIconCreated = (iconId: number, iconName: string) => {
+  const handleIconCreated = (_iconId: number, iconName: string) => {
     // 폼에 새로 생성된 아이콘 이름 설정
     setValue('iconName', iconName)
     // 검색어 초기화하여 목록 다시 불러오기
@@ -139,21 +133,26 @@ export function PromotionFormPage() {
 
   // linkUrl 변경 시 직접 입력 모드 동기화 (양방향)
   useEffect(() => {
-    if (linkType === 'internal') {
-      // linkUrl이 미리 정의된 옵션 중 하나인지 확인
-      const isPredefined = INTERNAL_LINK_OPTIONS.some(
-        (opt) => opt.value === linkUrl && opt.value !== '__custom__'
-      )
-      setIsDirectInput(!isPredefined && linkUrl !== '')
-    } else {
-      setIsDirectInput(false)
+    const updateInputMode = () => {
+      if (linkType === 'internal') {
+        // linkUrl이 미리 정의된 옵션 중 하나인지 확인
+        const isPredefined = INTERNAL_LINK_OPTIONS.some(
+          (opt) => opt.value === linkUrl && opt.value !== '__custom__'
+        )
+        setIsDirectInput(!isPredefined && linkUrl !== '')
+      } else {
+        setIsDirectInput(false)
+      }
     }
+
+    updateInputMode()
   }, [linkUrl, linkType])
 
   const onSubmit = async (data: PromotionFormValues) => {
     try {
       // 선택된 아이콘의 ID 확인
       if (!selectedIconId) {
+        // eslint-disable-next-line no-console
         console.error('아이콘 ID를 찾을 수 없습니다.')
         return
       }

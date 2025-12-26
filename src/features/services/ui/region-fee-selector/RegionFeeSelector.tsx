@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import type { GroupedServiceRegion } from '@/shared/types/api'

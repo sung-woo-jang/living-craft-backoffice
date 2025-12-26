@@ -81,25 +81,37 @@ export const ColorPicker = ({
   )
   const [mode, setMode] = useState('hex')
 
-  // Update color when controlled value changes
+  // onChange를 ref로 저장하여 무한 루프 방지
+  const onChangeRef = useRef(onChange)
+  useEffect(() => {
+    onChangeRef.current = onChange
+  }, [onChange])
+
+  // 외부 value 변경 시 내부 상태 업데이트 (무한 루프 방지를 위해 flag 사용)
+  const isUpdatingFromProp = useRef(false)
   useEffect(() => {
     if (value) {
+      isUpdatingFromProp.current = true
       const color = Color(value)
       const [h, s, l] = color.hsl().array()
       setHue(h)
       setSaturation(s)
       setLightness(l)
       setAlpha(color.alpha() * 100)
+      // 다음 렌더링 사이클에서 flag 초기화
+      setTimeout(() => {
+        isUpdatingFromProp.current = false
+      }, 0)
     }
   }, [value])
 
-  // Notify parent of changes
+  // 내부 상태 변경 시 부모에게 알림 (외부에서 업데이트 중일 때는 제외)
   useEffect(() => {
-    if (onChange) {
+    if (!isUpdatingFromProp.current && onChangeRef.current) {
       const color = Color.hsl(hue, saturation, lightness).alpha(alpha / 100)
-      onChange(color.hex())
+      onChangeRef.current(color.hex())
     }
-  }, [hue, saturation, lightness, alpha, onChange])
+  }, [hue, saturation, lightness, alpha])
 
   return (
     <ColorPickerContext.Provider

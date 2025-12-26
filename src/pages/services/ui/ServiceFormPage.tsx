@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
 import { Controller, FormProvider, useWatch } from 'react-hook-form'
-import type { CreateServiceRequest } from '@/shared/types/api'
 import { Button } from '@/shared/ui/button'
 import { AddIconModal } from '@/features/services/ui/add-icon-modal'
 import {
@@ -112,60 +111,69 @@ export function ServiceFormPage() {
   const onSubmit = async (data: ServiceFormValues) => {
     try {
       // sortOrder 처리: undefined면 자동 계산
-      let finalData = { ...data }
+      const finalData = { ...data }
 
-      if (!finalData.sortOrder || finalData.sortOrder === undefined) {
-        console.log('⚠️ sortOrder가 없어서 자동 계산')
-        // 신규 추가: 기본값 1 (백엔드에서 자동 조정됨)
+      if (!finalData.sortOrder) {
         finalData.sortOrder = 1
       }
 
-      console.log('📤 최종 전송 데이터:', finalData)
+      // iconName을 iconId로 변환
+      let iconId: number
+
+      if (isEditMode && serviceDetail?.icon?.id) {
+        // 수정 모드: 기존 iconId 사용
+        iconId = serviceDetail.icon.id
+      } else {
+        // 생성 모드: iconName으로 검색
+        const selectedIcon = iconsResponse?.data.items.find(
+          (icon) => icon.name === finalData.iconName
+        )
+
+        if (!selectedIcon) {
+          throw new Error('선택한 아이콘을 찾을 수 없습니다.')
+        }
+
+        iconId = selectedIcon.id
+      }
+
+      // API 요청 데이터 생성 (iconName -> iconId 변환)
+      const { iconName: _iconName, ...rest } = finalData
+      const apiData = {
+        ...rest,
+        iconId,
+      }
 
       if (isEditMode && id) {
         await updateService.mutateAsync({
           id,
-          data: finalData,
+          data: apiData,
         })
       } else {
-        await createService.mutateAsync(finalData as CreateServiceRequest)
+        await createService.mutateAsync(apiData)
       }
       navigate('/services')
-    } catch {
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('onSubmit 에러:', error)
       // 에러는 mutation hook에서 toast로 처리
     }
   }
 
   const handleFormSubmit = async () => {
-    console.log('🔘 handleFormSubmit 호출')
-
     // 폼 데이터 먼저 확인
-    let formData = getValues()
-    console.log('📋 현재 폼 데이터:', formData)
+    const formData = getValues()
 
     // sortOrder가 없으면 기본값 설정 (검증 전에 폼에 반영)
-    if (!formData.sortOrder || formData.sortOrder === undefined) {
-      console.log('⚠️ sortOrder가 없어서 기본값 설정: 1')
+    if (!formData.sortOrder) {
       setValue('sortOrder', 1)
-      formData = { ...formData, sortOrder: 1 }
     }
 
     // 폼 검증
     const isValid = await trigger()
-    console.log('  - 폼 검증 결과:', isValid)
 
     if (!isValid) {
-      console.log('❌ 폼 검증 실패')
-      console.log('  - formState.errors:', form.formState.errors)
-
-      // 각 필드별 에러 출력
-      Object.entries(form.formState.errors).forEach(([field, error]) => {
-        console.log(`    - ${field}:`, error)
-      })
       return
     }
-
-    console.log('✅ 폼 검증 성공, 데이터 전송')
 
     // onSubmit 직접 호출 (최신 데이터 다시 가져오기)
     const finalData = getValues()
@@ -177,7 +185,7 @@ export function ServiceFormPage() {
   }
 
   // 아이콘 생성 성공 핸들러
-  const handleIconCreated = (iconId: number, iconName: string) => {
+  const handleIconCreated = (_iconId: number, iconName: string) => {
     setValue('iconName', iconName)
     setIconSearchQuery('')
   }
@@ -360,6 +368,34 @@ export function ServiceFormPage() {
                       <Field data-invalid={fieldState.invalid}>
                         <FieldLabel htmlFor='iconBgColor'>
                           배경색 <span className={styles.labelRequired}>*</span>
+                        </FieldLabel>
+                        <ColorPicker
+                          value={field.value}
+                          onChange={field.onChange}
+                          className='bg-background w-full rounded-lg border p-4 shadow-sm'
+                        >
+                          <ColorPickerSelection className='mb-4 h-[200px] rounded-lg' />
+                          <ColorPickerHue className='mb-3' />
+                          <ColorPickerAlpha className='mb-4' />
+                          <div className='flex items-center gap-2'>
+                            <ColorPickerOutput />
+                            <ColorPickerFormat />
+                          </div>
+                        </ColorPicker>
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
+                      </Field>
+                    )}
+                  />
+
+                  <Controller
+                    name='iconColor'
+                    control={control}
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={fieldState.invalid}>
+                        <FieldLabel htmlFor='iconColor'>
+                          아이콘 색상 <span className={styles.labelRequired}>*</span>
                         </FieldLabel>
                         <ColorPicker
                           value={field.value}
