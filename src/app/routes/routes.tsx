@@ -5,7 +5,10 @@ import { FilmCuttingFormPage, FilmCuttingPage } from '@/pages/film-cutting'
 import { IconsPage } from '@/pages/icons'
 import { PortfolioFormPage, PortfoliosPage } from '@/pages/portfolios'
 import { PromotionFormPage, PromotionsPage } from '@/pages/promotions'
-import { ReservationsPage } from '@/pages/reservations'
+import {
+  ReservationsPage,
+  ReservationDetailPage,
+} from '@/pages/reservations'
 import { ReviewsPage } from '@/pages/reviews'
 import { ServiceFormPage, ServicesPage } from '@/pages/services'
 import { OperatingHoursPage } from '@/pages/settings/operating-hours'
@@ -40,6 +43,10 @@ export const router = createBrowserRouter([
           {
             path: 'reservations',
             element: <ReservationsPage />,
+          },
+          {
+            path: 'reservations/:id',
+            element: <ReservationDetailPage />,
           },
           {
             path: 'services',

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   type SortingState,
   type VisibilityState,
@@ -33,6 +34,8 @@ type ReservationsTableProps = {
 }
 
 export function ReservationsTable({ data }: ReservationsTableProps) {
+  const navigate = useNavigate()
+
   // Local UI-only states
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
@@ -47,6 +50,11 @@ export function ReservationsTable({ data }: ReservationsTableProps) {
     pageIndex: 0,
     pageSize: 10,
   })
+
+  // 행 클릭 핸들러 - 상세 페이지로 이동
+  const handleRowClick = (reservation: Reservation) => {
+    navigate(`/reservations/${reservation.id}`)
+  }
 
   const table = useReactTable({
     data,
@@ -136,6 +144,8 @@ export function ReservationsTable({ data }: ReservationsTableProps) {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
+                  onClick={() => handleRowClick(row.original)}
+                  className='cursor-pointer'
                 >
                   {row.getVisibleCells().map((cell) => {
                     const meta = cell.column.columnDef.meta

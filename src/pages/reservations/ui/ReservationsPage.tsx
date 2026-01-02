@@ -34,19 +34,9 @@ export function ReservationsPage() {
         </div>
       )}
 
-      {!isLoading &&
-        !error &&
-        data &&
-        Array.isArray(data) &&
-        data.length > 0 && <ReservationsTable data={data} />}
-
-      {!isLoading &&
-        !error &&
-        (!data || !Array.isArray(data) || data.length === 0) && (
-          <div className='flex h-[400px] items-center justify-center'>
-            <p className='text-muted-foreground'>예약이 없습니다.</p>
-          </div>
-        )}
+      {!isLoading && !error && data?.items && (
+        <ReservationsTable data={data.items} />
+      )}
     </div>
   )
 }

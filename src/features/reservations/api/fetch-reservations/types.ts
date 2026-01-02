@@ -33,4 +33,10 @@ export interface Reservation {
   updatedAt: string
 }
 
-export type FetchReservationsResponse = Reservation[]
+/**
+ * 예약 목록 응답
+ */
+export interface FetchReservationsResponse {
+  items: Reservation[]
+  total: number
+}
