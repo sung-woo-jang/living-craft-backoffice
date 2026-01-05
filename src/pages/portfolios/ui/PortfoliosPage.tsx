@@ -1,6 +1,7 @@
 import { Button } from '@/shared/ui/button'
 import { Plus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { PageHeader } from '@/widgets/page-header'
 import { useFetchPortfolios } from '@/features/portfolios/api'
 import { PortfoliosGrid } from '@/features/portfolios/ui/portfolios-grid'
 
@@ -18,18 +19,16 @@ export function PortfoliosPage() {
 
   return (
     <div className='flex h-full flex-col gap-4 p-4 md:gap-8 md:p-8'>
-      <div className='flex items-center justify-between'>
-        <div>
-          <h1 className='text-3xl font-bold tracking-tight'>포트폴리오 관리</h1>
-          <p className='text-muted-foreground mt-2'>
-            완료된 프로젝트를 등록하고 관리합니다.
-          </p>
-        </div>
-        <Button onClick={handleCreatePortfolio}>
-          <Plus className='mr-2 size-4' />
-          포트폴리오 추가
-        </Button>
-      </div>
+      <PageHeader
+        title='포트폴리오 관리'
+        description='완료된 프로젝트를 등록하고 관리합니다.'
+        action={
+          <Button onClick={handleCreatePortfolio}>
+            <Plus className='mr-2 size-4' />
+            포트폴리오 추가
+          </Button>
+        }
+      />
 
       {isLoading && (
         <div className='flex h-[400px] items-center justify-center'>

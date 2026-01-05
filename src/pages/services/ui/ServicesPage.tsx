@@ -1,6 +1,7 @@
 import { Button } from '@/shared/ui/button'
 import { Plus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { PageHeader } from '@/widgets/page-header'
 import { useFetchServicesList } from '@/features/services/api'
 import { ServicesTable } from '@/features/services/ui/services-table'
 
@@ -22,18 +23,16 @@ export function ServicesPage() {
 
   return (
     <div className='flex h-full flex-col gap-4 p-4 md:gap-8 md:p-8'>
-      <div className='flex items-center justify-between'>
-        <div>
-          <h1 className='text-3xl font-bold tracking-tight'>서비스 관리</h1>
-          <p className='text-muted-foreground mt-2'>
-            제공하는 서비스를 관리하고 지역별 출장비를 설정합니다.
-          </p>
-        </div>
-        <Button onClick={handleCreateService}>
-          <Plus className='mr-2 size-4' />
-          서비스 추가
-        </Button>
-      </div>
+      <PageHeader
+        title='서비스 관리'
+        description='제공하는 서비스를 관리하고 지역별 출장비를 설정합니다.'
+        action={
+          <Button onClick={handleCreateService}>
+            <Plus className='mr-2 size-4' />
+            서비스 추가
+          </Button>
+        }
+      />
 
       {isLoading && (
         <div className='flex h-[400px] items-center justify-center'>

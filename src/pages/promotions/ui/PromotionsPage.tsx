@@ -27,6 +27,7 @@ import {
   Link,
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { PageHeader } from '@/widgets/page-header'
 import {
   useFetchPromotions,
   useDeletePromotion,
@@ -95,18 +96,16 @@ export function PromotionsPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <div>
-          <h1 className={styles.title}>프로모션 배너 관리</h1>
-          <p className={styles.description}>
-            홈 화면에 표시되는 프로모션 배너를 관리합니다.
-          </p>
-        </div>
-        <Button onClick={handleCreatePromotion}>
-          <Plus className='mr-2 size-4' />
-          배너 추가
-        </Button>
-      </div>
+      <PageHeader
+        title='프로모션 배너 관리'
+        description='홈 화면에 표시되는 프로모션 배너를 관리합니다.'
+        action={
+          <Button onClick={handleCreatePromotion}>
+            <Plus className='mr-2 size-4' />
+            배너 추가
+          </Button>
+        }
+      />
 
       {isLoading && (
         <div className={styles.loadingContainer}>

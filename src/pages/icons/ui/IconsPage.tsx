@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from '@/shared/ui/select'
 import { Plus, ChevronLeft, ChevronRight } from 'lucide-react'
+import { PageHeader } from '@/widgets/page-header'
 import { useFetchIconsList } from '@/features/icons/api'
 import { IconsTable, IconDialog } from '@/features/icons/ui'
 import styles from './IconsPage.module.scss'
@@ -58,18 +59,16 @@ export function IconsPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <div className={styles.headerContent}>
-          <h1 className={styles.title}>아이콘 관리</h1>
-          <p className={styles.description}>
-            서비스 및 프로모션에서 사용되는 아이콘을 관리합니다.
-          </p>
-        </div>
-        <Button onClick={handleCreateIcon}>
-          <Plus className='mr-2 size-4' />
-          아이콘 추가
-        </Button>
-      </div>
+      <PageHeader
+        title='아이콘 관리'
+        description='서비스 및 프로모션에서 사용되는 아이콘을 관리합니다.'
+        action={
+          <Button onClick={handleCreateIcon}>
+            <Plus className='mr-2 size-4' />
+            아이콘 추가
+          </Button>
+        }
+      />
 
       {isLoading && (
         <div className={styles.centerMessage}>

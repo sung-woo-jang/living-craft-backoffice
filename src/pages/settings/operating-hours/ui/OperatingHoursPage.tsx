@@ -1,3 +1,4 @@
+import { PageHeader } from '@/widgets/page-header'
 import {
   useFetchOperatingHours,
   useFetchHolidays,
@@ -28,12 +29,10 @@ export function OperatingHoursPage() {
 
   return (
     <div className='flex h-full flex-col gap-4 p-4 md:gap-8 md:p-8'>
-      <div>
-        <h1 className='text-3xl font-bold tracking-tight'>운영 시간 설정</h1>
-        <p className='text-muted-foreground mt-2'>
-          견적 및 시공 가능 시간과 휴무일을 관리합니다.
-        </p>
-      </div>
+      <PageHeader
+        title='운영 시간 설정'
+        description='견적 및 시공 가능 시간과 휴무일을 관리합니다.'
+      />
 
       {isLoading && (
         <div className='flex h-[400px] items-center justify-center'>

@@ -1,3 +1,4 @@
+import { PageHeader } from '@/widgets/page-header'
 import { useFetchCustomers } from '@/features/customers/api'
 import { CustomersTable } from '@/features/customers/ui/customers-table'
 
@@ -10,14 +11,10 @@ export function CustomersPage() {
 
   return (
     <div className='flex h-full flex-col gap-4 p-4 md:gap-8 md:p-8'>
-      <div className='flex items-center justify-between'>
-        <div>
-          <h1 className='text-3xl font-bold tracking-tight'>고객 관리</h1>
-          <p className='text-muted-foreground mt-2'>
-            고객 정보를 조회하고 예약 이력을 확인합니다.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title='고객 관리'
+        description='고객 정보를 조회하고 예약 이력을 확인합니다.'
+      />
 
       {isLoading && (
         <div className='flex h-[400px] items-center justify-center'>

@@ -11,29 +11,6 @@
   }
 }
 
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.headerContent {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.title {
-  font-size: 1.875rem;
-  font-weight: bold;
-  letter-spacing: -0.025em;
-}
-
-.description {
-  margin-top: 0.5rem;
-  color: hsl(var(--muted-foreground));
-}
-
 .centerMessage {
   display: flex;
   align-items: center;

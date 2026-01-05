@@ -1,6 +1,7 @@
 import { Button } from '@/shared/ui/button'
 import { Plus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { PageHeader } from '@/widgets/page-header'
 import {
   useFetchCuttingProjects,
   useDeleteCuttingProject,
@@ -36,17 +37,15 @@ export function FilmCuttingPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <div>
-          <h1 className={styles.title}>필름 재단 최적화</h1>
-          <p className={styles.description}>
-            인테리어 필름 재단 시 손실율을 최소화하는 배치를 계산합니다.
-          </p>
-        </div>
-        <Button onClick={handleCreateProject}>
-          <Plus className='h-4 w-4' />새 프로젝트
-        </Button>
-      </div>
+      <PageHeader
+        title='필름 재단 최적화'
+        description='인테리어 필름 재단 시 손실율을 최소화하는 배치를 계산합니다.'
+        action={
+          <Button onClick={handleCreateProject}>
+            <Plus className='h-4 w-4' />새 프로젝트
+          </Button>
+        }
+      />
 
       {isLoading && (
         <div className={styles.loading}>

@@ -1,3 +1,4 @@
+import { PageHeader } from '@/widgets/page-header'
 import { useFetchReviews } from '@/features/reviews/api'
 import { ReviewsTable } from '@/features/reviews/ui/reviews-table'
 
@@ -10,14 +11,10 @@ export function ReviewsPage() {
 
   return (
     <div className='flex h-full flex-col gap-4 p-4 md:gap-8 md:p-8'>
-      <div className='flex items-center justify-between'>
-        <div>
-          <h1 className='text-3xl font-bold tracking-tight'>리뷰 관리</h1>
-          <p className='text-muted-foreground mt-2'>
-            고객 리뷰를 조회하고 관리합니다.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title='리뷰 관리'
+        description='고객 리뷰를 조회하고 관리합니다.'
+      />
 
       {isLoading && (
         <div className='flex h-[400px] items-center justify-center'>
