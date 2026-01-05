@@ -36,27 +36,70 @@ export type ReservationStatus =
   | 'completed'
   | 'cancelled'
 
+/**
+ * 예약에 포함된 서비스 정보
+ */
+export interface ReservationService {
+  id: number
+  createdAt: string
+  updatedAt: string
+  title: string
+  description: string
+  iconId: number
+  iconBgColor: string
+  iconColor: string
+  duration: string
+  requiresTimeSelection: boolean
+  isActive: boolean
+  sortOrder: number
+  icon: {
+    id: number
+    createdAt: string
+    updatedAt: string
+    name: string
+    type: 'MONO' | 'COLOR'
+  }
+}
+
+/**
+ * 예약에 포함된 고객 정보
+ */
+export interface ReservationCustomer {
+  id: number
+  createdAt: string
+  updatedAt: string
+  uuid: string
+  tossUserId: string
+  name: string
+  phone: string
+  email: string
+  refreshToken: string | null
+}
+
 export interface Reservation {
-  id: string
+  id: number
   reservationNumber: string
-  userId: string
-  serviceId: string
-  serviceName: string
+  customerId: number
+  serviceId: number
   customerName: string
   customerPhone: string
   estimateDate: string
   estimateTime: string
-  constructionDate: string
+  estimateConfirmedAt: string | null
+  constructionDate: string | null
   constructionTime: string | null
+  constructionScheduledAt: string | null
   address: string
   detailAddress: string
   memo: string
-  photos: string[]
+  photos: string[] | null
   status: ReservationStatus
-  cancelReason: string | null
-  canceledAt: string | null
+  cancelReason?: string | null
+  cancelledAt: string | null
   createdAt: string
   updatedAt: string
+  service: ReservationService
+  customer: ReservationCustomer
 }
 
 // ===== 아이콘 관련 타입 =====

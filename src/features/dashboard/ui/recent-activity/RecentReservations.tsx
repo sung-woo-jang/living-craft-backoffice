@@ -66,7 +66,7 @@ export function RecentReservations({ reservations }: RecentReservationsProps) {
                     </Badge>
                   </div>
                   <p className='text-muted-foreground text-sm'>
-                    {reservation.serviceName}
+                    {reservation.service.title}
                   </p>
                   <div className='text-muted-foreground flex items-center gap-3 text-xs'>
                     <span className='flex items-center gap-1'>
