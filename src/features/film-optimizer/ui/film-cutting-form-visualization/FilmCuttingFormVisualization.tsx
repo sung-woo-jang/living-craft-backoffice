@@ -1,5 +1,5 @@
 import { useRef, useMemo, useState } from 'react'
-import { useFetchFilms, useTogglePieceComplete } from '../../api'
+import { useFetchFilms, useTogglePieceComplete } from '../../api-local'
 import { useFilmCuttingForm, useBinPacker } from '../../model'
 import { CuttingCanvas, type CuttingCanvasRef, type PieceClickInfo } from '../cutting-canvas'
 import { ExportButtons } from '../export-buttons'
@@ -38,8 +38,7 @@ export function FilmCuttingFormVisualization() {
   const isEditMode = Boolean(editingProjectId)
 
   // 필름 정보
-  const { data: filmsResponse } = useFetchFilms()
-  const filmsList = filmsResponse?.data
+  const { data: filmsList } = useFetchFilms()
   const selectedFilm = filmsList?.find(
     (f) => f.id.toString() === selectedFilmId
   )
@@ -111,12 +110,12 @@ export function FilmCuttingFormVisualization() {
           return p
         })
 
-        // 편집 모드이고 서버에 저장된 조각인 경우에만 API 호출
+        // 편집 모드이고 IndexedDB에 저장된 조각인 경우에만 API 호출
         if (isEditMode && editingProjectId && !isLocalPieceId(pieceId)) {
           await toggleCompleteMutation.mutateAsync({
-            projectId: editingProjectId,
+            projectId: Number(editingProjectId),
             pieceId,
-            data: { fixedPosition },
+            fixedPosition,
           })
         }
 
@@ -125,9 +124,9 @@ export function FilmCuttingFormVisualization() {
         // 완료 → 미완료: fixedPosition만 해제
         if (isEditMode && editingProjectId && !isLocalPieceId(pieceId)) {
           await toggleCompleteMutation.mutateAsync({
-            projectId: editingProjectId,
+            projectId: Number(editingProjectId),
             pieceId,
-            data: undefined,
+            fixedPosition: undefined,
           })
         }
         togglePieceComplete(pieceId, null)

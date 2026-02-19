@@ -1,5 +1,5 @@
 import type { CuttingPiece, CuttingPieceInput } from '@/shared/types/api'
-import { useFetchFilms } from '../../api'
+import { useFetchFilms } from '../../api-local'
 import { useFilmCuttingForm } from '../../model'
 import { BulkInputDialog } from '../bulk-input-dialog'
 import { CreateFilmDialog } from '../create-film-dialog'
@@ -21,7 +21,7 @@ export function FilmCuttingFormDialogs() {
     ])
 
   const { data: filmsData } = useFetchFilms()
-  const selectedFilm = filmsData?.data?.find(
+  const selectedFilm = filmsData?.find(
     (film) => film.id.toString() === selectedFilmId
   )
   const filmWidth = selectedFilm?.width ?? 1220

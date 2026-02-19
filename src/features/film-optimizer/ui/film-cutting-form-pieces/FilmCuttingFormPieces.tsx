@@ -6,7 +6,7 @@ import {
   useFetchFilms,
   useDeletePiece,
   useTogglePieceComplete,
-} from '../../api'
+} from '../../api-local'
 import { useFilmCuttingForm, useBinPacker } from '../../model'
 import { PiecesInput } from '../pieces-input'
 import { PiecesTable } from '../pieces-table'
@@ -47,8 +47,7 @@ export function FilmCuttingFormPieces() {
   const [togglingPieceId, setTogglingPieceId] = useState<number | null>(null)
 
   // 필름 정보
-  const { data: filmsResponse } = useFetchFilms()
-  const filmsList = filmsResponse?.data
+  const { data: filmsList } = useFetchFilms()
   const selectedFilm = filmsList?.find(
     (f) => f.id.toString() === selectedFilmId
   )
@@ -90,10 +89,10 @@ export function FilmCuttingFormPieces() {
     setDeletingPieceId(pieceId)
 
     try {
-      // 편집 모드이고 서버에 저장된 조각인 경우에만 API 호출
+      // 편집 모드이고 IndexedDB에 저장된 조각인 경우에만 삭제 호출
       if (isEditMode && editingProjectId && !isLocalPieceId(pieceId)) {
         await deletePieceMutation.mutateAsync({
-          projectId: editingProjectId,
+          projectId: Number(editingProjectId),
           pieceId,
         })
       }
@@ -149,12 +148,12 @@ export function FilmCuttingFormPieces() {
           return p
         })
 
-        // 편집 모드이고 서버에 저장된 조각인 경우에만 API 호출
+        // 편집 모드이고 IndexedDB에 저장된 조각인 경우에만 API 호출
         if (isEditMode && editingProjectId && !isLocalPieceId(pieceId)) {
           await toggleCompleteMutation.mutateAsync({
-            projectId: editingProjectId,
+            projectId: Number(editingProjectId),
             pieceId,
-            data: fixedPosition ? { fixedPosition } : undefined,
+            fixedPosition: fixedPosition ?? undefined,
           })
         }
 
@@ -163,9 +162,9 @@ export function FilmCuttingFormPieces() {
         // 완료 → 미완료: fixedPosition만 해제
         if (isEditMode && editingProjectId && !isLocalPieceId(pieceId)) {
           await toggleCompleteMutation.mutateAsync({
-            projectId: editingProjectId,
+            projectId: Number(editingProjectId),
             pieceId,
-            data: undefined,
+            fixedPosition: undefined,
           })
         }
         togglePieceComplete(pieceId, null)

@@ -26,6 +26,26 @@ export const router = createBrowserRouter([
       // Error Routes
       ...errorRoutes,
 
+      // Public Film Cutting Routes (인증 불필요)
+      {
+        path: '/',
+        element: <AuthenticatedLayout />,
+        children: [
+          {
+            path: 'film-cutting',
+            element: <FilmCuttingPage />,
+          },
+          {
+            path: 'film-cutting/new',
+            element: <FilmCuttingFormPage />,
+          },
+          {
+            path: 'film-cutting/:id',
+            element: <FilmCuttingFormPage />,
+          },
+        ],
+      },
+
       // Protected Routes (인증 필요)
       {
         path: '/',
@@ -95,18 +115,6 @@ export const router = createBrowserRouter([
           {
             path: 'icons',
             element: <IconsPage />,
-          },
-          {
-            path: 'film-cutting',
-            element: <FilmCuttingPage />,
-          },
-          {
-            path: 'film-cutting/new',
-            element: <FilmCuttingFormPage />,
-          },
-          {
-            path: 'film-cutting/:id',
-            element: <FilmCuttingFormPage />,
           },
           {
             path: 'settings/operating',

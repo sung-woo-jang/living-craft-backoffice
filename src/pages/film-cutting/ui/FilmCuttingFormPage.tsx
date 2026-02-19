@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom'
 import {
   useFetchFilms,
   useFetchCuttingProjectDetail,
-} from '@/features/film-optimizer/api'
+} from '@/features/film-optimizer/api-local'
 import {
   FilmCuttingForm,
   FilmCuttingFormProvider,
@@ -14,12 +14,13 @@ import {
  */
 export function FilmCuttingFormPage() {
   const { id } = useParams<{ id: string }>()
+  const projectId = id ? Number(id) : undefined
 
   // 로딩 상태 확인
   const { isLoading: filmsLoading } = useFetchFilms()
-  const { isLoading: projectLoading } = useFetchCuttingProjectDetail(id)
+  const { isLoading: projectLoading } = useFetchCuttingProjectDetail(projectId)
 
-  const isLoading = filmsLoading || (Boolean(id) && projectLoading)
+  const isLoading = filmsLoading || (Boolean(projectId) && projectLoading)
 
   if (isLoading) {
     return <FilmCuttingForm.Loading />

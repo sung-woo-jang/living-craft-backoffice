@@ -5,8 +5,8 @@ import { PageHeader } from '@/widgets/page-header'
 import {
   useFetchCuttingProjects,
   useDeleteCuttingProject,
-  type CuttingProjectListItem,
-} from '@/features/film-optimizer/api'
+} from '@/features/film-optimizer/api-local'
+import { type CuttingProjectListItem } from '@/shared/lib/indexeddb'
 import { FilmCuttingTable } from '@/features/film-optimizer/ui/film-cutting-table'
 import styles from './FilmCuttingPage.module.scss'
 
@@ -15,8 +15,7 @@ import styles from './FilmCuttingPage.module.scss'
  */
 export function FilmCuttingPage() {
   const navigate = useNavigate()
-  const { data: projectsResponse, isLoading, error } = useFetchCuttingProjects()
-  const data = projectsResponse?.data
+  const { data, isLoading, error } = useFetchCuttingProjects()
   const deleteProject = useDeleteCuttingProject()
 
   const handleCreateProject = () => {

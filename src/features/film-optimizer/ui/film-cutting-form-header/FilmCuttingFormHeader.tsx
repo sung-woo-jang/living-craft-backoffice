@@ -5,7 +5,7 @@ import {
   useCreateCuttingProject,
   useUpdateCuttingProject,
   useAddPieces,
-} from '../../api'
+} from '../../api-local'
 import { useFilmCuttingForm, useBinPacker } from '../../model'
 import styles from './styles.module.scss'
 
@@ -38,8 +38,7 @@ export function FilmCuttingFormHeader() {
   const isEditMode = Boolean(editingProjectId)
 
   // 필름 정보
-  const { data: filmsResponse } = useFetchFilms()
-  const filmsList = filmsResponse?.data
+  const { data: filmsList } = useFetchFilms()
   const selectedFilm = filmsList?.find(
     (f) => f.id.toString() === selectedFilmId
   )
@@ -69,35 +68,32 @@ export function FilmCuttingFormHeader() {
     try {
       if (isEditMode && editingProjectId) {
         // 수정 모드
+        const projectId = Number(editingProjectId)
 
-        // 1. 새로 추가된 조각들 (로컬 ID) 먼저 서버에 저장
+        // 1. 새로 추가된 조각들 (로컬 ID) 먼저 IndexedDB에 저장
         const newLocalPieces = localPieces.filter((p) => isLocalPieceId(p.id))
         if (newLocalPieces.length > 0) {
           await addPiecesMutation.mutateAsync({
-            projectId: editingProjectId,
-            data: {
-              pieces: newLocalPieces.map((p) => ({
-                width: p.width,
-                height: p.height,
-                quantity: p.quantity,
-                label: p.label ?? undefined,
-                isCompleted: p.isCompleted,
-                fixedPosition: p.fixedPosition ?? undefined,
-              })),
-            },
+            projectId,
+            pieces: newLocalPieces.map((p) => ({
+              width: p.width,
+              height: p.height,
+              quantity: p.quantity,
+              label: p.label,
+              allowRotation: p.allowRotation,
+            })),
           })
         }
 
         // 2. 프로젝트 메타데이터 수정
         await updateProject.mutateAsync({
-          id: editingProjectId,
+          id: projectId,
           data: {
             name: projectName,
-            filmId: parseInt(selectedFilmId, 10),
             allowRotation,
-            wastePercentage: packingResult?.wastePercentage,
-            usedLength: packingResult?.usedLength,
-            packingResult: packingResult ?? undefined,
+            wastePercentage: packingResult?.wastePercentage ?? null,
+            usedLength: packingResult?.usedLength ?? null,
+            packingResult: packingResult ?? null,
           },
         })
       } else {
@@ -110,14 +106,13 @@ export function FilmCuttingFormHeader() {
             width: p.width,
             height: p.height,
             quantity: p.quantity,
-            label: p.label ?? undefined,
-            isCompleted: p.isCompleted,
-            fixedPosition: p.fixedPosition ?? undefined,
+            label: p.label,
+            allowRotation: p.allowRotation,
           })),
         })
 
         // 생성된 프로젝트로 이동
-        navigate(`/film-cutting/${result.data.id}`)
+        navigate(`/film-cutting/${result.id}`)
         return
       }
 

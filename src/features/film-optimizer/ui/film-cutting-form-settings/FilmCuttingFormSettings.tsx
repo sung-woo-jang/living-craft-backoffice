@@ -10,7 +10,7 @@ import {
 } from '@/shared/ui/select'
 import { Switch } from '@/shared/ui/switch'
 import { Plus } from 'lucide-react'
-import { useFetchFilms } from '../../api'
+import { useFetchFilms } from '../../api-local'
 import { useFilmCuttingForm } from '../../model'
 import styles from './styles.module.scss'
 
@@ -39,8 +39,7 @@ export function FilmCuttingFormSettings() {
     'setOpen',
   ])
 
-  const { data: filmsResponse } = useFetchFilms()
-  const filmsList = filmsResponse?.data
+  const { data: filmsList } = useFetchFilms()
 
   return (
     <div className={styles.section}>

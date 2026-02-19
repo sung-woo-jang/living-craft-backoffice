@@ -11,7 +11,7 @@ import {
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
 import { Textarea } from '@/shared/ui/textarea'
-import { useCreateFilm } from '../../api'
+import { useCreateFilm } from '../../api-local'
 import styles from './styles.module.scss'
 
 interface CreateFilmDialogProps {
@@ -85,13 +85,14 @@ export function CreateFilmDialog({
     try {
       const result = await createFilm.mutateAsync({
         name: name.trim(),
-        width: width ? parseInt(width, 10) : undefined,
-        length: length ? parseInt(length, 10) : undefined,
-        description: description.trim() || undefined,
+        width: width ? parseInt(width, 10) : 1220,
+        length: length ? parseInt(length, 10) : 60000,
+        description: description.trim() || null,
+        isActive: true,
       })
 
       // 성공 시 생성된 필름 ID를 부모에게 전달
-      onSuccess((result.data as unknown as { id: number }).id)
+      onSuccess(result.id)
       handleClose()
     } catch {
       // 에러는 mutation hook에서 자동 처리 (toast)

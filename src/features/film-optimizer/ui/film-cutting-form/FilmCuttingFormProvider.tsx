@@ -6,7 +6,7 @@ import {
   type ReactNode,
 } from 'react'
 import { useParams } from 'react-router-dom'
-import { useFetchCuttingProjectDetail } from '../../api'
+import { useFetchCuttingProjectDetail } from '../../api-local'
 import { useFilmCuttingForm } from '../../model'
 
 interface FilmCuttingFormProviderProps {
@@ -23,6 +23,7 @@ export function FilmCuttingFormProvider({
   children,
 }: FilmCuttingFormProviderProps) {
   const { id } = useParams<{ id: string }>()
+  const projectId = id ? Number(id) : undefined
   const { setEditingProjectId, initFromProjectDetail, reset, localPieces } =
     useFilmCuttingForm([
       'setEditingProjectId',
@@ -41,8 +42,7 @@ export function FilmCuttingFormProvider({
   const isFirstInit = useRef(true)
 
   // 프로젝트 상세 데이터 로드
-  const { data: projectDetailResponse } = useFetchCuttingProjectDetail(id)
-  const projectDetail = projectDetailResponse?.data
+  const { data: projectDetail } = useFetchCuttingProjectDetail(projectId)
 
   // 편집 모드 설정 및 cleanup
   useEffect(() => {
