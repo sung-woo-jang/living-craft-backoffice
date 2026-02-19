@@ -27,8 +27,6 @@ export function FilmCuttingFormPieces() {
     removePiece,
     setLocalPieces,
     togglePieceComplete,
-    togglePieceAllowRotation,
-    setAllPiecesRotation,
     setOpen,
   } = useFilmCuttingForm([
     'editingProjectId',
@@ -39,8 +37,6 @@ export function FilmCuttingFormPieces() {
     'removePiece',
     'setLocalPieces',
     'togglePieceComplete',
-    'togglePieceAllowRotation',
-    'setAllPiecesRotation',
     'setOpen',
   ])
 
@@ -181,11 +177,6 @@ export function FilmCuttingFormPieces() {
     }
   }
 
-  // 전체 회전 일괄 설정 핸들러
-  const handleSetAllRotation = (allowRotation: boolean) => {
-    setAllPiecesRotation(allowRotation, selectedFilm?.width ?? 1220)
-  }
-
   return (
     <>
       {/* 조각 입력 */}
@@ -216,9 +207,6 @@ export function FilmCuttingFormPieces() {
           pieces={localPieces}
           onDelete={handleDeletePiece}
           onToggleComplete={handleToggleComplete}
-          onTogglePieceRotation={togglePieceAllowRotation}
-          onSetAllRotation={handleSetAllRotation}
-          filmWidth={selectedFilm?.width ?? 1220}
           deletingId={deletingPieceId}
           togglingId={togglingPieceId}
         />

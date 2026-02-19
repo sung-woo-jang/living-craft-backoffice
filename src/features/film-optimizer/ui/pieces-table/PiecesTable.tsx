@@ -11,32 +11,12 @@ interface PiecesTableProps {
   onDelete?: (pieceId: number) => void
   /** 완료 상태 토글 콜백 */
   onToggleComplete?: (pieceId: number) => void
-  /** 조각별 회전 허용 토글 콜백 */
-  onTogglePieceRotation?: (pieceId: number) => void
-  /** 전체 회전 일괄 설정 콜백 */
-  onSetAllRotation?: (allowRotation: boolean) => void
   /** 삭제 중인 조각 ID */
   deletingId?: number | null
   /** 토글 중인 조각 ID */
   togglingId?: number | null
   /** 비활성화 상태 */
   disabled?: boolean
-  /** 필름 폭 (회전 제약 계산용) */
-  filmWidth?: number
-}
-
-type RotationConstraint = 'required' | 'impossible' | 'optional'
-
-/**
- * 회전 제약 조건 판별
- */
-function getRotationConstraint(
-  piece: CuttingPiece,
-  filmWidth: number
-): RotationConstraint {
-  if (piece.width > filmWidth && piece.height <= filmWidth) return 'required'
-  if (piece.width <= filmWidth && piece.height > filmWidth) return 'impossible'
-  return 'optional'
 }
 
 /**
@@ -50,12 +30,9 @@ export function PiecesTable({
   pieces,
   onDelete,
   onToggleComplete,
-  onTogglePieceRotation,
-  onSetAllRotation,
   deletingId,
   togglingId,
   disabled = false,
-  filmWidth = 1220,
 }: PiecesTableProps) {
   if (pieces.length === 0) {
     return (
@@ -94,32 +71,6 @@ export function PiecesTable({
               <th>크기 (mm)</th>
               <th className={styles.thCenter}>수량</th>
               <th>라벨</th>
-              <th className={styles.thCenter}>
-                <div className={styles.rotationHeader}>
-                  <span>회전</span>
-                  {onSetAllRotation && (
-                    <div className={styles.rotationHeaderActions}>
-                      <button
-                        className={styles.rotationHeaderButton}
-                        onClick={() => onSetAllRotation(true)}
-                        disabled={disabled}
-                        type='button'
-                      >
-                        전체 허용
-                      </button>
-                      <span className={styles.rotationHeaderDivider}>|</span>
-                      <button
-                        className={styles.rotationHeaderButton}
-                        onClick={() => onSetAllRotation(false)}
-                        disabled={disabled}
-                        type='button'
-                      >
-                        전체 해제
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </th>
               <th className={styles.thCenter}>완료</th>
               <th className={styles.thCenter}>삭제</th>
             </tr>
@@ -137,35 +88,6 @@ export function PiecesTable({
                 <td className={styles.tdCenter}>{piece.quantity}</td>
                 <td className={styles.labelCell}>
                   {piece.label || <span className={styles.emptyLabel}>-</span>}
-                </td>
-                <td className={styles.tdCenter}>
-                  {(() => {
-                    const constraint = getRotationConstraint(piece, filmWidth)
-                    const isConstrained = constraint !== 'optional'
-                    return (
-                      <Checkbox
-                        checked={piece.allowRotation}
-                        onCheckedChange={() =>
-                          !isConstrained && onTogglePieceRotation?.(piece.id)
-                        }
-                        disabled={disabled || isConstrained}
-                        aria-label={
-                          constraint === 'required'
-                            ? `${piece.label || `조각 ${index + 1}`} 회전 필수`
-                            : constraint === 'impossible'
-                              ? `${piece.label || `조각 ${index + 1}`} 회전 불가`
-                              : `${piece.label || `조각 ${index + 1}`} 회전 허용`
-                        }
-                        title={
-                          constraint === 'required'
-                            ? '필름 폭 초과로 회전 필수'
-                            : constraint === 'impossible'
-                              ? '회전 시 필름 폭 초과로 회전 불가'
-                              : undefined
-                        }
-                      />
-                    )
-                  })()}
                 </td>
                 <td className={styles.tdCenter}>
                   <Checkbox
