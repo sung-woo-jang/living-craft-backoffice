@@ -8,6 +8,7 @@ export interface CuttingPieceInput {
   height: number
   quantity?: number // 기본값: 1
   label?: string
+  allowRotation?: boolean // 기본값: true
   isCompleted?: boolean // 기본값: false
   fixedPosition?: {
     x: number
@@ -75,6 +76,7 @@ export interface UpdatePieceRequest {
   height?: number
   quantity?: number
   label?: string
+  allowRotation?: boolean
   sortOrder?: number
 }
 

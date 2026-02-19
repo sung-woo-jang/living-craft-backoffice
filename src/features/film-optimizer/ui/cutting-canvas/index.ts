@@ -1,1 +1,5 @@
-export { CuttingCanvas, type CuttingCanvasRef } from './CuttingCanvas'
+export {
+  CuttingCanvas,
+  type CuttingCanvasRef,
+  type PieceClickInfo,
+} from './CuttingCanvas'

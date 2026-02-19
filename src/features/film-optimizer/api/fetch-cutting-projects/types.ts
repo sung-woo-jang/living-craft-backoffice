@@ -48,6 +48,8 @@ export interface CuttingPiece {
   label: string | null
   sortOrder: number
   isCompleted: boolean
+  /** 조각별 회전 허용 여부 (전역 allowRotation이 true일 때만 유효) */
+  allowRotation: boolean
   /** 완료 시 고정된 배치 위치 */
   fixedPosition?: {
     x: number

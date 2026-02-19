@@ -59,6 +59,24 @@ const useFilmCuttingFormStore = createWithEqualityFn<FilmCuttingFormState>(
         }),
       })),
 
+    togglePieceAllowRotation: (pieceId) =>
+      set((state) => ({
+        localPieces: state.localPieces.map((p) =>
+          p.id === pieceId ? { ...p, allowRotation: !p.allowRotation } : p
+        ),
+      })),
+
+    setAllPiecesRotation: (allowRotation, filmWidth) =>
+      set((state) => ({
+        localPieces: state.localPieces.map((p) => {
+          const rotationRequired = p.width > filmWidth && p.height <= filmWidth
+          const rotationImpossible = p.width <= filmWidth && p.height > filmWidth
+          if (rotationRequired) return { ...p, allowRotation: true }
+          if (rotationImpossible) return { ...p, allowRotation: false }
+          return { ...p, allowRotation }
+        }),
+      })),
+
     // 편집 모드
     setEditingProjectId: (editingProjectId) => set({ editingProjectId }),
 

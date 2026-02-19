@@ -55,6 +55,25 @@
   margin: 0;
 }
 
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkboxLabel {
+  font-size: 13px;
+  color: #374151;
+  cursor: pointer;
+  user-select: none;
+}
+
+.rotationHint {
+  font-size: 11px;
+  color: #6b7280;
+  margin: 0;
+}
+
 .addButton {
   width: 100%;
 }

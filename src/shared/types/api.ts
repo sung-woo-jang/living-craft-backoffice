@@ -793,6 +793,8 @@ export interface CuttingPiece {
   label: string | null
   sortOrder: number
   isCompleted: boolean
+  /** 조각별 회전 허용 여부 (전역 allowRotation이 true일 때만 유효) */
+  allowRotation: boolean
   /** 완료 시 고정된 배치 위치 */
   fixedPosition?: {
     x: number
@@ -859,6 +861,7 @@ export interface CuttingPieceInput {
   height: number
   quantity?: number // 기본값: 1
   label?: string
+  allowRotation?: boolean // 기본값: true
   isCompleted?: boolean // 기본값: false
   fixedPosition?: {
     x: number
@@ -910,5 +913,6 @@ export interface UpdatePieceRequest {
   height?: number
   quantity?: number
   label?: string
+  allowRotation?: boolean
   sortOrder?: number
 }

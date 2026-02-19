@@ -17,6 +17,7 @@ export interface ParseResult {
  * - "500x400 x3" 또는 "500x400 *3" 또는 "500x400x3" → 폭 500, 높이 400, 수량 3
  * - "500x400 라벨명" → 폭 500, 높이 400, 수량 1, 라벨 "라벨명"
  * - "500x400 x2 라벨명" → 폭 500, 높이 400, 수량 2, 라벨 "라벨명"
+ * - "500x400 라벨명 nr" 또는 "500x400 라벨명 norot" → 회전 불가
  *
  * 구분자: 줄바꿈, 쉼표
  *
@@ -105,6 +106,7 @@ function parseSingleLine(line: string): SingleLineResult {
 
   let quantity = 1
   let label: string | undefined
+  let allowRotation = true
 
   // 수량 패턴 찾기 (x3, *3 등)
   const qtyMatch = remaining.match(/^[xX*×]\s*(\d+)/)
@@ -114,6 +116,14 @@ function parseSingleLine(line: string): SingleLineResult {
       return { success: false, error: '수량은 0보다 커야 합니다.' }
     }
     remaining = remaining.substring(qtyMatch[0].length).trim()
+  }
+
+  // 회전 불가 플래그 파싱 (nr 또는 norot, 대소문자 무시)
+  // 문자열 끝에 위치한 경우만 인식 (라벨과 구분)
+  const noRotMatch = remaining.match(/\s+(nr|norot)\s*$/i)
+  if (noRotMatch) {
+    allowRotation = false
+    remaining = remaining.substring(0, remaining.length - noRotMatch[0].length).trim()
   }
 
   // 나머지는 라벨로 처리
@@ -128,6 +138,7 @@ function parseSingleLine(line: string): SingleLineResult {
       height,
       quantity,
       label,
+      allowRotation,
     },
   }
 }
@@ -145,6 +156,9 @@ export function piecesToText(pieces: CuttingPieceInput[]): string {
       }
       if (piece.label) {
         text += ` ${piece.label}`
+      }
+      if (piece.allowRotation === false) {
+        text += ` nr`
       }
       return text
     })

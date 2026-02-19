@@ -45,6 +45,10 @@ export interface FilmCuttingFormState {
     pieceId: number,
     fixedPosition?: PieceFixedPosition | null
   ) => void
+  /** 조각별 회전 허용 여부 토글 */
+  togglePieceAllowRotation: (pieceId: number) => void
+  /** 전체 조각 회전 허용 여부 일괄 설정 (회전 필수/불가 조각 제외) */
+  setAllPiecesRotation: (allowRotation: boolean, filmWidth: number) => void
 
   // 편집 모드 정보
   editingProjectId: string | null

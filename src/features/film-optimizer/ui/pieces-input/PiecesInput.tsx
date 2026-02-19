@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { CuttingPieceInput } from '@/shared/types/api'
 import { Button } from '@/shared/ui/button'
+import { Checkbox } from '@/shared/ui/checkbox'
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
 import { Plus } from 'lucide-react'
@@ -30,22 +31,37 @@ export function PiecesInput({
   const [height, setHeight] = useState('')
   const [quantity, setQuantity] = useState('1')
   const [label, setLabel] = useState('')
+  const [allowRotation, setAllowRotation] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  // 케이스 판별
+  const w = parseInt(width, 10) || 0
+  const h = parseInt(height, 10) || 0
+  const rotationRequired = w > filmWidth && h <= filmWidth   // 케이스 B: 회전 필수
+  const rotationImpossible = w <= filmWidth && h > filmWidth // 케이스 C: 회전 불가
+  const checkboxDisabled = disabled || rotationRequired || rotationImpossible
+
+  // 렌더 시점에 유효 allowRotation 파생 (useEffect 없이)
+  const effectiveAllowRotation = rotationRequired
+    ? true
+    : rotationImpossible
+      ? false
+      : allowRotation
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
 
-    const w = parseInt(width, 10)
-    const h = parseInt(height, 10)
+    const pw = parseInt(width, 10)
+    const ph = parseInt(height, 10)
     const q = parseInt(quantity, 10) || 1
 
     // 유효성 검사
-    if (isNaN(w) || w <= 0) {
+    if (isNaN(pw) || pw <= 0) {
       setError('폭은 0보다 큰 숫자여야 합니다.')
       return
     }
-    if (isNaN(h) || h <= 0) {
+    if (isNaN(ph) || ph <= 0) {
       setError('높이는 0보다 큰 숫자여야 합니다.')
       return
     }
@@ -54,23 +70,38 @@ export function PiecesInput({
       return
     }
 
-    // 필름 폭 초과 검사 (회전을 고려하여 작은 쪽이 폭보다 작으면 OK)
-    const minDim = Math.min(w, h)
-    if (minDim > filmWidth) {
-      setError(
-        `조각의 최소 치수(${minDim}mm)가 필름 폭(${filmWidth}mm)을 초과합니다.`
-      )
-      return
+    // 회전 허용 여부에 따라 다른 유효성 검사
+    if (!effectiveAllowRotation) {
+      // 회전 없이 배치: width가 filmWidth 이하여야 함
+      if (pw > filmWidth) {
+        setError(
+          `폭(${pw}mm)이 필름 폭(${filmWidth}mm)을 초과합니다. 회전 허용을 켜거나 크기를 조정해 주세요.`
+        )
+        return
+      }
+    } else {
+      // 회전 허용: 최소 치수가 filmWidth 이하여야 함
+      const minDim = Math.min(pw, ph)
+      if (minDim > filmWidth) {
+        setError(
+          `조각의 최소 치수(${minDim}mm)가 필름 폭(${filmWidth}mm)을 초과합니다.`
+        )
+        return
+      }
     }
 
+    const finalW = pw
+    const finalH = ph
+
     onAdd({
-      width: w,
-      height: h,
+      width: finalW,
+      height: finalH,
       quantity: q,
       label: label.trim() || undefined,
+      allowRotation: effectiveAllowRotation,
     })
 
-    // 폼 초기화 (수량은 유지)
+    // 폼 초기화 (수량, allowRotation은 유지)
     setWidth('')
     setHeight('')
     setLabel('')
@@ -143,6 +174,28 @@ export function PiecesInput({
             />
           </div>
         </div>
+
+        <div className={styles.checkboxRow}>
+          <Checkbox
+            id='piece-allow-rotation'
+            checked={effectiveAllowRotation}
+            onCheckedChange={(checked) => setAllowRotation(checked === true)}
+            disabled={checkboxDisabled}
+          />
+          <Label htmlFor='piece-allow-rotation' className={styles.checkboxLabel}>
+            회전 허용
+          </Label>
+        </div>
+        {rotationRequired && (
+          <p className={styles.rotationHint}>
+            이 조각은 회전해야 필름에 들어갑니다.
+          </p>
+        )}
+        {rotationImpossible && (
+          <p className={styles.rotationHint}>
+            회전 시 필름 폭을 초과하므로 회전이 비활성화됩니다.
+          </p>
+        )}
       </div>
 
       {error && <p className={styles.error}>{error}</p>}

@@ -15,6 +15,8 @@ export interface PackerInputItem {
   label: string | null
   /** 조각 목록에서의 인덱스 (1부터 시작) */
   listIndex: number
+  /** 조각별 회전 허용 여부 (기본값: true) */
+  allowRotation?: boolean
   /** 완료된 조각의 고정 위치 */
   fixedPosition?: {
     x: number
@@ -57,7 +59,10 @@ export function piecesToPackerInput(pieces: CuttingPiece[]): PackerInputItem[] {
         height: piece.height,
         label: piece.label,
         listIndex: pieceIndex + 1, // 1부터 시작
-        fixedPosition: piece.fixedPosition,
+        allowRotation: piece.allowRotation,
+        // quantity > 1인 경우 첫 번째 인스턴스만 고정 위치 적용
+        // 나머지는 자유 배치 (동일 위치 중첩 방지)
+        fixedPosition: i === 0 ? piece.fixedPosition : undefined,
       })
     }
   })
@@ -217,19 +222,20 @@ export function packPieces(
     let width = item.width
     let height = item.height
     let rotated = false
+    let forcedRotation = false // Case A 여부 플래그
+
+    // 전역 allowRotation AND 조각별 allowRotation 모두 true일 때만 회전 허용
+    const canRotate = allowRotation && (item.allowRotation ?? true)
 
     // 회전이 필요한 경우 처리
-    if (allowRotation) {
-      // 폭이 필름 폭보다 크면 회전 필수
+    if (canRotate) {
+      // Case A: 폭이 필름 폭보다 크면 회전 필수 (배치 불가 방지)
       if (width > filmWidth && height <= filmWidth) {
         ;[width, height] = [height, width]
         rotated = true
+        forcedRotation = true
       }
-      // 높이가 더 크면 회전해서 폭을 줄임 (더 많은 조각을 가로로 배치 가능)
-      else if (height > width && width <= filmWidth) {
-        ;[width, height] = [height, width]
-        rotated = true
-      }
+      // Case B 삭제 - 배치 루프에서 동적 결정
     }
 
     return {
@@ -237,13 +243,17 @@ export function packPieces(
       packedWidth: width,
       packedHeight: height,
       rotated,
+      canRotate,
+      forcedRotation,
     }
   })
 
-  // 높이 기준 내림차순 정렬 (같은 높이면 폭 내림차순)
+  // 최대 변 기준 내림차순 정렬 (같은 최대 변이면 폭 내림차순)
   const sortedItems = [...preparedItems].sort((a, b) => {
-    if (b.packedHeight !== a.packedHeight) {
-      return b.packedHeight - a.packedHeight
+    const aMax = Math.max(a.width, a.height)
+    const bMax = Math.max(b.width, b.height)
+    if (bMax !== aMax) {
+      return bMax - aMax
     }
     return b.packedWidth - a.packedWidth
   })
@@ -258,10 +268,51 @@ export function packPieces(
       continue
     }
 
+    let finalW = item.packedWidth
+    let finalH = item.packedHeight
+    let finalRotated = item.rotated
+
+    // Case B 동적 결정: canRotate이고, 강제 회전 아니고, 정사각형 아닌 경우
+    if (item.canRotate && !item.forcedRotation && finalW !== finalH) {
+      // 현재 방향 배치 시도
+      const posNormal = findPlacementPosition(
+        finalW,
+        finalH,
+        filmWidth,
+        fixedRects,
+        placedRects,
+        padding
+      )
+      // 회전 방향 배치 시도 (회전 후 폭이 filmWidth 이하인 경우만)
+      const rotW = finalH
+      const rotH = finalW
+      const posRotated =
+        rotW <= filmWidth
+          ? findPlacementPosition(
+              rotW,
+              rotH,
+              filmWidth,
+              fixedRects,
+              placedRects,
+              padding
+            )
+          : null
+
+      // 점수: 배치 후 사용 길이 (낮을수록 좋음)
+      const scoreNormal = posNormal ? posNormal.y + finalH : Infinity
+      const scoreRotated = posRotated ? posRotated.y + rotH : Infinity
+
+      if (scoreRotated < scoreNormal) {
+        finalW = rotW
+        finalH = rotH
+        finalRotated = !item.rotated
+      }
+    }
+
     // 빈 공간을 찾아 배치
     const position = findPlacementPosition(
-      item.packedWidth,
-      item.packedHeight,
+      finalW,
+      finalH,
       filmWidth,
       fixedRects,
       placedRects,
@@ -272,11 +323,11 @@ export function packPieces(
       const rect: PackedRect = {
         x: position.x,
         y: position.y,
-        width: item.packedWidth,
-        height: item.packedHeight,
+        width: finalW,
+        height: finalH,
         originalWidth: item.width,
         originalHeight: item.height,
-        rotated: item.rotated,
+        rotated: finalRotated,
         pieceId: item.id,
         label: item.label,
         listIndex: item.listIndex,

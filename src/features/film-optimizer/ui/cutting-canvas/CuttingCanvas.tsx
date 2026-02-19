@@ -25,6 +25,15 @@ function getPieceColor(pieceId: number, index: number): string {
   return PIECE_COLORS[(pieceId + index) % PIECE_COLORS.length]
 }
 
+export interface PieceClickInfo {
+  pieceId: number
+  x: number
+  y: number
+  width: number
+  height: number
+  rotated: boolean
+}
+
 interface CuttingCanvasProps {
   /** 패킹 결과 */
   packingResult: PackingResult | null
@@ -33,7 +42,7 @@ interface CuttingCanvasProps {
   /** 표시 배율 (기본값: 0.5 = 50%) */
   scale?: number
   /** 조각 클릭 콜백 */
-  onPieceClick?: (pieceId: number) => void
+  onPieceClick?: (info: PieceClickInfo) => void
   /** 완료된 조각 ID 목록 */
   completedPieceIds?: number[]
   /** 클래스명 */
@@ -125,7 +134,16 @@ export const CuttingCanvas = forwardRef<CuttingCanvasRef, CuttingCanvasProps>(
               index={rect.listIndex} // listIndex 사용 (조각 목록 번호와 일치)
               color={color}
               isCompleted={isCompleted}
-              onClick={() => onPieceClick?.(rect.pieceId)}
+              onClick={() =>
+                onPieceClick?.({
+                  pieceId: rect.pieceId,
+                  x: rect.x,
+                  y: rect.y,
+                  width: rect.width,
+                  height: rect.height,
+                  rotated: rect.rotated,
+                })
+              }
             />
           )
         })

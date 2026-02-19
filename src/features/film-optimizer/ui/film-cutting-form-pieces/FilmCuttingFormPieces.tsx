@@ -25,7 +25,10 @@ export function FilmCuttingFormPieces() {
     allowRotation,
     addPiece,
     removePiece,
+    setLocalPieces,
     togglePieceComplete,
+    togglePieceAllowRotation,
+    setAllPiecesRotation,
     setOpen,
   } = useFilmCuttingForm([
     'editingProjectId',
@@ -34,7 +37,10 @@ export function FilmCuttingFormPieces() {
     'allowRotation',
     'addPiece',
     'removePiece',
+    'setLocalPieces',
     'togglePieceComplete',
+    'togglePieceAllowRotation',
+    'setAllPiecesRotation',
     'setOpen',
   ])
 
@@ -70,6 +76,7 @@ export function FilmCuttingFormPieces() {
       height: piece.height,
       quantity: piece.quantity ?? 1,
       label: piece.label ?? null,
+      allowRotation: piece.allowRotation ?? true,
       sortOrder: localPieces.length,
       isCompleted: false,
       createdAt: new Date().toISOString(),
@@ -107,58 +114,76 @@ export function FilmCuttingFormPieces() {
     setTogglingPieceId(pieceId)
 
     try {
-      // 현재 조각 찾기
       const piece = localPieces.find((p) => p.id === pieceId)
       if (!piece) return
 
-      // 완료로 전환 시 fixedPosition 계산
-      let fixedPosition: {
-        x: number
-        y: number
-        width: number
-        height: number
-        rotated: boolean
-      } | null = null
-
       if (!piece.isCompleted && packingResult) {
-        // 미완료 -> 완료: 현재 배치 위치를 fixedPosition으로 저장
+        // 미완료 → 완료: packingResult에서 pieceId별 첫 번째 rect를 수집
+        const rectByPieceId = new Map<
+          number,
+          { x: number; y: number; width: number; height: number; rotated: boolean }
+        >()
         for (const bin of packingResult.bins) {
-          const rect = bin.rects.find((r) => r.pieceId === pieceId)
-          if (rect) {
-            fixedPosition = {
-              x: rect.x,
-              y: rect.y,
-              width: rect.width,
-              height: rect.height,
-              rotated: rect.rotated,
+          for (const rect of bin.rects) {
+            if (!rectByPieceId.has(rect.pieceId)) {
+              rectByPieceId.set(rect.pieceId, {
+                x: rect.x,
+                y: rect.y,
+                width: rect.width,
+                height: rect.height,
+                rotated: rect.rotated,
+              })
             }
-            break
           }
         }
-      }
 
-      // 편집 모드이고 서버에 저장된 조각인 경우에만 API 호출
-      if (isEditMode && editingProjectId && !isLocalPieceId(pieceId)) {
-        await toggleCompleteMutation.mutateAsync({
-          projectId: editingProjectId,
-          pieceId,
-          data: fixedPosition ? { fixedPosition } : undefined,
+        const fixedPosition = rectByPieceId.get(pieceId) ?? null
+
+        // 모든 미완료 조각의 위치를 현재 packingResult 기준으로 고정
+        // → 완료 후 재패킹 시 나머지 조각들이 재배치되는 것을 방지
+        const updatedPieces = localPieces.map((p) => {
+          const rectInfo = rectByPieceId.get(p.id)
+          if (p.id === pieceId) {
+            return { ...p, isCompleted: true, fixedPosition: rectInfo ?? null }
+          }
+          // 아직 fixedPosition이 없는 미완료 조각: 현재 위치로 고정
+          if (!p.isCompleted && !p.fixedPosition && rectInfo) {
+            return { ...p, fixedPosition: rectInfo }
+          }
+          return p
         })
-      }
 
-      // 로컬 상태 업데이트
-      if (piece.isCompleted) {
-        // 완료 -> 미완료: fixedPosition 해제
+        // 편집 모드이고 서버에 저장된 조각인 경우에만 API 호출
+        if (isEditMode && editingProjectId && !isLocalPieceId(pieceId)) {
+          await toggleCompleteMutation.mutateAsync({
+            projectId: editingProjectId,
+            pieceId,
+            data: fixedPosition ? { fixedPosition } : undefined,
+          })
+        }
+
+        setLocalPieces(updatedPieces)
+      } else if (piece.isCompleted) {
+        // 완료 → 미완료: fixedPosition만 해제
+        if (isEditMode && editingProjectId && !isLocalPieceId(pieceId)) {
+          await toggleCompleteMutation.mutateAsync({
+            projectId: editingProjectId,
+            pieceId,
+            data: undefined,
+          })
+        }
         togglePieceComplete(pieceId, null)
-      } else {
-        // 미완료 -> 완료: fixedPosition 설정
-        togglePieceComplete(pieceId, fixedPosition)
       }
     } catch {
       // 에러는 mutation hook에서 처리
     } finally {
       setTogglingPieceId(null)
     }
+  }
+
+  // 전체 회전 일괄 설정 핸들러
+  const handleSetAllRotation = (allowRotation: boolean) => {
+    setAllPiecesRotation(allowRotation, selectedFilm?.width ?? 1220)
   }
 
   return (
@@ -191,6 +216,9 @@ export function FilmCuttingFormPieces() {
           pieces={localPieces}
           onDelete={handleDeletePiece}
           onToggleComplete={handleToggleComplete}
+          onTogglePieceRotation={togglePieceAllowRotation}
+          onSetAllRotation={handleSetAllRotation}
+          filmWidth={selectedFilm?.width ?? 1220}
           deletingId={deletingPieceId}
           togglingId={togglingPieceId}
         />
