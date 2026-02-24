@@ -11,7 +11,7 @@ import {
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
 import { Textarea } from '@/shared/ui/textarea'
-import { useCreateFilm } from '../../api-local'
+import { useCreateFilm } from '../../api'
 import styles from './styles.module.scss'
 
 interface CreateFilmDialogProps {
@@ -87,8 +87,7 @@ export function CreateFilmDialog({
         name: name.trim(),
         width: width ? parseInt(width, 10) : 1220,
         length: length ? parseInt(length, 10) : 60000,
-        description: description.trim() || null,
-        isActive: true,
+        description: description.trim() || undefined,
       })
 
       // 성공 시 생성된 필름 ID를 부모에게 전달

@@ -5,8 +5,8 @@ import { PageHeader } from '@/widgets/page-header'
 import {
   useFetchCuttingProjects,
   useDeleteCuttingProject,
-} from '@/features/film-optimizer/api-local'
-import { type CuttingProjectListItem } from '@/shared/lib/indexeddb'
+  type CuttingProjectListItem,
+} from '@/features/film-optimizer/api'
 import { FilmCuttingTable } from '@/features/film-optimizer/ui/film-cutting-table'
 import styles from './FilmCuttingPage.module.scss'
 

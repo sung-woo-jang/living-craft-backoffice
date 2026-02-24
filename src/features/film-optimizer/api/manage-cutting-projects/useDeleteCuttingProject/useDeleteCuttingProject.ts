@@ -16,7 +16,7 @@ const deleteCuttingProject = async (
 export function useDeleteCuttingProject() {
   const queryClient = useQueryClient()
 
-  return useStandardMutation<void, Error, number | string>({
+  const mutation = useStandardMutation<void, Error, number | string>({
     mutationFn: deleteCuttingProject,
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -27,4 +27,12 @@ export function useDeleteCuttingProject() {
       toast.success('재단 프로젝트가 삭제되었습니다.')
     },
   })
+
+  return {
+    ...mutation,
+    mutateAsync: async (variables: number | string) => {
+      const result = await mutation.mutateAsync(variables)
+      return result.data
+    },
+  }
 }

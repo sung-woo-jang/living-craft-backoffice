@@ -20,18 +20,28 @@ const togglePieceComplete = async ({
 export function useTogglePieceComplete() {
   const queryClient = useQueryClient()
 
-  return useStandardMutation<CuttingPiece, Error, TogglePieceCompleteVariables>(
-    {
-      mutationFn: togglePieceComplete,
-      onSuccess: (_, variables) => {
-        queryClient.invalidateQueries({
-          queryKey: [
-            ...generateQueryKeysFromUrl(
-              ADMIN_API.FILM_OPTIMIZER.PROJECTS.DETAIL(variables.projectId)
-            ),
-          ],
-        })
-      },
-    }
-  )
+  const mutation = useStandardMutation<
+    CuttingPiece,
+    Error,
+    TogglePieceCompleteVariables
+  >({
+    mutationFn: togglePieceComplete,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          ...generateQueryKeysFromUrl(
+            ADMIN_API.FILM_OPTIMIZER.PROJECTS.DETAIL(variables.projectId)
+          ),
+        ],
+      })
+    },
+  })
+
+  return {
+    ...mutation,
+    mutateAsync: async (variables: TogglePieceCompleteVariables) => {
+      const result = await mutation.mutateAsync(variables)
+      return result.data
+    },
+  }
 }

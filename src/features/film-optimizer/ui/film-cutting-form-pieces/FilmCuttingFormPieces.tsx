@@ -6,7 +6,7 @@ import {
   useFetchFilms,
   useDeletePiece,
   useTogglePieceComplete,
-} from '../../api-local'
+} from '../../api'
 import { useFilmCuttingForm, useBinPacker } from '../../model'
 import { PiecesInput } from '../pieces-input'
 import { PiecesTable } from '../pieces-table'
@@ -116,7 +116,13 @@ export function FilmCuttingFormPieces() {
         // 미완료 → 완료: packingResult에서 pieceId별 첫 번째 rect를 수집
         const rectByPieceId = new Map<
           number,
-          { x: number; y: number; width: number; height: number; rotated: boolean }
+          {
+            x: number
+            y: number
+            width: number
+            height: number
+            rotated: boolean
+          }
         >()
         for (const bin of packingResult.bins) {
           for (const rect of bin.rects) {
@@ -148,12 +154,12 @@ export function FilmCuttingFormPieces() {
           return p
         })
 
-        // 편집 모드이고 IndexedDB에 저장된 조각인 경우에만 API 호출
+        // 편집 모드이고 저장된 조각인 경우에만 API 호출
         if (isEditMode && editingProjectId && !isLocalPieceId(pieceId)) {
           await toggleCompleteMutation.mutateAsync({
             projectId: Number(editingProjectId),
             pieceId,
-            fixedPosition: fixedPosition ?? undefined,
+            data: fixedPosition ? { fixedPosition } : undefined,
           })
         }
 
@@ -164,7 +170,7 @@ export function FilmCuttingFormPieces() {
           await toggleCompleteMutation.mutateAsync({
             projectId: Number(editingProjectId),
             pieceId,
-            fixedPosition: undefined,
+            data: undefined,
           })
         }
         togglePieceComplete(pieceId, null)

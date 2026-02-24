@@ -24,5 +24,6 @@ export function useFetchFilms() {
       ...generateQueryKeysFromUrl(ADMIN_API.FILM_OPTIMIZER.FILMS.LIST),
     ],
     queryFn: fetchFilms,
+    select: (data) => data.data,
   })
 }

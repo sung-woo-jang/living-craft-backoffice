@@ -6,7 +6,7 @@ import {
   type ReactNode,
 } from 'react'
 import { useParams } from 'react-router-dom'
-import { useFetchCuttingProjectDetail } from '../../api-local'
+import { useFetchCuttingProjectDetail } from '../../api'
 import { useFilmCuttingForm } from '../../model'
 
 interface FilmCuttingFormProviderProps {

@@ -19,7 +19,7 @@ const createCuttingProject = async (
 export function useCreateCuttingProject() {
   const queryClient = useQueryClient()
 
-  return useStandardMutation<
+  const mutation = useStandardMutation<
     CuttingProjectDetail,
     Error,
     CreateCuttingProjectRequest
@@ -34,4 +34,12 @@ export function useCreateCuttingProject() {
       toast.success('재단 프로젝트가 생성되었습니다.')
     },
   })
+
+  return {
+    ...mutation,
+    mutateAsync: async (variables: CreateCuttingProjectRequest) => {
+      const result = await mutation.mutateAsync(variables)
+      return result.data
+    },
+  }
 }

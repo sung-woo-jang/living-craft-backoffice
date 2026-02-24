@@ -21,7 +21,7 @@ const fetchCuttingProjectDetail = async (
  * GET /api/admin/film-optimizer/projects/:id
  */
 export function useFetchCuttingProjectDetail(id: number | string | undefined) {
-  return useStandardQuery<CuttingProjectDetail>({
+  return useStandardQuery<CuttingProjectDetail, Error, CuttingProjectDetail>({
     queryKey: [
       ...generateQueryKeysFromUrl(
         ADMIN_API.FILM_OPTIMIZER.PROJECTS.DETAIL(id ?? '')
@@ -32,5 +32,6 @@ export function useFetchCuttingProjectDetail(id: number | string | undefined) {
       return fetchCuttingProjectDetail(id)
     },
     enabled: !!id,
+    select: (data) => data.data,
   })
 }

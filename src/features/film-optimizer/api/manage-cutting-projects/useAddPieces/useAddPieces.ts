@@ -20,7 +20,11 @@ const addPieces = async ({
 export function useAddPieces() {
   const queryClient = useQueryClient()
 
-  return useStandardMutation<CuttingPiece[], Error, AddPiecesVariables>({
+  const mutation = useStandardMutation<
+    CuttingPiece[],
+    Error,
+    AddPiecesVariables
+  >({
     mutationFn: addPieces,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
@@ -33,4 +37,12 @@ export function useAddPieces() {
       toast.success('재단 조각이 추가되었습니다.')
     },
   })
+
+  return {
+    ...mutation,
+    mutateAsync: async (variables: AddPiecesVariables) => {
+      const result = await mutation.mutateAsync(variables)
+      return result.data
+    },
+  }
 }

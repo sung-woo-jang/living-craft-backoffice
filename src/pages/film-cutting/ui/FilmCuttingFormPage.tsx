@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom'
 import {
   useFetchFilms,
   useFetchCuttingProjectDetail,
-} from '@/features/film-optimizer/api-local'
+} from '@/features/film-optimizer/api'
 import {
   FilmCuttingForm,
   FilmCuttingFormProvider,

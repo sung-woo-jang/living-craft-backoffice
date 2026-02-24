@@ -10,7 +10,7 @@ import {
 } from '@/shared/ui/select'
 import { Switch } from '@/shared/ui/switch'
 import { Plus } from 'lucide-react'
-import { useFetchFilms } from '../../api-local'
+import { useFetchFilms } from '../../api'
 import { useFilmCuttingForm } from '../../model'
 import styles from './styles.module.scss'
 

@@ -18,7 +18,7 @@ const deletePiece = async ({
 export function useDeletePiece() {
   const queryClient = useQueryClient()
 
-  return useStandardMutation<void, Error, PieceActionVariables>({
+  const mutation = useStandardMutation<void, Error, PieceActionVariables>({
     mutationFn: deletePiece,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
@@ -31,4 +31,12 @@ export function useDeletePiece() {
       toast.success('재단 조각이 삭제되었습니다.')
     },
   })
+
+  return {
+    ...mutation,
+    mutateAsync: async (variables: PieceActionVariables) => {
+      const result = await mutation.mutateAsync(variables)
+      return result.data
+    },
+  }
 }

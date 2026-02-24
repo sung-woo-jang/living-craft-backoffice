@@ -23,11 +23,16 @@ const fetchCuttingProjects = async (
  * GET /api/admin/film-optimizer/projects
  */
 export function useFetchCuttingProjects(filmId?: number | string) {
-  return useStandardQuery<FetchCuttingProjectsResponse>({
+  return useStandardQuery<
+    FetchCuttingProjectsResponse,
+    Error,
+    FetchCuttingProjectsResponse
+  >({
     queryKey: [
       ...generateQueryKeysFromUrl(ADMIN_API.FILM_OPTIMIZER.PROJECTS.LIST),
       filmId,
     ],
     queryFn: () => fetchCuttingProjects(filmId),
+    select: (data) => data.data,
   })
 }

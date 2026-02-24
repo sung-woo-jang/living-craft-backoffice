@@ -1,5 +1,5 @@
 import type { CuttingPiece, CuttingPieceInput } from '@/shared/types/api'
-import { useFetchFilms } from '../../api-local'
+import { useFetchFilms } from '../../api'
 import { useFilmCuttingForm } from '../../model'
 import { BulkInputDialog } from '../bulk-input-dialog'
 import { CreateFilmDialog } from '../create-film-dialog'

@@ -22,7 +22,7 @@ const updateCuttingProject = async ({
 export function useUpdateCuttingProject() {
   const queryClient = useQueryClient()
 
-  return useStandardMutation<
+  const mutation = useStandardMutation<
     CuttingProjectDetail,
     Error,
     UpdateCuttingProjectVariables
@@ -44,4 +44,12 @@ export function useUpdateCuttingProject() {
       toast.success('재단 프로젝트가 수정되었습니다.')
     },
   })
+
+  return {
+    ...mutation,
+    mutateAsync: async (variables: UpdateCuttingProjectVariables) => {
+      const result = await mutation.mutateAsync(variables)
+      return result.data
+    },
+  }
 }

@@ -1,5 +1,5 @@
 import { useRef, useMemo, useState } from 'react'
-import { useFetchFilms, useTogglePieceComplete } from '../../api-local'
+import { useFetchFilms, useTogglePieceComplete } from '../../api'
 import { useFilmCuttingForm, useBinPacker } from '../../model'
 import { CuttingCanvas, type CuttingCanvasRef, type PieceClickInfo } from '../cutting-canvas'
 import { ExportButtons } from '../export-buttons'
@@ -110,12 +110,12 @@ export function FilmCuttingFormVisualization() {
           return p
         })
 
-        // 편집 모드이고 IndexedDB에 저장된 조각인 경우에만 API 호출
+        // 편집 모드이고 저장된 조각인 경우에만 API 호출
         if (isEditMode && editingProjectId && !isLocalPieceId(pieceId)) {
           await toggleCompleteMutation.mutateAsync({
             projectId: Number(editingProjectId),
             pieceId,
-            fixedPosition,
+            data: { fixedPosition },
           })
         }
 
@@ -126,7 +126,7 @@ export function FilmCuttingFormVisualization() {
           await toggleCompleteMutation.mutateAsync({
             projectId: Number(editingProjectId),
             pieceId,
-            fixedPosition: undefined,
+            data: undefined,
           })
         }
         togglePieceComplete(pieceId, null)

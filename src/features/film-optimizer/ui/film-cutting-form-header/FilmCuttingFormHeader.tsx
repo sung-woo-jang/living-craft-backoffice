@@ -5,7 +5,7 @@ import {
   useCreateCuttingProject,
   useUpdateCuttingProject,
   useAddPieces,
-} from '../../api-local'
+} from '../../api'
 import { useFilmCuttingForm, useBinPacker } from '../../model'
 import styles from './styles.module.scss'
 
@@ -70,18 +70,20 @@ export function FilmCuttingFormHeader() {
         // 수정 모드
         const projectId = Number(editingProjectId)
 
-        // 1. 새로 추가된 조각들 (로컬 ID) 먼저 IndexedDB에 저장
+        // 1. 새로 추가된 조각들 (로컬 ID) 먼저 저장
         const newLocalPieces = localPieces.filter((p) => isLocalPieceId(p.id))
         if (newLocalPieces.length > 0) {
           await addPiecesMutation.mutateAsync({
             projectId,
-            pieces: newLocalPieces.map((p) => ({
-              width: p.width,
-              height: p.height,
-              quantity: p.quantity,
-              label: p.label,
-              allowRotation: p.allowRotation,
-            })),
+            data: {
+              pieces: newLocalPieces.map((p) => ({
+                width: p.width,
+                height: p.height,
+                quantity: p.quantity,
+                label: p.label ?? undefined,
+                allowRotation: p.allowRotation,
+              })),
+            },
           })
         }
 
@@ -91,9 +93,9 @@ export function FilmCuttingFormHeader() {
           data: {
             name: projectName,
             allowRotation,
-            wastePercentage: packingResult?.wastePercentage ?? null,
-            usedLength: packingResult?.usedLength ?? null,
-            packingResult: packingResult ?? null,
+            wastePercentage: packingResult?.wastePercentage ?? undefined,
+            usedLength: packingResult?.usedLength ?? undefined,
+            packingResult: packingResult ?? undefined,
           },
         })
       } else {
@@ -106,7 +108,7 @@ export function FilmCuttingFormHeader() {
             width: p.width,
             height: p.height,
             quantity: p.quantity,
-            label: p.label,
+            label: p.label ?? undefined,
             allowRotation: p.allowRotation,
           })),
         })

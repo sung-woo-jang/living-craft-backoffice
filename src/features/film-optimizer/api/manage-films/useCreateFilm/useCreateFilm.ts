@@ -27,7 +27,7 @@ const createFilm = async (
 export function useCreateFilm() {
   const queryClient = useQueryClient()
 
-  return useStandardMutation<FilmDetail, Error, CreateFilmRequest>({
+  const mutation = useStandardMutation<FilmDetail, Error, CreateFilmRequest>({
     mutationFn: createFilm,
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -38,4 +38,12 @@ export function useCreateFilm() {
       toast.success('필름지가 생성되었습니다.')
     },
   })
+
+  return {
+    ...mutation,
+    mutateAsync: async (variables: CreateFilmRequest) => {
+      const result = await mutation.mutateAsync(variables)
+      return result.data
+    },
+  }
 }
